@@ -1,0 +1,17 @@
+# Dependencies
+
+
+# Environment variables
+.env
+
+# important files
+
+PROJECT_THESIS.md
+PROJECT_DOCUMENTATION.md
+USER_GUIDE.md
+ARCHITECTURE.md
+CONTRIBUTING.md
+
+# Coverage directory
+
+# Build output
