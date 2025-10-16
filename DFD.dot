@@ -1,0 +1,58 @@
+digraph DFD {
+    graph [label="Homestead Management System - DFD Level 1", labelloc=t, fontsize=20];
+    node [shape=box, style=rounded];
+    
+    // External Entities
+    subgraph externals {
+        rank = same;
+        Traveler [shape=ellipse, style=filled, fillcolor=lightyellow];
+        Host [shape=ellipse, style=filled, fillcolor=lightyellow];
+    }
+
+    // Processes
+    subgraph processes {
+        rank = same;
+        P1 [label="1.0\nUser & Auth\nManagement"];
+        P2 [label="2.0\nProperty\nManagement"];
+        P3 [label="3.0\nBooking\nManagement"];
+        P4 [label="4.0\nReview & Rating\nManagement"];
+    }
+
+    // Data Stores
+    subgraph datastores {
+        rank = same;
+        DS1 [label="D1: Users", shape=cylinder, style=filled, fillcolor=lightgrey];
+        DS2 [label="D2: Properties", shape=cylinder, style=filled, fillcolor=lightgrey];
+        DS3 [label="D3: Bookings", shape=cylinder, style=filled, fillcolor=lightgrey];
+        DS4 [label="D4: Reviews", shape=cylinder, style=filled, fillcolor=lightgrey];
+    }
+
+    // Data Flows
+    Traveler -> P1 [label="Registration/Login Details"];
+    P1 -> Traveler [label="Auth Token/User Profile"];
+    Host -> P1 [label="Registration/Login Details"];
+    P1 -> Host [label="Auth Token/User Profile"];
+    P1 -> DS1 [label="Write/Update User Data"];
+    DS1 -> P1 [label="Read User Data"];
+
+    Host -> P2 [label="New/Updated Property Details"];
+    P2 -> Host [label="Property Listings"];
+    P2 -> DS2 [label="Write/Update Property Data"];
+    DS2 -> P2 [label="Read Property Data"];
+    Traveler -> P2 [label="Search/Filter Criteria"];
+    P2 -> Traveler [label="Property Details"];
+
+    Traveler -> P3 [label="Booking Request"];
+    P3 -> Traveler [label="Booking Confirmation/Status"];
+    P3 -> Host [label="Booking Notification"];
+    Host -> P3 [label="Booking Approval/Rejection"];
+    P3 -> DS3 [label="Write Booking Data"];
+    DS3 -> P3 [label="Read Booking Data"];
+    P3 -> DS1 [label="Read User/Host Info"];
+    P3 -> DS2 [label="Read Property Info"];
+
+    Traveler -> P4 [label="Review & Rating"];
+    P4 -> DS4 [label="Write Review Data"];
+    P4 -> P2 [label="Update Average Rating"];
+    DS4 -> P2 [label="Read Reviews for Property"];
+}

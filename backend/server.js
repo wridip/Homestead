@@ -1,0 +1,87 @@
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const path = require('path');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const rateLimit = require('express-rate-limit');
+
+// Load environment variables
+dotenv.config();
+
+const app = express();
+
+// --- Middleware ---
+// Enable CORS
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  credentials: true,
+}));
+
+// Set security-related HTTP headers
+app.use(helmet());
+
+// Log HTTP requests in development mode
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+// Body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+if (process.env.NODE_ENV !== 'test') {
+  // Sanitize data
+  app.use(mongoSanitize());
+
+  // Prevent XSS attacks
+  app.use(xss());
+
+  // Rate limiting
+  const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 mins
+    max: 100,
+  });
+  app.use(limiter);
+}
+
+// --- Database Connection ---
+if (process.env.NODE_ENV !== 'test') {
+  const connectDB = require('./src/config/db');
+  connectDB();
+}
+
+// --- API Routes ---
+const authRoutes = require('./src/routes/authRoutes');
+const propertyRoutes = require('./src/routes/propertyRoutes');
+const bookingRoutes = require('./src/routes/bookingRoutes');
+const reviewRoutes = require('./src/routes/reviewRoutes');
+const hostRoutes = require('./src/routes/hostRoutes');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/properties', propertyRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/hosts', hostRoutes);
+// Nested reviews route under properties
+app.use('/api/properties/:propertyId/reviews', reviewRoutes);
+
+// Basic route for testing
+app.get('/api', (req, res) => {
+  res.status(200).json({ message: 'Welcome to the Homestead Management System API!' });
+});
+
+const errorHandler = require('./src/middlewares/errorMiddleware');
+app.use(errorHandler);
+
+// --- Server Initialization ---
+const PORT = process.env.PORT || 5000;
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  });
+}
+
+module.exports = app;
