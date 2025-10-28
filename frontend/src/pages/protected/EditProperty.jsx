@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPropertyById, updateProperty } from '../../services/propertyService';
+import axios from 'axios'; // Import axios
 
 const EditProperty = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,8 @@ const EditProperty = () => {
     images: [],
     status: 'Active',
   });
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -25,6 +28,9 @@ const EditProperty = () => {
       try {
         const response = await getPropertyById(id);
         setFormData(response.data);
+        setImagePreviews(response.data.images);
+        console.log('Fetched property images:', response.data.images);
+        console.log('Initial image previews:', response.data.images);
       } catch (error) {
         console.error('Failed to fetch property', error);
       }
@@ -64,13 +70,52 @@ const EditProperty = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+    const newPreviews = files.map(file => URL.createObjectURL(file));
+    setImagePreviews(prev => [...prev, ...newPreviews]);
+  };
+
+  const handleRemoveImage = (index, isExisting) => {
+    if (isExisting) {
+      const newImages = [...formData.images];
+      newImages.splice(index, 1);
+      setFormData({ ...formData, images: newImages });
+    } else {
+      const newSelectedFiles = [...selectedFiles];
+      newSelectedFiles.splice(index - formData.images.length, 1);
+      setSelectedFiles(newSelectedFiles);
+    }
+    const newImagePreviews = [...imagePreviews];
+    newImagePreviews.splice(index, 1);
+    setImagePreviews(newImagePreviews);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('handleSubmit called');
     try {
-      await updateProperty(id, formData);
+      let imageUrls = [...formData.images]; // Keep existing images
+      if (selectedFiles.length > 0) {
+        const uploadData = new FormData();
+        selectedFiles.forEach((file) => {
+          uploadData.append('images', file);
+        });
+        const uploadRes = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/properties/upload`, uploadData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        imageUrls = [...imageUrls, ...uploadRes.data.files]; // Add new images
+      }
+
+      await updateProperty(id, { ...formData, images: imageUrls });
       navigate('/dashboard/properties');
     } catch (error) {
       console.error('Failed to update property', error);
+      console.error('Error details:', error.response ? error.response.data : error.message);
     }
   };
 
@@ -213,7 +258,25 @@ const EditProperty = () => {
         {/* Images & Media */}
         <div className="p-4 border rounded">
           <h2 className="text-xl font-semibold mb-4">Images & Media</h2>
-          <input type="file" multiple className="p-2 border rounded" />
+          <input type="file" multiple onChange={handleImageChange} className="p-2 border rounded" />
+          <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {imagePreviews.map((image, index) => (
+              <div key={index} className="relative">
+                <img 
+                  src={image.startsWith('/uploads') ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}` : image}
+                  alt="preview" 
+                  className="w-full h-32 object-cover rounded-lg" 
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index, image.startsWith('/uploads'))}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs"
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Status */}

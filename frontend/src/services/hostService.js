@@ -38,3 +38,14 @@ export const getHostProperties = async () => {
   });
   return response.data;
 };
+
+// Delete a property
+export const deleteProperty = async (id) => {
+  const token = getAuthToken();
+  const response = await axios.delete(`${API_URL}/properties/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

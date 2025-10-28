@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getHostProperties } from '../../services/hostService';
+import { getHostProperties, deleteProperty } from '../../services/hostService';
 
 const ManageProperties = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this property?')) {
+      try {
+        await deleteProperty(id);
+        setProperties(properties.filter((property) => property._id !== id));
+      } catch (error) {
+        console.error('Failed to delete property', error);
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -55,7 +66,7 @@ const ManageProperties = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{property.status}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <Link to={`/dashboard/edit-property/${property._id}`} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</Link>
-                  <button className="text-red-600 hover:text-red-900">Delete</button>
+                  <button onClick={() => handleDelete(property._id)} className="text-red-600 hover:text-red-900">Delete</button>
                 </td>
               </tr>
             ))}

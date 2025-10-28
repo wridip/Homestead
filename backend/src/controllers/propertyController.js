@@ -129,7 +129,7 @@ exports.getProperties = async (req, res, next) => {
 // @access  Public
 exports.getPropertyById = async (req, res, next) => {
   try {
-    const property = await Property.findById(req.params.id).populate('reviews');
+    const property = await Property.findById(req.params.id);
 
     if (!property) {
       return res.status(404).json({ success: false, message: `Property not found with id of ${req.params.id}` });

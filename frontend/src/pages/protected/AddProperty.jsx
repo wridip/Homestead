@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addProperty } from '../../services/hostService';
+import axios from 'axios';
 
 const AddProperty = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,8 @@ const AddProperty = () => {
     images: [],
     status: 'Active',
   });
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -51,9 +54,35 @@ const AddProperty = () => {
   };
 
   const handleImageChange = (e) => {
-    // For now, we'll use a placeholder image.
-    // In a real application, you would upload the files to a server and get back the URLs.
-    setFormData({ ...formData, images: ['https://via.placeholder.com/300'] });
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+    const previews = files.map(file => URL.createObjectURL(file));
+    setImagePreviews(previews);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let imageUrls = [];
+      if (selectedFiles.length > 0) {
+        const uploadData = new FormData();
+        selectedFiles.forEach((file) => {
+          uploadData.append('images', file);
+        });
+        const uploadRes = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/properties/upload`, uploadData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        imageUrls = uploadRes.data.files;
+      }
+
+      await addProperty({ ...formData, images: imageUrls });
+      navigate('/dashboard/properties');
+    } catch (error) {
+      console.error('Failed to add property', error);
+    }
   };
 
   return (
@@ -188,6 +217,27 @@ const AddProperty = () => {
         <div className="p-4 border rounded">
           <h2 className="text-xl font-semibold mb-4">Images & Media</h2>
           <input type="file" multiple onChange={handleImageChange} className="p-2 border rounded" />
+          <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {imagePreviews.map((image, index) => (
+              <div key={index} className="relative">
+                <img src={image} alt="preview" className="w-full h-32 object-cover rounded-lg" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newSelectedFiles = [...selectedFiles];
+                    newSelectedFiles.splice(index, 1);
+                    setSelectedFiles(newSelectedFiles);
+                    const newImagePreviews = [...imagePreviews];
+                    newImagePreviews.splice(index, 1);
+                    setImagePreviews(newImagePreviews);
+                  }}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs"
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Status */}
