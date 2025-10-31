@@ -78,7 +78,17 @@ const AddProperty = () => {
         imageUrls = uploadRes.data.files;
       }
 
-      await addProperty({ ...formData, images: imageUrls });
+      const propertyData = { ...formData, images: imageUrls };
+      if (propertyData.latitude && propertyData.longitude) {
+        propertyData.location = {
+          type: 'Point',
+          coordinates: [parseFloat(propertyData.longitude), parseFloat(propertyData.latitude)]
+        };
+        delete propertyData.latitude;
+        delete propertyData.longitude;
+      }
+
+      await addProperty(propertyData);
       navigate('/dashboard/properties');
     } catch (error) {
       console.error('Failed to add property', error);

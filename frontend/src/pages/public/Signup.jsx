@@ -11,11 +11,10 @@ const Signup = () => {
     email: '',
     password: '',
     password2: '',
-    role: 'Traveler',
   });
   const [error, setError] = useState(null);
 
-  const { name, email, password, password2, role } = formData;
+  const { name, email, password, password2 } = formData;
 
   const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -25,7 +24,7 @@ const Signup = () => {
       return setError('Passwords do not match');
     }
     try {
-      const data = await signupService({ name, email, password, role });
+      const data = await signupService({ name, email, password });
       login(data);
       navigate('/dashboard');
     } catch (err) {
@@ -41,7 +40,7 @@ const Signup = () => {
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <div>
             <label htmlFor="name" className="text-sm font-bold text-gray-600 block">Name</label>
-            <input id="name" type="text" name="name" value={name} onChange={onChange} className="w-full p-2 border border-gray-300 rounded mt-1" required />
+            <input id="name" type="text" name="name" value={name} onChange={onChange} className="w-full p-2 border border--gray-300 rounded mt-1" required />
           </div>
           <div>
             <label htmlFor="email" className="text-sm font-bold text-gray-600 block">Email</label>
@@ -54,13 +53,6 @@ const Signup = () => {
           <div>
             <label htmlFor="password2" className="text-sm font-bold text-gray-600 block">Confirm Password</label>
             <input id="password2" type="password" name="password2" value={password2} onChange={onChange} className="w-full p-2 border border-gray-300 rounded mt-1" required />
-          </div>
-          <div>
-            <label htmlFor="role" className="text-sm font-bold text-gray-600 block">Sign up as a:</label>
-            <select id="role" name="role" value={role} onChange={onChange} className="w-full p-2 border border-gray-300 rounded mt-1">
-              <option value="Traveler">Traveler</option>
-              <option value="Host">Host</option>
-            </select>
           </div>
           <div>
             <button type="submit" className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm">

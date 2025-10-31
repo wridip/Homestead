@@ -27,10 +27,13 @@ const EditProperty = () => {
     const fetchProperty = async () => {
       try {
         const response = await getPropertyById(id);
-        setFormData(response.data);
-        setImagePreviews(response.data.images);
-        console.log('Fetched property images:', response.data.images);
-        console.log('Initial image previews:', response.data.images);
+        const propertyData = response.data;
+        if (propertyData.location && propertyData.location.coordinates) {
+          propertyData.latitude = propertyData.location.coordinates[1];
+          propertyData.longitude = propertyData.location.coordinates[0];
+        }
+        setFormData(propertyData);
+        setImagePreviews(propertyData.images || []);
       } catch (error) {
         console.error('Failed to fetch property', error);
       }
@@ -111,7 +114,17 @@ const EditProperty = () => {
         imageUrls = [...imageUrls, ...uploadRes.data.files]; // Add new images
       }
 
-      await updateProperty(id, { ...formData, images: imageUrls });
+      const propertyData = { ...formData, images: imageUrls };
+      if (propertyData.latitude && propertyData.longitude) {
+        propertyData.location = {
+          type: 'Point',
+          coordinates: [parseFloat(propertyData.longitude), parseFloat(propertyData.latitude)]
+        };
+        delete propertyData.latitude;
+        delete propertyData.longitude;
+      }
+
+      await updateProperty(id, propertyData);
       navigate('/dashboard/properties');
     } catch (error) {
       console.error('Failed to update property', error);

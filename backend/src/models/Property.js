@@ -23,11 +23,16 @@ const propertySchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  latitude: {
-    type: String,
-  },
-  longitude: {
-    type: String,
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
   },
   amenities: [{ type: String }],
   roomTypes: [{

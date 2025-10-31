@@ -10,8 +10,7 @@ exports.createProperty = async (req, res, next) => {
       description,
       address,
       contact,
-      latitude,
-      longitude,
+      location,
       amenities,
       roomTypes,
       baseRate,
@@ -26,8 +25,7 @@ exports.createProperty = async (req, res, next) => {
       description,
       address,
       contact,
-      latitude,
-      longitude,
+      location,
       amenities,
       roomTypes,
       baseRate,
@@ -160,14 +158,25 @@ exports.updateProperty = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'Not authorized to update this property' });
     }
 
-    property = await Property.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const { name, description, address, contact, location, amenities, roomTypes, baseRate, seasonalPricing, images, status } = req.body;
+
+    property.name = name || property.name;
+    property.description = description || property.description;
+    property.address = address || property.address;
+    property.contact = contact || property.contact;
+    property.location = location || property.location;
+    property.amenities = amenities || property.amenities;
+    property.roomTypes = roomTypes || property.roomTypes;
+    property.baseRate = baseRate || property.baseRate;
+    property.seasonalPricing = seasonalPricing || property.seasonalPricing;
+    property.images = images || property.images;
+    property.status = status || property.status;
+
+    const updatedProperty = await property.save();
 
     res.status(200).json({
       success: true,
-      data: property,
+      data: updatedProperty,
     });
   } catch (error) {
     next(error);
