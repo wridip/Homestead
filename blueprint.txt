@@ -1,0 +1,140 @@
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <title>Homestead — Authentic Homestays</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght @300;400;500;600&amp;display=swap" rel="stylesheet">
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+  </style>
+<link id="all-fonts-link-font-geist" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght @300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-geist">.font-geist { font-family: 'Geist', sans-serif !important; }</style><link id="all-fonts-link-font-roboto" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght @300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-roboto">.font-roboto { font-family: 'Roboto', sans-serif !important; }</style><link id="all-fonts-link-font-montserrat" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght @300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-montserrat">.font-montserrat { font-family: 'Montserrat', sans-serif !important; }</style><link id="all-fonts-link-font-poppins" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght @300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-poppins">.font-poppins { font-family: 'Poppins', sans-serif !important; }</style><link id="all-fonts-link-font-playfair" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght @400;500;600;700;900&amp;display=swap"><style id="all-fonts-style-font-playfair">.font-playfair { font-family: 'Playfair Display', serif !important; }</style><link id="all-fonts-link-font-instrument-serif" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:wght @400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-instrument-serif">.font-instrument-serif { font-family: 'Instrument Serif', serif !important; }</style><link id="all-fonts-link-font-merriweather" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght @300;400;700;900&amp;display=swap"><style id="all-fonts-style-font-merriweather">.font-merriweather { font-family: 'Merriweather', serif !important; }</style><link id="all-fonts-link-font-bricolage" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght @300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-bricolage">.font-bricolage { font-family: 'Bricolage Grotesque', sans-serif !important; }</style><link id="all-fonts-link-font-jakarta" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght @300;400;500;600;700;800&amp;display=swap"><style id="all-fonts-style-font-jakarta">.font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif !important; }</style><link id="all-fonts-link-font-manrope" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght @300;400;500;600;700;800&amp;display=swap"><style id="all-fonts-style-font-manrope">.font-manrope { font-family: 'Manrope', sans-serif !important; }</style><link id="all-fonts-link-font-space-grotesk" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght @300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-space-grotesk">.font-space-grotesk { font-family: 'Space Grotesk', sans-serif !important; }</style><link id="all-fonts-link-font-work-sans" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght @300;400;500;600;700;800&amp;display=swap"><style id="all-fonts-style-font-work-sans">.font-work-sans { font-family: 'Work Sans', sans-serif !important; }</style><link id="all-fonts-link-font-pt-serif" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:wght @400;700&amp;display=swap"><style id="all-fonts-style-font-pt-serif">.font-pt-serif { font-family: 'PT Serif', serif !important; }</style><link id="all-fonts-link-font-geist-mono" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght @300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-geist-mono">.font-geist-mono { font-family: 'Geist Mono', monospace !important; }</style><link id="all-fonts-link-font-space-mono" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght @400;700&amp;display=swap"><style id="all-fonts-style-font-space-mono">.font-space-mono { font-family: 'Space Mono', monospace !important; }</style><link id="all-fonts-link-font-quicksand" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght @300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-quicksand">.font-quicksand { font-family: 'Quicksand', sans-serif !important; }</style><link id="all-fonts-link-font-nunito" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght @300;400;500;600;700;800&amp;display=swap"><style id="all-fonts-style-font-nunito">.font-nunito { font-family: 'Nunito', sans-serif !important; }</style></head>
+<body class="antialiased bg-[#000000] text-[#D1D0D0] font-[Inter]">
+  <!-- Header -->
+  <header class="fixed transition-all z-50 top-0 right-0 left-0" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:1520,&quot;h&quot;:64,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}" id="siteHeader">
+    <div id="progressBar" class="absolute left-0 top-0 h-[2px] w-0 bg-[#5C4E4E]" style="width: 0%;" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:1520,&quot;h&quot;:2,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}"></div>
+    <div class="flex sm:px-6 lg:px-8 h-16 max-w-7xl mr-auto ml-auto pr-4 pl-4 items-center justify-between" bis_size="{&quot;x&quot;:120,&quot;y&quot;:2567,&quot;w&quot;:1280,&quot;h&quot;:64,&quot;abs_x&quot;:120,&quot;abs_y&quot;:2609}">
+      <a href="#home" class="inline-flex items-center gap-2" bis_size="{&quot;x&quot;:152,&quot;y&quot;:2585,&quot;w&quot;:106,&quot;h&quot;:28,&quot;abs_x&quot;:152,&quot;abs_y&quot;:2627}">
+        <span class="text-xl font-semibold tracking-tight" bis_size="{&quot;x&quot;:152,&quot;y&quot;:2585,&quot;w&quot;:106,&quot;h&quot;:28,&quot;abs_x&quot;:152,&quot;abs_y&quot;:2627}">Homestead</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm" bis_size="{&quot;x&quot;:643,&quot;y&quot;:2589,&quot;w&quot;:183,&quot;h&quot;:20,&quot;abs_x&quot;:643,&quot;abs_y&quot;:2631}">
+        <a data-spy="" href="#home" class="transition-colors hover:text-[#D1D0D0]" bis_size="{&quot;x&quot;:643,&quot;y&quot;:2589,&quot;w&quot;:39,&quot;h&quot;:20,&quot;abs_x&quot;:643,&quot;abs_y&quot;:2631}">Home</a>
+        <a data-spy="" href="#featured" class="transition-colors hover:text-[#D1D0D0]" bis_size="{&quot;x&quot;:714,&quot;y&quot;:2589,&quot;w&quot;:49,&quot;h&quot;:20,&quot;abs_x&quot;:714,&quot;abs_y&quot;:2631}">Explore</a>
+        <a data-spy="" href="#host" class="transition-colors hover:text-[#D1D0D0]" bis_size="{&quot;x&quot;:796,&quot;y&quot;:2589,&quot;w&quot;:30,&quot;h&quot;:20,&quot;abs_x&quot;:796,&quot;abs_y&quot;:2631}">Host</a>
+      </nav>
+      <div class="flex items-center gap-3" bis_size="{&quot;x&quot;:1211,&quot;y&quot;:2580,&quot;w&quot;:156,&quot;h&quot;:37,&quot;abs_x&quot;:1211,&quot;abs_y&quot;:2622}">
+        <a href="#" class="btn-adaptive rounded-md px-3 py-1.5 text-sm font-medium border transition-colors text-[#D1D0D0] border-white/15 hover:bg-white/5" bis_size="{&quot;x&quot;:1211,&quot;y&quot;:2582,&quot;w&quot;:62,&quot;h&quot;:33,&quot;abs_x&quot;:1211,&quot;abs_y&quot;:2624}">Login</a>
+        <a href="#" class="btn-adaptive rounded-md px-3.5 py-2 text-sm font-semibold border transition-colors text-[#D1D0D0] border-white/15 hover:bg-white/5" bis_size="{&quot;x&quot;:1286,&quot;y&quot;:2580,&quot;w&quot;:82,&quot;h&quot;:37,&quot;abs_x&quot;:1286,&quot;abs_y&quot;:2622}">Sign Up</a>
+        <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center rounded-md border border-white/10 p-2 text-[#D1D0D0]/80 hover:bg-white/5 transition" aria-label="Open Menu" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:0,&quot;h&quot;:0,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="menu" class="lucide lucide-menu w-5 h-5" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:0,&quot;h&quot;:0,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile nav -->
+    <div id="mobileMenu" class="hidden border-t border-white/10 bg-[#0a0a0a] md:hidden" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:0,&quot;h&quot;:0,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-1" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:0,&quot;h&quot;:0,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}">
+        <a href="#home" class="rounded-md px-3 py-2 text-sm text-[#D1D0D0] hover:bg-white/5" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:0,&quot;h&quot;:0,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}">Home</a>
+        <a href="#featured" class="rounded-md px-3 py-2 text-sm text-[#D1D0D0] hover:bg-white/5" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:0,&quot;h&quot;:0,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}">Explore</a>
+        <a href="#host" class="rounded-md px-3 py-2 text-sm text-[#D1D0D0] hover:bg-white/5" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:0,&quot;h&quot;:0,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}">Host</a>
+        <a href="#" class="rounded-md px-3 py-2 text-sm text-[#D1D0D0]/80 hover:bg-white/5" bis_size="{&quot;x&quot;:0,&quot;y&quot;:2567,&quot;w&quot;:0,&quot;h&quot;:0,&quot;abs_x&quot;:0,&quot;abs_y&quot;:2609}">About</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-20" id="home" bis_size="{&quot;x&quot;:0,&quot;y&quot;:0,&quot;w&quot;:1520,&quot;h&quot;:2941,&quot;abs_x&quot;:0,&quot;abs_y&quot;:42}">
+    <!-- Hero -->
+    <section data-bg="dark" class="relative overflow-hidden" bis_size="{&quot;x&quot;:0,&quot;y&quot;:80,&quot;w&quot;:1520,&quot;h&quot;:504,&quot;abs_x&quot;:0,&quot;abs_y&quot;:122}">
+      <img id="heroParallax" src="https://images.unsplash.com/photo-1488085061387-422e29b40080?q=80&amp;w=2000&amp;auto=format&amp;fit=crop" alt="Remote valley landscape" class="absolute inset-0 -z-10 h-full w-full object-cover will-change-transform" style="transform: translateY(0px) scale(1.05);" bis_size="{&quot;x&quot;:-38,&quot;y&quot;:580,&quot;w&quot;:1596,&quot;h&quot;:530,&quot;abs_x&quot;:-38,&quot;abs_y&quot;:622}">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-b from-[#000000]/50 via-[#000000]/80 to-[#000000]" bis_size="{&quot;x&quot;:0,&quot;y&quot;:80,&quot;w&quot;:1520,&quot;h&quot;:504,&quot;abs_x&quot;:0,&quot;abs_y&quot;:122}"></div>
+
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 lg:pb-24 pt-10 pb-16" bis_size="{&quot;x&quot;:120,&quot;y&quot;:80,&quot;w&quot;:1280,&quot;h&quot;:504,&quot;abs_x&quot;:120,&quot;abs_y&quot;:122}">
+        <div class="max-w-3xl mx-auto text-center" bis_size="{&quot;x&quot;:376,&quot;y&quot;:120,&quot;w&quot;:768,&quot;h&quot;:120,&quot;abs_x&quot;:376,&quot;abs_y&quot;:162}">
+          <h1 class="text-4xl sm:text-5xl tracking-tight font-medium transition duration-700 opacity-100 translate-y-0" data-animate="" bis_size="{&quot;x&quot;:376,&quot;y&quot;:120,&quot;w&quot;:768,&quot;h&quot;:48,&quot;abs_x&quot;:376,&quot;abs_y&quot;:162}">Find Your Perfect Offbeat Getaway</h1>
+          <p class="mt-4 text-base sm:text-lg text-[#D1D0D0]/80 transition duration-700 opacity-100 translate-y-0" data-animate="" bis_size="{&quot;x&quot;:376,&quot;y&quot;:184,&quot;w&quot;:768,&quot;h&quot;:56,&quot;abs_x&quot;:376,&quot;abs_y&quot;:226}">Connect with local hosts in rural, less-traveled places. Each booking supports community-led, sustainable tourism.</p>
+        </div>
+
+        <!-- Search Card -->
+        <div class="mx-auto mt-8 max-w-4xl rounded-2xl border border-white/10 bg-[#0a0a0a]/70 backdrop-blur shadow-sm transition duration-700 opacity-100 translate-y-0" data-animate="" bis_size="{&quot;x&quot;:312,&quot;y&quot;:272,&quot;w&quot;:896,&quot;h&quot;:63,&quot;abs_x&quot;:312,&quot;abs_y&quot;:314}">
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 p-3" bis_size="{&quot;x&quot;:313,&quot;y&quot;:272,&quot;w&quot;:894,&quot;h&quot;:61,&quot;abs_x&quot;:313,&quot;abs_y&quot;:314}">
+            <div class="flex items-center gap-2 rounded-lg border border-white/10 bg-[#0a0a0a] px-3 py-2" bis_size="{&quot;x&quot;:325,&quot;y&quot;:284,&quot;w&quot;:208,&quot;h&quot;:37,&quot;abs_x&quot;:325,&quot;abs_y&quot;:326}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="map-pin" class="lucide lucide-map-pin w-5 h-5 text-[#988686]" bis_size="{&quot;x&quot;:338,&quot;y&quot;:293,&quot;w&quot;:17,&quot;h&quot;:20,&quot;abs_x&quot;:338,&quot;abs_y&quot;:335}"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <input type="text" placeholder="Where to?" class="w-full bg-transparent text-sm placeholder-[#988686] focus:outline-none text-[#D1D0D0]" bis_size="{&quot;x&quot;:363,&quot;y&quot;:293,&quot;w&quot;:157,&quot;h&quot;:20,&quot;abs_x&quot;:363,&quot;abs_y&quot;:335}">
+            </div>
+            <div class="flex items-center gap-2 rounded-lg border border-white/10 bg-[#0a0a0a] px-3 py-2" bis_size="{&quot;x&quot;:545,&quot;y&quot;:284,&quot;w&quot;:208,&quot;h&quot;:37,&quot;abs_x&quot;:545,&quot;abs_y&quot;:326}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar" class="lucide lucide-calendar w-5 h-5 text-[#988686]" bis_size="{&quot;x&quot;:558,&quot;y&quot;:293,&quot;w&quot;:17,&quot;h&quot;:20,&quot;abs_x&quot;:558,&quot;abs_y&quot;:335}"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+              <input type="text" placeholder="Dates" class="placeholder-[#988686] focus:outline-none text-sm bg-transparent w-full" bis_size="{&quot;x&quot;:583,&quot;y&quot;:293,&quot;w&quot;:157,&quot;h&quot;:20,&quot;abs_x&quot;:583,&quot;abs_y&quot;:335}">
+            </div>
+            <div class="flex items-center gap-2 rounded-lg border border-white/10 bg-[#0a0a0a] px-3 py-2" bis_size="{&quot;x&quot;:766,&quot;y&quot;:284,&quot;w&quot;:208,&quot;h&quot;:37,&quot;abs_x&quot;:766,&quot;abs_y&quot;:326}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="users" class="lucide lucide-users w-5 h-5 text-[#988686]" bis_size="{&quot;x&quot;:779,&quot;y&quot;:293,&quot;w&quot;:17,&quot;h&quot;:20,&quot;abs_x&quot;:779,&quot;abs_y&quot;:335}"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle></svg>
+              <input type="number" min="1" placeholder="Guests" class="w-full bg-transparent text-sm placeholder-[#988686] focus:outline-none text-[#D1D0D0]" bis_size="{&quot;x&quot;:804,&quot;y&quot;:293,&quot;w&quot;:157,&quot;h&quot;:20,&quot;abs_x&quot;:804,&quot;abs_y&quot;:335}">
+            </div>
+            <a href="#featured" class="btn-adaptive rounded-lg px-4 py-2 text-center text-sm font-semibold border flex items-center justify-center gap-2 text-[#D1D0D0] border-white/15 hover:bg-white/5" bis_size="{&quot;x&quot;:987,&quot;y&quot;:284,&quot;w&quot;:208,&quot;h&quot;:37,&quot;abs_x&quot;:987,&quot;abs_y&quot;:326}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="search" class="lucide lucide-search w-5 h-5" bis_size="{&quot;x&quot;:1053,&quot;y&quot;:293,&quot;w&quot;:20,&quot;h&quot;:20,&quot;abs_x&quot;:1053,&quot;abs_y&quot;:335}"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+              Search
+            </a>
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="mx-auto mt-10 grid max-w-6xl grid-cols-2 sm:grid-cols-4 gap-4" bis_size="{&quot;x&quot;:184,&quot;y&quot;:375,&quot;w&quot;:1152,&quot;h&quot;:113,&quot;abs_x&quot;:184,&quot;abs_y&quot;:417}">
+          <button class="group relative overflow-hidden rounded-xl border border-white/10 transition duration-700 opacity-100 translate-y-0" data-animate="" bis_size="{&quot;x&quot;:184,&quot;y&quot;:375,&quot;w&quot;:276,&quot;h&quot;:113,&quot;abs_x&quot;:184,&quot;abs_y&quot;:417}">
+            <img src="https://images.unsplash.com/photo-1501884428012-aa321a256730?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" alt="Mountain cabins" class="h-28 w-full object-cover transition group-hover:scale-105" bis_size="{&quot;x&quot;:185,&quot;y&quot;:376,&quot;w&quot;:274,&quot;h&quot;:112,&quot;abs_x&quot;:185,&quot;abs_y&quot;:418}">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" bis_size="{&quot;x&quot;:185,&quot;y&quot;:376,&quot;w&quot;:274,&quot;h&quot;:112,&quot;abs_x&quot;:185,&quot;abs_y&quot;:418}"></div>
+            <div class="absolute bottom-2 left-2 text-white" bis_size="{&quot;x&quot;:193,&quot;y&quot;:436,&quot;w&quot;:120,&quot;h&quot;:44,&quot;abs_x&quot;:193,&quot;abs_y&quot;:478}">
+              <p class="text-base font-medium tracking-tight" bis_size="{&quot;x&quot;:193,&quot;y&quot;:436,&quot;w&quot;:120,&quot;h&quot;:24,&quot;abs_x&quot;:193,&quot;abs_y&quot;:478}">Mountains</p>
+              <p class="text-xs/5 text-white/80" bis_size="{&quot;x&quot;:193,&quot;y&quot;:460,&quot;w&quot;:120,&quot;h&quot;:20,&quot;abs_x&quot;:193,&quot;abs_y&quot;:502}">Quiet, scenic retreats</p>
+            </div>
+          </button>
+          <button class="group relative overflow-hidden rounded-xl border border-white/10 transition duration-700 opacity-100 translate-y-0" data-animate="" bis_size="{&quot;x&quot;:476,&quot;y&quot;:375,&quot;w&quot;:276,&quot;h&quot;:113,&quot;abs_x&quot;:476,&quot;abs_y&quot;:417}">
+            <img src="https://images.unsplash.com/photo-1477587458883-47145ed94245?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" alt="Riverside stays" class="h-28 w-full object-cover transition group-hover:scale-105" bis_size="{&quot;x&quot;:477,&quot;y&quot;:376,&quot;w&quot;:274,&quot;h&quot;:112,&quot;abs_x&quot;:477,&quot;abs_y&quot;:418}">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" bis_size="{&quot;x&quot;:477,&quot;y&quot;:376,&quot;w&quot;:274,&quot;h&quot;:112,&quot;abs_x&quot;:477,&quot;abs_y&quot;:418}"></div>
+            <div class="absolute bottom-2 left-2 text-white" bis_size="{&quot;x&quot;:485,&quot;y&quot;:436,&quot;w&quot;:98,&quot;h&quot;:44,&quot;abs_x&quot;:485,&quot;abs_y&quot;:478}">
+              <p class="text-base font-medium tracking-tight" bis_size="{&quot;x&quot;:485,&quot;y&quot;:436,&quot;w&quot;:98,&quot;h&quot;:24,&quot;abs_x&quot;:485,&quot;abs_y&quot;:478}">Riverside</p>
+              <p class="text-xs/5 text-white/80" bis_size="{&quot;x&quot;:485,&quot;y&quot;:460,&quot;w&quot;:98,&quot;h&quot;:20,&quot;abs_x&quot;:485,&quot;abs_y&quot;:502}">Stay by the water</p>
+            </div>
+          </button>
+          <button class="group relative overflow-hidden rounded-xl border border-white/10 transition duration-700 opacity-100 translate-y-0" data-animate="" bis_size="{&quot;x&quot;:768,&quot;y&quot;:375,&quot;w&quot;:276,&quot;h&quot;:113,&quot;abs_x&quot;:768,&quot;abs_y&quot;:417}">
+            <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" alt="Farm homestays" class="h-28 w-full object-cover transition group-hover:scale-105" bis_size="{&quot;x&quot;:769,&quot;y&quot;:376,&quot;w&quot;:274,&quot;h&quot;:112,&quot;abs_x&quot;:769,&quot;abs_y&quot;:418}">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" bis_size="{&quot;x&quot;:769,&quot;y&quot;:376,&quot;w&quot;:274,&quot;h&quot;:112,&quot;abs_x&quot;:769,&quot;abs_y&quot;:418}"></div>
+            <div class="absolute bottom-2 left-2 text-white" bis_size="{&quot;x&quot;:777,&quot;y&quot;:436,&quot;w&quot;:105,&quot;h&quot;:44,&quot;abs_x&quot;:777,&quot;abs_y&quot;:478}">
+              <p class="text-base font-medium tracking-tight" bis_size="{&quot;x&quot;:777,&quot;y&quot;:436,&quot;w&quot;:105,&quot;h&quot;:24,&quot;abs_x&quot;:777,&quot;abs_y&quot;:478}">Farms</p>
+              <p class="text-xs/5 text-white/80" bis_size="{&quot;x&quot;:777,&quot;y&quot;:460,&quot;w&quot;:105,&quot;h&quot;:20,&quot;abs_x&quot;:777,&quot;abs_y&quot;:502}">Agri-stays &amp; barns</p>
+            </div>
+          </button>
+          <button class="group relative overflow-hidden rounded-xl border border-white/10 transition duration-700 opacity-100 translate-y-0" data-animate="" bis_size="{&quot;x&quot;:1060,&quot;y&quot;:375,&quot;w&quot;:276,&quot;h&quot;:113,&quot;abs_x&quot;:1060,&quot;abs_y&quot;:417}">
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" alt="Minimal cabins" class="h-28 w-full object-cover transition group-hover:scale-105" bis_size="{&quot;x&quot;:1061,&quot;y&quot;:376,&quot;w&quot;:274,&quot;h&quot;:112,&quot;abs_x&quot;:1061,&quot;abs_y&quot;:418}">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" bis_size="{&quot;x&quot;:1061,&quot;y&quot;:376,&quot;w&quot;:274,&quot;h&quot;:112,&quot;abs_x&quot;:1061,&quot;abs_y&quot;:418}"></div>
+            <div class="absolute bottom-2 left-2 text-white" bis_size="{&quot;x&quot;:1069,&quot;y&quot;:436,&quot;w&quot;:124,&quot;h&quot;:44,&quot;abs_x&quot;:1069,&quot;abs_y&quot;:478}">
+              <p class="text-base font-medium tracking-tight" bis_size="{&quot;x&quot;:1069,&quot;y&quot;:436,&quot;w&quot;:124,&quot;h&quot;:24,&quot;abs_x&quot;:1069,&quot;abs_y&quot;:478}">Minimal</p>
+              <p class="text-xs/5 text-white/80" bis_size="{&quot;x&quot;:1069,&quot;y&quot;:460,&quot;w&quot;:124,&quot;h&quot;:20,&quot;abs_x&quot;:1069,&quot;abs_y&quot;:502}">Clean, modern cabins</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured stays -->
+    <section id="featured" data-bg="dark" class="scroll-mt-16">
+      <div className="mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+        <div className="flex items-end justify-between" data-animate>
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Featured stays</h2>
+          <Link to="/explore" className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-slate-700 hover:text-slate-900 text-slate-600">
+            Explore all
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </Link>
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {properties.map(property => (
+            <PropertyCard key={property._id} property={property} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Home;
