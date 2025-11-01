@@ -1,0 +1,83 @@
+import React, { useState } from 'react';
+
+const SharePhoto = () => {
+  const [photo, setPhoto] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [name, setName] = useState('');
+  const [socialLink, setSocialLink] = useState('');
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // TODO: Implement photo upload logic
+    console.log({ photo, name, socialLink });
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-4">Share Your Photo</h1>
+      <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+        <div className="mb-4">
+          <label htmlFor="photo" className="block text-sm font-medium text-gray-700">
+            Photo
+          </label>
+          <input
+            type="file"
+            id="photo"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="mt-1 block w-full"
+          />
+        </div>
+        {preview && (
+          <div className="mb-4">
+            <img src={preview} alt="Preview" className="max-w-full h-auto" />
+          </div>
+        )}
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Your Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="socialLink" className="block text-sm font-medium text-gray-700">
+            Social Media Link
+          </label>
+          <input
+            type="url"
+            id="socialLink"
+            value={socialLink}
+            onChange={(e) => setSocialLink(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Upload
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default SharePhoto;

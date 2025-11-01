@@ -18,6 +18,7 @@ import EditProperty from '../pages/protected/EditProperty';
 import HostBookings from '../pages/protected/HostBookings';
 import Profile from '../pages/protected/Profile';
 import ProtectedRoute from '../components/common/ProtectedRoute';
+import SharePhoto from '../pages/protected/SharePhoto';
 
 const AppRouter = () => {
   return (
@@ -36,6 +37,7 @@ const AppRouter = () => {
         </Route>
         <Route element={<ProtectedRoute roles={['Traveler']} />}>
           <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/share-photo" element={<SharePhoto />} />
         </Route>
 
         {/* Public Routes */}
