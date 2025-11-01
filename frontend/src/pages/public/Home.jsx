@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getProperties } from '../../services/propertyService';
 import PropertyCard from '../../components/properties/PropertyCard';
@@ -6,7 +6,6 @@ import { PhotoCard } from '../../components/properties/PhotoCard';
 
 const Home = () => {
   const [properties, setProperties] = useState([]);
-  const heroParallaxRef = useRef(null);
 
   const photos = [
     {
@@ -70,33 +69,29 @@ const Home = () => {
       animateEls.forEach(el => io.observe(el));
     };
 
-    const handleScroll = () => {
-      if (heroParallaxRef.current) {
-        const sy = window.scrollY || document.documentElement.scrollTop;
-        const offset = sy * 0.2;
-        heroParallaxRef.current.style.transform = `translateY(${offset}px) scale(1.05)`;
-      }
-    };
-
     initAnimate();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
   }, []);
 
   return (
     <main className="pt-20" id="home">
       {/* Hero */}
-                        <section data-bg="dark" className="relative overflow-hidden bg-[#121212]">
-                          <img ref={heroParallaxRef} src="https://images.unsplash.com/photo-1488085061387-422e29b40080?q=80&w=2000&auto=format&fit=crop" alt="Remote valley landscape" className="absolute inset-0 -z-10 h-full w-full object-cover will-change-transform opacity-30" />
+      <section
+        data-bg="dark"
+        className="relative overflow-hidden"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1488085061387-422e29b40080?q=80&w=2000&auto=format&fit=crop')",
+          backgroundAttachment: 'fixed',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+        }}
+      >
                           <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#121212]/50 via-[#121212]/80 to-[#121212]"></div>
                   
                           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 lg:pb-24 pt-10 pb-16">
                             <div className="max-w-3xl mx-auto text-center">
-                              <h1 className="text-4xl sm:text-5xl tracking-tight font-medium text-[#E0E0E0]" data-animate>Find Your Perfect Offbeat Getaway</h1>
-                              <p className="mt-4 text-base sm:text-lg text-[#E0E0E0]/80" data-animate>Connect with local hosts in rural, less-traveled places. Each booking supports community-led, sustainable tourism.</p>
+                              <h1 className="text-4xl sm:text-5xl tracking-tight font-medium text-neutral-900" data-animate>Find Your Perfect Offbeat Getaway</h1>
+                              <p className="mt-4 text-base sm:text-lg text-neutral-900" data-animate>Connect with local hosts in rural, less-traveled places. Each booking supports community-led, sustainable tourism.</p>
                             </div>
                   
                             {/* Search Card */}

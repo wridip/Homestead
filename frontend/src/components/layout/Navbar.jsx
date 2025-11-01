@@ -28,22 +28,22 @@ const Navbar = () => {
       <div id="progressBar" className="absolute left-0 top-0 h-[2px] bg-[#BB86FC]" style={{ width: `${progress}%` }}></div>
       <div className="flex sm:px-6 lg:px-8 h-16 max-w-7xl mr-auto ml-auto pr-4 pl-4 items-center justify-between">
         <Link to="/" className="inline-flex items-center gap-2">
-          <span className="text-xl font-semibold tracking-tight text-[#E0E0E0]">Homestead</span>
+          <span className="text-xl font-semibold tracking-tight text-neutral-500">Homestead</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm">
-          <Link to="/" className="transition-colors hover:text-[#E0E0E0] text-[#E0E0E0]/80">Home</Link>
-          <Link to="/explore" className="transition-colors hover:text-[#E0E0E0] text-[#E0E0E0]/80">Explore</Link>
-          <a href="#host" className="transition-colors hover:text-[#E0E0E0] text-[#E0E0E0]/80">Host</a>
+          <Link to="/" className="transition-colors hover:text-white text-neutral-500">Home</Link>
+          <Link to="/explore" className="transition-colors hover:text-white text-neutral-500">Explore</Link>
+          <a href="#host" className="transition-colors hover:text-white text-neutral-500">Host</a>
         </nav>
         <div className="flex items-center gap-3">
           {isAuthenticated ? (
             <>
-              <span className="hidden sm:inline text-sm text-[#E0E0E0]/80">Welcome, {user?.name}</span>
+              <span className="hidden sm:inline text-sm text-neutral-500">Welcome, {user?.name}</span>
               <button onClick={logout} className="btn-adaptive rounded-md px-3 py-1.5 text-sm font-medium border transition-colors text-[#E0E0E0] border-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)]">Logout</button>
             </>
           ) : (
             <>
-              <Link to="/login" className="btn-adaptive rounded-md px-3 py-1.5 text-sm font-medium border transition-colors text-[#E0E0E0] border-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)]">Login</Link>
+              <Link to="/login" className="btn-adaptive rounded-md px-3 py-1.5 text-sm font-medium border transition-colors text-neutral-500 border-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)]">Login</Link>
               <Link to="/signup" className="btn-adaptive rounded-md px-3.5 py-2 text-sm font-semibold border transition-colors text-[#121212] bg-[#BB86FC] border-[#BB86FC] hover:bg-opacity-80">Sign Up</Link>
             </>
           )}
@@ -55,9 +55,9 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div id="mobileMenu" className="border-t border-[rgba(255,255,255,0.1)] bg-[#121212] md:hidden">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-1">
-            <Link to="/" className="rounded-md px-3 py-2 text-sm text-[#E0E0E0] hover:bg-[rgba(255,255,255,0.05)]">Home</Link>
-            <Link to="/explore" className="rounded-md px-3 py-2 text-sm text-[#E0E0E0] hover:bg-[rgba(255,255,255,0.05)]">Explore</Link>
-            <a href="#host" className="rounded-md px-3 py-2 text-sm text-[#E0E0E0] hover:bg-[rgba(255,255,255,0.05)]">Host</a>
+            <Link to="/" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">Home</Link>
+            <Link to="/explore" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">Explore</Link>
+            <a href="#host" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">Host</a>
           </div>
         </div>
       )}
