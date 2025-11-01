@@ -1,16 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getProperties } from '../../services/propertyService';
+import { getPhotos, deletePhoto } from '../../services/photoService';
 import PropertyCard from '../../components/properties/PropertyCard';
 import { PhotoCard } from '../../components/properties/PhotoCard';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import HeroVideo from '../../assets/web.mp4'; // Assuming you have a video file here
+import HeroVideo from '../../assets/web.mp4';
 
 const Home = () => {
   const [properties, setProperties] = useState([]);
+  const [photos, setPhotos] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [location, setLocation] = useState("");
+  const [guests, setGuests] = useState("");
+  const navigate = useNavigate();
+
+  const handleDeletePhoto = async (photoId) => {
+    try {
+      await deletePhoto(photoId);
+      setPhotos(photos.filter(photo => photo._id !== photoId));
+      console.log('Photo deleted successfully:', photoId);
+    } catch (error) {
+      console.error('Failed to delete photo', error);
+    }
+  };
 
   // TODO: Replace with actual API call to fetch bookings
   const bookedDates = [
@@ -18,36 +33,6 @@ const Home = () => {
     new Date(2025, 10, 21),
     new Date(2025, 10, 28),
     new Date(2025, 10, 29),
-  ];
-
-  const photos = [
-    {
-      imageUrl: 'https://images.unsplash.com/photo-1640906152676-dace6710d24b?w=2160&q=80',
-      alt: 'Golden hour over the valley near Mudhouse North',
-      user: '@ananya.travels',
-      tag: '#MudhouseNorth',
-      caption: 'Golden hour over the valley. Could smell the rain in the pines.',
-      likes: 248,
-      comments: 12
-    },
-    {
-      imageUrl: 'https://images.unsplash.com/photo-1629946832022-c327f74956e0?w=2160&q=80',
-      alt: 'Canoe at dawn by the bamboo deck',
-      user: '@rahul.ontheroad',
-      tag: '#BambooStayEast',
-      caption: 'First light on the river. Chai after the paddle was everything.',
-      likes: 312,
-      comments: 27
-    },
-    {
-      imageUrl: 'https://images.unsplash.com/photo-1724525647065-f948fc102e68?w=2160&q=80',
-      alt: 'Minimal cabin framed by pines',
-      user: '@meera.min',
-      tag: '#PineCabinWest',
-      caption: 'Workspace goals. Fresh pine scent and silence all day.',
-      likes: 198,
-      comments: 9
-    }
   ];
 
   useEffect(() => {
@@ -60,9 +45,18 @@ const Home = () => {
       }
     };
 
-    fetchProperties();
-  }, []);
-
+      const fetchPhotos = async () => {
+        try {
+          const response = await getPhotos();
+          setPhotos(response.data);
+        } catch (error) {
+          console.error('Failed to fetch photos', error);
+        }
+      };
+    
+      fetchProperties();
+      fetchPhotos();
+    }, []);
   useEffect(() => {
     const animateEls = Array.from(document.querySelectorAll('[data-animate]'));
 
@@ -104,6 +98,23 @@ const Home = () => {
     return 'text-green-500 bg-green-200';
   };
 
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (location) {
+      params.append('location', location);
+    }
+    if (startDate) {
+      params.append('startDate', startDate.toISOString());
+    }
+    if (endDate) {
+      params.append('endDate', endDate.toISOString());
+    }
+    if (guests) {
+      params.append('guests', guests);
+    }
+    navigate(`/explore?${params.toString()}`);
+  };
+
 
   return (
     <main className="pt-20" id="home">
@@ -128,7 +139,7 @@ const Home = () => {
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 p-3">
               <div className="flex items-center gap-2 rounded-lg border border-[rgba(255,255,255,0.1)] bg-[#1E1E1E] px-3 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#BB86FC]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#BB86FC]"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <input type="text" placeholder="Where to?" className="w-full bg-transparent text-sm placeholder-[#E0E0E0]/60 focus:outline-none text-white" />
+                <input type="text" placeholder="Where to?" className="w-full bg-transparent text-sm placeholder-[#E0E0E0]/60 focus:outline-none text-white" value={location} onChange={(e) => setLocation(e.target.value)} />
               </div>
               <div className="flex items-center gap-2 rounded-lg border border-[rgba(255,255,255,0.1)] bg-[#1E1E1E] px-3 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#BB86FC]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#BB86FC]"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
@@ -147,12 +158,12 @@ const Home = () => {
               </div>
               <div className="flex items-center gap-2 rounded-lg border border-[rgba(255,255,255,0.1)] bg-[#1E1E1E] px-3 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#BB86FC]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#BB86FC]"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                <input type="number" min="1" placeholder="Guests" className="w-full bg-transparent text-sm placeholder-[#E0E0E0]/60 focus:outline-none text-white" />
+                <input type="number" min="1" placeholder="Guests" className="w-full bg-transparent text-sm placeholder-[#E0E0E0]/60 focus:outline-none text-white" value={guests} onChange={(e) => setGuests(e.target.value)} />
               </div>
-              <Link to="/explore" className="btn-adaptive rounded-lg px-4 py-2 text-center text-sm font-semibold border flex items-center justify-center gap-2 text-[#121212] bg-[#BB86FC] border-[#BB86FC] hover:bg-opacity-80 transition-all duration-300">
+              <button onClick={handleSearch} className="btn-adaptive rounded-lg px-4 py-2 text-center text-sm font-semibold border flex items-center justify-center gap-2 text-[#121212] bg-[#BB86FC] border-[#BB86FC] hover:bg-opacity-80 transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
                 Search
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -227,7 +238,7 @@ const Home = () => {
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             {photos.map((photo, index) => (
-              <PhotoCard key={index} photo={photo} />
+              <PhotoCard key={photo._id || index} photo={photo} onDelete={handleDeletePhoto} />
             ))}
           </div>
         </div>

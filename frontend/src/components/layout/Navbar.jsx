@@ -33,7 +33,9 @@ const Navbar = () => {
         <nav className="hidden md:flex items-center gap-8 text-sm">
           <Link to="/" className="transition-colors hover:text-white text-neutral-500">Home</Link>
           <Link to="/explore" className="transition-colors hover:text-white text-neutral-500">Explore</Link>
-          <a href="#host" className="transition-colors hover:text-white text-neutral-500">Host</a>
+          {isAuthenticated && user?.role === 'Host' && (
+            <Link to="/dashboard" className="transition-colors hover:text-white text-neutral-500">Dashboard</Link>
+          )}
         </nav>
         <div className="flex items-center gap-3">
           {isAuthenticated ? (
@@ -57,7 +59,9 @@ const Navbar = () => {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-1">
             <Link to="/" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">Home</Link>
             <Link to="/explore" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">Explore</Link>
-            <a href="#host" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">Host</a>
+            {isAuthenticated && user?.role === 'Host' && (
+              <Link to="/dashboard" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">Dashboard</Link>
+            )}
           </div>
         </div>
       )}

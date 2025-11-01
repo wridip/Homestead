@@ -24,7 +24,7 @@ const PropertyCard = ({ property }) => {
         <p className="mt-1 line-clamp-2 text-sm text-[#E0E0E0]/70">{property.description}</p>
         <div className="mt-3 flex items-center justify-between">
           <p className="text-sm font-semibold text-[#E0E0E0]">₹{property.baseRate}<span className="ml-1 font-normal text-[#E0E0E0]/70">/night</span></p>
-          <Link to={`/properties/${property._id}`} className="btn-adaptive rounded-md px-3 py-1.5 text-sm font-semibold border text-[#121212] bg-[#BB86FC] border-[#BB86FC] hover:bg-opacity-80">View Details</Link>
+          <Link to={`/property/${property._id}`} className="btn-adaptive rounded-md px-3 py-1.5 text-sm font-semibold border text-[#121212] bg-[#BB86FC] border-[#BB86FC] hover:bg-opacity-80">View Details</Link>
         </div>
       </div>
     </article>

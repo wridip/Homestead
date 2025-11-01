@@ -10,6 +10,8 @@ const PropertyDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  console.log('PropertyDetails - ID from useParams:', id);
+
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
@@ -19,8 +21,10 @@ const PropertyDetails = () => {
     const fetchProperty = async () => {
       try {
         const response = await getPropertyById(id);
+        console.log('PropertyDetails - Fetched property data:', response.data);
         setProperty(response.data);
       } catch (err) {
+        console.error('PropertyDetails - Error fetching property:', err);
         setError(err.message);
       }
       setLoading(false);

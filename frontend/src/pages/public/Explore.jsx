@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getProperties } from '../../services/propertyService';
 import PropertyCard from '../../components/properties/PropertyCard';
 
@@ -12,8 +13,30 @@ const Explore = () => {
     type: [],
     region: '',
     price: 3000,
-    eco: ''
+    eco: '',
+    startDate: null,
+    endDate: null,
+    guests: null,
   });
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const location = searchParams.get('location');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    const guests = searchParams.get('guests');
+
+    if (location) {
+      setSearchQuery(location);
+    }
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      startDate: startDate ? new Date(startDate) : null,
+      endDate: endDate ? new Date(endDate) : null,
+      guests: guests ? parseInt(guests) : null,
+    }));
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -34,7 +57,7 @@ const Explore = () => {
     let result = properties;
 
     if (searchQuery) {
-      result = result.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      result = result.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || (p.location && p.location.toLowerCase().includes(searchQuery.toLowerCase())));
     }
 
     if (filters.type.length > 0) {
@@ -54,6 +77,13 @@ const Explore = () => {
       // This is a placeholder for eco filtering. The property model needs an eco field.
       // For now, it does nothing.
     }
+
+    if (filters.guests) {
+      // Assuming property model has a maxGuests field
+      result = result.filter(p => p.maxGuests >= filters.guests);
+    }
+
+    // TODO: Implement date-based filtering. This requires checking for booking conflicts.
 
     setFilteredProperties(result);
 
@@ -81,7 +111,10 @@ const Explore = () => {
       type: [],
       region: '',
       price: 3000,
-      eco: ''
+      eco: '',
+      startDate: null,
+      endDate: null,
+      guests: null,
     });
   };
 

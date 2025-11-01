@@ -13,18 +13,16 @@ dotenv.config();
 
 const app = express();
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
-
-// --- Middleware ---
-// Enable CORS
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   credentials: true,
 }));
 
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Set security-related HTTP headers
-app.use(helmet());
+// app.use(helmet());
 
 // Log HTTP requests in development mode
 if (process.env.NODE_ENV === 'development') {
@@ -47,7 +45,7 @@ if (process.env.NODE_ENV !== 'test') {
     windowMs: 10 * 60 * 1000, // 10 mins
     max: 100,
   });
-  app.use(limiter);
+  // app.use(limiter);
 }
 
 // --- Database Connection ---
@@ -62,11 +60,13 @@ const propertyRoutes = require('./src/routes/propertyRoutes');
 const bookingRoutes = require('./src/routes/bookingRoutes');
 const reviewRoutes = require('./src/routes/reviewRoutes');
 const hostRoutes = require('./src/routes/hostRoutes');
+const photoRoutes = require('./src/routes/photoRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/hosts', hostRoutes);
+app.use('/api/photos', photoRoutes);
 // Nested reviews route under properties
 app.use('/api/properties/:propertyId/reviews', reviewRoutes);
 
