@@ -43,11 +43,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData.user));
+    localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', userData.token);
     dispatch({
       type: 'LOGIN',
-      payload: userData,
+      payload: { user: userData, token: userData.token },
     });
   };
 

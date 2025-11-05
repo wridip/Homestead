@@ -50,7 +50,7 @@ exports.createBooking = async (req, res, next) => {
 // @access  Private (Traveler)
 exports.getUserBookings = async (req, res, next) => {
   try {
-    const bookings = await Booking.find({ travelerId: req.user._id }).populate('propertyId', 'title location');
+    const bookings = await Booking.find({ travelerId: req.user._id }).populate('propertyId', 'name location');
 
     res.status(200).json({
       success: true,
@@ -67,7 +67,7 @@ exports.getUserBookings = async (req, res, next) => {
 // @access  Private (Host)
 exports.getHostBookings = async (req, res, next) => {
   try {
-    const bookings = await Booking.find({ hostId: req.user._id }).populate('propertyId', 'title').populate('travelerId', 'name email');
+    const bookings = await Booking.find({ hostId: req.user._id }).populate('propertyId', 'name').populate('travelerId', 'name email');
 
     res.status(200).json({
       success: true,

@@ -61,10 +61,16 @@ const propertySchema = new mongoose.Schema({
     min: 0,
     max: 5
   },
+  numReviews: {
+    type: Number,
+    default: 0,
+  },
+  averageRating: {
+    type: Number,
+    default: 0,
+  },
 }, {
   timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
 });
 
 // Virtual populate

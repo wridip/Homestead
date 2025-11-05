@@ -11,10 +11,11 @@ const Signup = () => {
     email: '',
     password: '',
     password2: '',
+    role: 'Traveler', // Default role
   });
   const [error, setError] = useState(null);
 
-  const { name, email, password, password2 } = formData;
+  const { name, email, password, password2, role } = formData;
 
   const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -24,7 +25,7 @@ const Signup = () => {
       return setError('Passwords do not match');
     }
     try {
-      const data = await signupService({ name, email, password });
+      const data = await signupService({ name, email, password, role }); // Pass role to service
       login(data);
       navigate('/dashboard');
     } catch (err) {
@@ -53,6 +54,38 @@ const Signup = () => {
           <div>
             <label htmlFor="password2" className="text-sm font-bold text-gray-600 block">Confirm Password</label>
             <input id="password2" type="password" name="password2" value={password2} onChange={onChange} className="w-full p-2 border border-gray-300 rounded mt-1" required />
+          </div>
+          {/* Role Selection */}
+          <div>
+            <label className="text-sm font-bold text-gray-600 block">I am a:</label>
+            <div className="flex items-center mt-2">
+              <input
+                id="role-traveler"
+                type="radio"
+                name="role"
+                value="Traveler"
+                checked={role === 'Traveler'}
+                onChange={onChange}
+                className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+              />
+              <label htmlFor="role-traveler" className="ml-2 block text-sm text-gray-900">
+                Traveler
+              </label>
+            </div>
+            <div className="flex items-center mt-2">
+              <input
+                id="role-host"
+                type="radio"
+                name="role"
+                value="Host"
+                checked={role === 'Host'}
+                onChange={onChange}
+                className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+              />
+              <label htmlFor="role-host" className="ml-2 block text-sm text-gray-900">
+                Host
+              </label>
+            </div>
           </div>
           <div>
             <button type="submit" className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm">

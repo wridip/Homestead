@@ -36,6 +36,9 @@ const Navbar = () => {
           {isAuthenticated && user?.role === 'Host' && (
             <Link to="/dashboard" className="transition-colors hover:text-white text-neutral-500">Dashboard</Link>
           )}
+          {isAuthenticated && user?.role === 'Traveler' && (
+            <Link to="/my-bookings" className="transition-colors hover:text-white text-neutral-500">My Bookings</Link>
+          )}
         </nav>
         <div className="flex items-center gap-3">
           {isAuthenticated ? (
@@ -61,6 +64,9 @@ const Navbar = () => {
             <Link to="/explore" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">Explore</Link>
             {isAuthenticated && user?.role === 'Host' && (
               <Link to="/dashboard" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">Dashboard</Link>
+            )}
+            {isAuthenticated && user?.role === 'Traveler' && (
+              <Link to="/my-bookings" className="rounded-md px-3 py-2 text-sm text-neutral-500 hover:bg-[rgba(255,255,255,0.05)]">My Bookings</Link>
             )}
           </div>
         </div>
