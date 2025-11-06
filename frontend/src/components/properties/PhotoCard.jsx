@@ -31,7 +31,7 @@ const PhotoCard = ({ photo, onDelete }) => {
             {/* Likes and comments can be added later */}
           </div>
           <div className="flex items-center gap-2">
-            {user && user.role === 'Host' && user._id === photo.user._id && (
+            {user && user.role === 'Host' && (
               <button onClick={handleDelete} className="rounded-md border border-[rgba(255,255,255,0.1)] px-3 py-1.5 text-xs font-medium hover:border-[rgba(255,255,255,0.2)] transition inline-flex items-center text-red-500">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
                 Delete
