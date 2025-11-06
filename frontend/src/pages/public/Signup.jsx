@@ -34,41 +34,35 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center text-gray-700">Create an Account</h2>
+    <div className="flex items-center justify-center min-h-screen bg-transparent">
+      <div className="w-full max-w-md p-8 space-y-6 bg-[#1E1E1E] rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center text-neutral-200">Create an Account</h2>
         <form onSubmit={onSubmit} className="space-y-4">
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <div>
-            <label htmlFor="name" className="text-sm font-bold text-gray-600 block">Name</label>
-            <input id="name" type="text" name="name" value={name} onChange={onChange} className="w-full p-2 border border--gray-300 rounded mt-1" required />
+            <label htmlFor="name" className="text-sm font-bold text-neutral-400 block">Name</label>
+            <input id="name" type="text" name="name" value={name} onChange={onChange} className="w-full p-2 bg-transparent border border-neutral-700 rounded mt-1 text-white" required />
           </div>
           <div>
-            <label htmlFor="email" className="text-sm font-bold text-gray-600 block">Email</label>
-            <input id="email" type="email" name="email" value={email} onChange={onChange} className="w-full p-2 border border-gray-300 rounded mt-1" required />
+            <label htmlFor="email" className="text-sm font-bold text-neutral-400 block">Email</label>
+            <input id="email" type="email" name="email" value={email} onChange={onChange} className="w-full p-2 bg-transparent border border-neutral-700 rounded mt-1 text-white" required />
           </div>
           <div>
-            <label htmlFor="password"  className="text-sm font-bold text-gray-600 block">Password</label>
-            <input id="password" type="password" name="password" value={password} onChange={onChange} className="w-full p-2 border border-gray-300 rounded mt-1" required />
+            <label htmlFor="password"  className="text-sm font-bold text-neutral-400 block">Password</label>
+            <input id="password" type="password" name="password" value={password} onChange={onChange} className="w-full p-2 bg-transparent border border-neutral-700 rounded mt-1 text-white" required />
           </div>
           <div>
-            <label htmlFor="password2" className="text-sm font-bold text-gray-600 block">Confirm Password</label>
-            <input id="password2" type="password" name="password2" value={password2} onChange={onChange} className="w-full p-2 border border-gray-300 rounded mt-1" required />
+            <label htmlFor="password2" className="text-sm font-bold text-neutral-400 block">Confirm Password</label>
+            <input id="password2" type="password" name="password2" value={password2} onChange={onChange} className="w-full p-2 bg-transparent border border-neutral-700 rounded mt-1 text-white" required />
           </div>
           {/* Role Selection */}
           <div>
-            <label className="text-sm font-bold text-gray-600 block">I am a:</label>
+            <label className="text-sm font-bold text-neutral-400 block">I am a:</label>
             <div className="flex items-center mt-2">
               <input
-                id="role-traveler"
-                type="radio"
-                name="role"
-                value="Traveler"
-                checked={role === 'Traveler'}
-                onChange={onChange}
-                className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+className="h-4 w-4 text-purple-600 bg-transparent border-neutral-700 focus:ring-purple-500"
               />
-              <label htmlFor="role-traveler" className="ml-2 block text-sm text-gray-900">
+              <label htmlFor="role-traveler" className="ml-2 block text-sm text-neutral-200">
                 Traveler
               </label>
             </div>
@@ -80,21 +74,21 @@ const Signup = () => {
                 value="Host"
                 checked={role === 'Host'}
                 onChange={onChange}
-                className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                className="h-4 w-4 text-purple-600 bg-transparent border-neutral-700 focus:ring-purple-500"
               />
-              <label htmlFor="role-host" className="ml-2 block text-sm text-gray-900">
+              <label htmlFor="role-host" className="ml-2 block text-sm text-neutral-200">
                 Host
               </label>
             </div>
           </div>
           <div>
-            <button type="submit" className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-sm">
+            <button type="submit" className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-md text-white text-sm">
               Sign Up
             </button>
           </div>
         </form>
-        <p className="text-sm text-center text-gray-600">
-          Already have an account? <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
+        <p className="text-sm text-center text-neutral-400">
+          Already have an account? <Link to="/login" className="text-purple-400 hover:underline">Login</Link>
         </p>
       </div>
     </div>

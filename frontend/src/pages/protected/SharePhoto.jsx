@@ -51,13 +51,13 @@ const SharePhoto = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Share Your Photo</h1>
-      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
-      {success && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">{success}</div>}
-      <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+    <div className="container mx-auto px-4 py-8 bg-transparent">
+      <h1 className="text-3xl font-bold mb-4 text-neutral-200">Share Your Photo</h1>
+      {error && <div className="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
+      {success && <div className="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded relative mb-4" role="alert">{success}</div>}
+      <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-8 bg-[#1E1E1E] rounded-lg shadow-md">
         <div className="mb-4">
-          <label htmlFor="photo" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="photo" className="block text-sm font-medium text-neutral-400">
             Photo
           </label>
           <input
@@ -65,7 +65,7 @@ const SharePhoto = () => {
             id="photo"
             accept="image/*"
             onChange={handlePhotoChange}
-            className="mt-1 block w-full"
+            className="mt-1 block w-full bg-transparent border border-neutral-700 rounded-md text-white"
           />
         </div>
         {preview && (
@@ -74,7 +74,7 @@ const SharePhoto = () => {
           </div>
         )}
         <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="name" className="block text-sm font-medium text-neutral-400">
             Your Name
           </label>
           <input
@@ -82,11 +82,11 @@ const SharePhoto = () => {
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md bg-transparent border border-neutral-700 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm text-white"
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="socialLink" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="socialLink" className="block text-sm font-medium text-neutral-400">
             Social Media Link
           </label>
           <input
@@ -94,12 +94,12 @@ const SharePhoto = () => {
             id="socialLink"
             value={socialLink}
             onChange={(e) => setSocialLink(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md bg-transparent border border-neutral-700 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm text-white"
           />
         </div>
         <button
           type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
         >
           Upload
         </button>

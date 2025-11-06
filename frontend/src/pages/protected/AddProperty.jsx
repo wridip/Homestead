@@ -96,70 +96,68 @@ const AddProperty = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Add New Property</h1>
+    <div className="container mx-auto p-6 bg-transparent">
+      <h1 className="text-2xl font-bold text-neutral-200 mb-6">Add New Property</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Information */}
-        <div className="p-4 border rounded">
-          <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
+<div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
               name="name"
               placeholder="Property Name"
               onChange={handleChange}
-              className="p-2 border rounded"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
             <input
               type="text"
               name="address"
               placeholder="Address"
               onChange={handleChange}
-              className="p-2 border rounded"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
             <textarea
               name="description"
               placeholder="Description"
               onChange={handleChange}
-              className="p-2 border rounded col-span-2"
+              className="p-2 bg-transparent border border-neutral-700 rounded col-span-2 text-white"
             />
             <input
               type="text"
               name="contact"
               placeholder="Contact"
               onChange={handleChange}
-              className="p-2 border rounded"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
           </div>
         </div>
 
-        {/* Location & Maps */}
-        <div className="p-4 border rounded">
-          <h2 className="text-xl font-semibold mb-4">Location & Maps</h2>
+<div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Location & Maps</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
               name="latitude"
               placeholder="Latitude"
               onChange={handleChange}
-              className="p-2 border rounded"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
             <input
               type="text"
               name="longitude"
               placeholder="Longitude"
               onChange={handleChange}
-              className="p-2 border rounded"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
           </div>
         </div>
 
         {/* Amenities */}
-        <div className="p-4 border rounded">
-          <h2 className="text-xl font-semibold mb-4">Amenities</h2>
+        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Amenities</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {['WiFi', 'Pool', 'Gym', 'Parking'].map((amenity) => (
-              <label key={amenity} className="flex items-center space-x-2">
+              <label key={amenity} className="flex items-center space-x-2 text-neutral-200">
                 <input
                   type="checkbox"
                   value={amenity}
@@ -172,8 +170,8 @@ const AddProperty = () => {
         </div>
 
         {/* Room Types */}
-        <div className="p-4 border rounded">
-          <h2 className="text-xl font-semibold mb-4">Room Types</h2>
+        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Room Types</h2>
           {formData.roomTypes.map((room, index) => (
             <div key={index} className="grid grid-cols-3 gap-2 mb-2">
               <input
@@ -182,7 +180,7 @@ const AddProperty = () => {
                 placeholder="Room Name"
                 value={room.name}
                 onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-2 border rounded"
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
               />
               <input
                 type="number"
@@ -190,7 +188,7 @@ const AddProperty = () => {
                 placeholder="Beds"
                 value={room.beds}
                 onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-2 border rounded"
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
               />
               <input
                 type="number"
@@ -198,35 +196,35 @@ const AddProperty = () => {
                 placeholder="Occupancy"
                 value={room.occupancy}
                 onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-2 border rounded"
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
               />
             </div>
           ))}
           <button
             type="button"
             onClick={addRoomType}
-            className="bg-gray-200 px-4 py-2 rounded"
+            className="bg-neutral-700 text-white px-4 py-2 rounded"
           >
             Add Room Type
           </button>
         </div>
 
         {/* Pricing & Availability */}
-        <div className="p-4 border rounded">
-          <h2 className="text-xl font-semibold mb-4">Pricing & Availability</h2>
+        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Pricing & Availability</h2>
           <input
             type="number"
             name="baseRate"
             placeholder="Base Rate"
             onChange={handleChange}
-            className="p-2 border rounded"
+            className="p-2 bg-transparent border border-neutral-700 rounded text-white"
           />
         </div>
 
         {/* Images & Media */}
-        <div className="p-4 border rounded">
-          <h2 className="text-xl font-semibold mb-4">Images & Media</h2>
-          <input type="file" multiple onChange={handleImageChange} className="p-2 border rounded" />
+        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Images & Media</h2>
+          <input className="p-2 bg-transparent border border-neutral-700 rounded text-white" />
           <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {imagePreviews.map((image, index) => (
               <div key={index} className="relative">
@@ -241,7 +239,7 @@ const AddProperty = () => {
                     newImagePreviews.splice(index, 1);
                     setImagePreviews(newImagePreviews);
                   }}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs"
+                  className="absolute top-1 right-1 bg-red-500 dark:bg-red-600 text-white rounded-full p-1 text-xs"
                 >
                   X
                 </button>
@@ -251,16 +249,16 @@ const AddProperty = () => {
         </div>
 
         {/* Status */}
-        <div className="p-4 border rounded">
-          <h2 className="text-xl font-semibold mb-4">Status</h2>
-          <select name="status" onChange={handleChange} className="p-2 border rounded">
+        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Status</h2>
+          <select name="status" onChange={handleChange} className="p-2 bg-transparent border border-neutral-700 rounded text-white">
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
             <option value="Under Construction">Under Construction</option>
           </select>
         </div>
 
-        <button type="submit" className="bg-blue-500 text-white px-6 py-2 rounded-lg">
+        <button type="submit" className="bg-purple-600 text-white px-6 py-2 rounded-lg">
           Submit
         </button>
       </form>
