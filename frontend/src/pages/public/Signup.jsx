@@ -35,7 +35,7 @@ const Signup = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-transparent">
-      <div className="w-full max-w-md p-8 space-y-6 bg-[#1E1E1E] rounded-lg shadow-md">
+      <div className="w-full max-w-md p-8 space-y-6 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
         <h2 className="text-2xl font-bold text-center text-neutral-200">Create an Account</h2>
         <form onSubmit={onSubmit} className="space-y-4">
           {error && <p className="text-red-500 text-sm">{error}</p>}

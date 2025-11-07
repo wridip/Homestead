@@ -133,12 +133,12 @@ const EditProperty = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Edit Property</h1>
+    <div className="container mx-auto p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
+      <h1 className="text-2xl font-bold text-neutral-200 mb-6">Edit Property</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
-        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
-          <h2 className="text-xl font-semibold mb-4 dark:text-white">Basic Information</h2>
+        <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
@@ -146,7 +146,7 @@ const EditProperty = () => {
               placeholder="Property Name"
               value={formData.name}
               onChange={handleChange}
-              className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
             <input
               type="text"
@@ -154,14 +154,14 @@ const EditProperty = () => {
               placeholder="Address"
               value={formData.address}
               onChange={handleChange}
-              className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
             <textarea
               name="description"
               placeholder="Description"
               value={formData.description}
               onChange={handleChange}
-              className="p-2 border dark:border-gray-600 rounded col-span-2 dark:bg-gray-800 dark:text-white"
+              className="p-2 bg-transparent border border-neutral-700 rounded col-span-2 text-white"
             />
             <input
               type="text"
@@ -169,14 +169,14 @@ const EditProperty = () => {
               placeholder="Contact"
               value={formData.contact}
               onChange={handleChange}
-              className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
           </div>
         </div>
 
         {/* Location & Maps */}
-        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
-          <h2 className="text-xl font-semibold mb-4 dark:text-white">Location & Maps</h2>
+        <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Location & Maps</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
@@ -184,7 +184,7 @@ const EditProperty = () => {
               placeholder="Latitude"
               value={formData.latitude}
               onChange={handleChange}
-              className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
             <input
               type="text"
@@ -192,17 +192,17 @@ const EditProperty = () => {
               placeholder="Longitude"
               value={formData.longitude}
               onChange={handleChange}
-              className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
             />
           </div>
         </div>
 
         {/* Amenities */}
-        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
-          <h2 className="text-xl font-semibold mb-4 dark:text-white">Amenities</h2>
+        <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Amenities</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {['WiFi', 'Pool', 'Gym', 'Parking'].map((amenity) => (
-              <label key={amenity} className="flex items-center space-x-2 dark:text-white">
+              <label key={amenity} className="flex items-center space-x-2 text-neutral-200">
                 <input
                   type="checkbox"
                   value={amenity}
@@ -216,8 +216,8 @@ const EditProperty = () => {
         </div>
 
         {/* Room Types */}
-        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
-          <h2 className="text-xl font-semibold mb-4 dark:text-white">Room Types</h2>
+        <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Room Types</h2>
           {formData.roomTypes.map((room, index) => (
             <div key={index} className="grid grid-cols-3 gap-2 mb-2">
               <input
@@ -226,7 +226,7 @@ const EditProperty = () => {
                 placeholder="Room Name"
                 value={room.name}
                 onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
               />
               <input
                 type="number"
@@ -234,7 +234,7 @@ const EditProperty = () => {
                 placeholder="Beds"
                 value={room.beds}
                 onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
               />
               <input
                 type="number"
@@ -242,36 +242,36 @@ const EditProperty = () => {
                 placeholder="Occupancy"
                 value={room.occupancy}
                 onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
               />
             </div>
           ))}
           <button
             type="button"
             onClick={addRoomType}
-            className="bg-gray-200 dark:bg-gray-600 px-4 py-2 rounded"
+            className="bg-neutral-700 text-white px-4 py-2 rounded"
           >
             Add Room Type
           </button>
         </div>
 
         {/* Pricing & Availability */}
-        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
-          <h2 className="text-xl font-semibold mb-4 dark:text-white">Pricing & Availability</h2>
+        <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Pricing & Availability</h2>
           <input
             type="number"
             name="baseRate"
             placeholder="Base Rate"
             value={formData.baseRate}
             onChange={handleChange}
-            className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white"
+            className="p-2 bg-transparent border border-neutral-700 rounded text-white"
           />
         </div>
 
         {/* Images & Media */}
-        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
-          <h2 className="text-xl font-semibold mb-4 dark:text-white">Images & Media</h2>
-          <input type="file" multiple onChange={handleImageChange} className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white" />
+        <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Images & Media</h2>
+          <input type="file" multiple onChange={handleImageChange} className="p-2 bg-transparent border border-neutral-700 rounded text-white" />
           <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {imagePreviews.map((image, index) => (
               <div key={index} className="relative">
@@ -283,7 +283,7 @@ const EditProperty = () => {
                 <button
                   type="button"
                   onClick={() => handleRemoveImage(index, image.startsWith('/uploads'))}
-                  className="absolute top-1 right-1 bg-red-500 dark:bg-red-600 text-white rounded-full p-1 text-xs"
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs"
                 >
                   X
                 </button>
@@ -293,16 +293,16 @@ const EditProperty = () => {
         </div>
 
         {/* Status */}
-        <div className="p-4 border dark:border-gray-600 rounded dark:bg-gray-700">
-          <h2 className="text-xl font-semibold mb-4 dark:text-white">Status</h2>
-          <select name="status" value={formData.status} onChange={handleChange} className="p-2 border dark:border-gray-600 rounded dark:bg-gray-800 dark:text-white">
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-            <option value="Under Construction">Under Construction</option>
+        <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
+          <h2 className="text-xl font-semibold mb-4 text-neutral-200">Status</h2>
+          <select name="status" value={formData.status} onChange={handleChange} className="p-2 bg-transparent border border-neutral-700 rounded text-white bg-[#1E1E1E]">
+            <option value="Active" className="bg-[#1E1E1E] text-white">Active</option>
+            <option value="Inactive" className="bg-[#1E1E1E] text-white">Inactive</option>
+            <option value="Under Construction" className="bg-[#1E1E1E] text-white">Under Construction</option>
           </select>
         </div>
 
-        <button type="submit" className="bg-blue-500 dark:bg-blue-600 text-white px-6 py-2 rounded-lg">
+        <button type="submit" className="bg-purple-600 text-white px-6 py-2 rounded-lg">
           Update Property
         </button>
       </form>

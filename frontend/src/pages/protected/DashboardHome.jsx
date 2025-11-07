@@ -31,7 +31,7 @@ const DashboardHome = () => {
   }
 
   return (
-    <>
+    <div className="p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">
@@ -51,7 +51,7 @@ const DashboardHome = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        <div className="xl:col-span-2 rounded-xl border border-white/10 bg-white/5 p-5">
+        <div className="xl:col-span-2 rounded-xl border border-neutral-800 bg-[#1E1E1E] p-5">
           <div className="flex items-baseline justify-between">
             <div>
               <h2 className="text-lg font-semibold tracking-tight text-white">
@@ -69,14 +69,14 @@ const DashboardHome = () => {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-white/5 p-5">
+        <div className="rounded-xl border border-neutral-800 bg-[#1E1E1E] p-5">
           <h2 className="text-lg font-semibold tracking-tight text-white">
             Incoming Requests
           </h2>
           <p className="text-[13px] text-neutral-400 mt-0.5">Action needed</p>
           <div className="mt-4 space-y-3">
             {stats?.upcomingBookings.slice(0, 2).map(booking => (
-              <div key={booking._id} className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/10">
+              <div key={booking._id} className="flex items-center gap-3 p-3 rounded-lg bg-neutral-900/50 border border-neutral-800">
                 <img src={booking.propertyId.images[0]} className="h-10 w-10 rounded-md object-cover" alt="property" />
                 <div className="flex-1">
                   <p className="text-[14px] font-medium">
@@ -87,7 +87,7 @@ const DashboardHome = () => {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="h-8 w-8 inline-flex items-center justify-center rounded-md border border-white/10 hover:bg-white/10">
+                  <button className="h-8 w-8 inline-flex items-center justify-center rounded-md border border-neutral-800 hover:bg-neutral-700">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-neutral-300"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
                   </button>
                   <button className="h-8 w-8 inline-flex items-center justify-center rounded-md bg-emerald-600/90 hover:bg-emerald-500">
@@ -96,13 +96,13 @@ const DashboardHome = () => {
                 </div>
               </div>
             ))}
-            <Link to="/dashboard/bookings" className="w-full mt-2 text-[13px] px-3 py-2 rounded-md border border-white/10 hover:bg-white/5 block text-center">
+            <Link to="/dashboard/bookings" className="w-full mt-2 text-[13px] px-3 py-2 rounded-md border border-neutral-800 hover:bg-neutral-700 block text-center">
               View all
             </Link>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

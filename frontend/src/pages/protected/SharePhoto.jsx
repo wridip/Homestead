@@ -51,7 +51,7 @@ const SharePhoto = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-transparent">
+    <div className="container mx-auto px-4 py-8 p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
       <h1 className="text-3xl font-bold mb-4 text-neutral-200">Share Your Photo</h1>
       {error && <div className="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
       {success && <div className="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded relative mb-4" role="alert">{success}</div>}

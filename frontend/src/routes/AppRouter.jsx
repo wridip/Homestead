@@ -74,7 +74,7 @@ const MainLayout = () => (
       }}></div>
     </div>
     <Navbar />
-    <main className="flex-grow">
+    <main className="flex-grow pt-16">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />

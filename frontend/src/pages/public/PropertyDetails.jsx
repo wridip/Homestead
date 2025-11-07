@@ -112,23 +112,23 @@ const PropertyDetails = () => {
   const totalPrice = nights > 0 ? nights * property.baseRate : 0;
 
   return (
-    <div className="container mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold text-text-primary-light dark:text-text-primary-dark">{property.name}</h1>
-      <p className="text-text-secondary-light dark:text-text-secondary-dark">{property.address}</p>
+    <div className="container mx-auto px-6 py-12 p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
+      <h1 className="text-3xl font-bold text-neutral-200">{property.name}</h1>
+      <p className="text-neutral-400">{property.address}</p>
       
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <img src={property.images && property.images.length > 0 ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${property.images[0]}` : 'https://via.placeholder.com/300'} alt={property.name} className="w-full object-cover rounded-lg shadow-md" />
           
           <div className="mt-8">
-            <h2 className="text-2xl font-semibold text-text-primary-light dark:text-text-primary-dark">About this property</h2>
-            <p className="text-text-secondary-light dark:text-text-secondary-dark mt-4">{property.description}</p>
+            <h2 className="text-2xl font-semibold text-neutral-200">About this property</h2>
+            <p className="text-neutral-400 mt-4">{property.description}</p>
           </div>
         </div>
 
         <div>
-          <div className="bg-primary-light dark:bg-primary-dark p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold text-text-primary-light dark:text-text-primary-dark">Book your stay</h2>
+          <div className="bg-[#1E1E1E] p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold text-neutral-200">Book your stay</h2>
             <div className="mt-4">
               <DatePicker
                 selected={startDate}
@@ -144,45 +144,45 @@ const PropertyDetails = () => {
               />
             </div>
             {nights > 0 && (
-              <div className="mt-4 text-lg dark:text-text-primary-dark">
+              <div className="mt-4 text-lg text-neutral-200">
                 <p>Total nights: {nights}</p>
                 <p>Total price: ₹{totalPrice.toFixed(2)}</p>
               </div>
             )}
-            <button onClick={handleBooking} className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+            <button onClick={handleBooking} className="mt-4 w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">
               Book Now
             </button>
-            {bookingError && <p className="text-red-500 dark:text-red-400 mt-2">{bookingError}</p>}
-            {bookingSuccess && <p className="text-green-500 dark:text-green-400 mt-2">Booking successful!</p>}
+            {bookingError && <p className="text-red-400 mt-2">{bookingError}</p>}
+            {bookingSuccess && <p className="text-green-400 mt-2">Booking successful!</p>}
           </div>
         </div>
       </div>
 
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold text-text-primary-light dark:text-text-primary-dark">Reviews</h2>
+        <h2 className="text-2xl font-semibold text-neutral-200">Reviews</h2>
         {reviews.length > 0 ? (
           reviews.map(review => (
-            <div key={review._id} className="bg-primary-light dark:bg-primary-dark p-4 rounded-lg shadow-md mt-4">
-              <p className="font-bold dark:text-text-primary-dark">{review.userId.name}</p>
-              <p className="dark:text-text-primary-dark">Rating: {review.rating}/5</p>
-              <p className="dark:text-text-primary-dark">{review.comment}</p>
+            <div key={review._id} className="bg-[#1E1E1E] p-4 rounded-lg shadow-md mt-4">
+              <p className="font-bold text-neutral-200">{review.userId.name}</p>
+              <p className="text-neutral-200">Rating: {review.rating}/5</p>
+              <p className="text-neutral-200">{review.comment}</p>
             </div>
           ))
         ) : (
-          <p className="dark:text-text-primary-dark">No reviews yet.</p>
+          <p className="text-neutral-200">No reviews yet.</p>
         )}
 
         {isAuthenticated && user.role === 'Traveler' && (
-          <form onSubmit={handleReviewSubmit} className="mt-8 bg-primary-light dark:bg-primary-dark p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold text-text-primary-light dark:text-text-primary-dark">Leave a Review</h3>
+          <form onSubmit={handleReviewSubmit} className="mt-8 bg-[#1E1E1E] p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold text-neutral-200">Leave a Review</h3>
             <div className="mt-4">
-              <label htmlFor="rating" className="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">Rating</label>
+              <label htmlFor="rating" className="block text-sm font-medium text-neutral-400">Rating</label>
               <select
                 id="rating"
                 name="rating"
                 value={newReview.rating}
                 onChange={(e) => setNewReview({ ...newReview, rating: e.target.value })}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-secondary-dark dark:border-gray-600 dark:text-text-primary-dark"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-neutral-800 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-neutral-900/50 text-neutral-200"
               >
                 <option value="0">Select a rating</option>
                 <option value="1">1 - Terrible</option>
@@ -193,26 +193,26 @@ const PropertyDetails = () => {
               </select>
             </div>
             <div className="mt-4">
-              <label htmlFor="comment" className="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">Comment</label>
+              <label htmlFor="comment" className="block text-sm font-medium text-neutral-400">Comment</label>
               <textarea
                 id="comment"
                 name="comment"
                 rows="3"
                 value={newReview.comment}
                 onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
-                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md dark:bg-secondary-dark dark:border-gray-600 dark:text-text-primary-dark"
+                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-neutral-800 rounded-md bg-neutral-900/50 text-neutral-200"
               ></textarea>
             </div>
-            <button type="submit" className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+            <button type="submit" className="mt-4 w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">
               Submit Review
             </button>
-            {reviewError && <p className="text-red-500 dark:text-red-400 mt-2">{reviewError}</p>}
+            {reviewError && <p className="text-red-400 mt-2">{reviewError}</p>}
           </form>
         )}
       </div>
 
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold text-text-primary-light dark:text-text-primary-dark">Location</h2>
+        <h2 className="text-2xl font-semibold text-neutral-200">Location</h2>
         <div className="mt-4">
           {isLoaded ? (
             <GoogleMap
@@ -223,7 +223,7 @@ const PropertyDetails = () => {
               <Marker position={center} />
             </GoogleMap>
           ) : (
-            <div className="dark:text-text-primary-dark">Loading Map...</div>
+            <div className="text-neutral-200">Loading Map...</div>
           )}
         </div>
       </div>

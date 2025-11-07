@@ -40,13 +40,13 @@ const MyBookings = () => {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12 bg-transparent">
+    <div className="container mx-auto px-6 py-12 p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
       <h1 className="text-3xl font-bold text-neutral-200 mb-6">My Bookings</h1>
       {bookings.length === 0 ? (
         <p className="text-neutral-400">You have no bookings.</p>
       ) : (
         <div className="bg-[#1E1E1E] shadow-md rounded-lg overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+          <table className="min-w-full divide-y divide-neutral-800">
             <thead className="bg-[#121212]">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Property</th>
@@ -59,7 +59,7 @@ const MyBookings = () => {
               {bookings.map((booking) => (
                 <tr key={booking._id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-200">{booking.propertyId.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">
                     {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{booking.status}</td>
