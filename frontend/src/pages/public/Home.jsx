@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import AuthContext from '../../context/AuthContext';
 import { getProperties } from '../../services/propertyService';
 import { getPhotos, deletePhoto } from '../../services/photoService';
 import PropertyCard from '../../components/properties/PropertyCard';
@@ -15,6 +16,7 @@ const Home = () => {
   const [location, setLocation] = useState("");
   const [guests, setGuests] = useState("");
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useContext(AuthContext);
 
   const handleDeletePhoto = async (photoId) => {
     try {
@@ -269,7 +271,7 @@ const Home = () => {
               </li>
             </ul>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#" className="btn-adaptive rounded-md px-4 py-2 text-sm font-semibold border inline-flex items-center gap-2 bg-purple-600 text-white hover:bg-purple-500">
+              <a href="/signup" className="btn-adaptive rounded-md px-4 py-2 text-sm font-semibold border inline-flex items-center gap-2 bg-purple-600 text-white hover:bg-purple-500">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>
                 Become a host
               </a>
@@ -289,7 +291,9 @@ const Home = () => {
                   <img src="https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&q=80" alt="Priya, Host avatar" className="h-full w-full object-cover" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium leading-4 text-neutral-200">Priya • Host</p>
+                  <p className="text-xs font-medium leading-4 text-neutral-200">
+                    {isAuthenticated && user && user.role === 'Host' ? `${user.name} • Host` : 'Priya • Host'}
+                  </p>
                   <p className="text-[11px] text-neutral-400 leading-4">Since 2021</p>
                 </div>
                 <div className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-neutral-200">

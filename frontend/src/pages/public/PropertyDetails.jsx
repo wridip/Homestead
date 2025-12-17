@@ -6,8 +6,8 @@ import { createBooking } from '../../services/bookingService';
 import AuthContext from '../../context/AuthContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Carousel styles
+import { Carousel } from 'react-responsive-carousel'; // Carousel component
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
 const PropertyDetails = () => {
@@ -25,10 +25,10 @@ const PropertyDetails = () => {
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
   const [reviewError, setReviewError] = useState(null);
 
+  // Load Google Maps API (without the 'places' library here)
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"]
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
   });
 
   const fetchPropertyAndReviews = async () => {
@@ -130,7 +130,7 @@ const PropertyDetails = () => {
           
           <div className="mt-8">
             <h2 className="text-2xl font-semibold text-neutral-200">About this property</h2>
-            <p className="text-neutral-400 mt-4">{property.description}</p>
+            <p className="mt-4">{property.description}</p>
           </div>
         </div>
 
