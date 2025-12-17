@@ -43,7 +43,7 @@ const Explore = () => {
     let result = properties;
 
     if (searchQuery) {
-      result = result.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || (p.location && p.location.toLowerCase().includes(searchQuery.toLowerCase())));
+      result = result.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || (p.address && p.address.toLowerCase().includes(searchQuery.toLowerCase())));
     }
 
     if (filters.type.length > 0) {

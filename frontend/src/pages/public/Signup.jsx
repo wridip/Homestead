@@ -60,7 +60,13 @@ const Signup = () => {
             <label className="text-sm font-bold text-neutral-400 block">I am a:</label>
             <div className="flex items-center mt-2">
               <input
-className="h-4 w-4 text-purple-600 bg-transparent border-neutral-700 focus:ring-purple-500"
+                id="role-traveler"
+                type="radio"
+                name="role"
+                value="Traveler"
+                checked={role === 'Traveler'}
+                onChange={onChange}
+                className="h-4 w-4 text-purple-600 bg-transparent border-neutral-700 focus:ring-purple-500"
               />
               <label htmlFor="role-traveler" className="ml-2 block text-sm text-neutral-200">
                 Traveler
