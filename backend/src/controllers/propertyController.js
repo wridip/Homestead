@@ -209,3 +209,35 @@ exports.deleteProperty = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Update property images
+// @route   PUT /api/properties/:id/images
+// @access  Private (Host)
+exports.updatePropertyImages = async (req, res, next) => {
+  try {
+    let property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).json({ success: false, message: `Property not found with id of ${req.params.id}` });
+    }
+
+    // Make sure user is property owner
+    if (property.hostId.toString() !== req.user.id && req.user.role !== 'Admin') {
+      return res.status(401).json({ success: false, message: 'Not authorized to update this property' });
+    }
+
+    if (req.files) {
+      const images = req.files.map(file => `/uploads/${file.filename}`);
+      property.images = images;
+    }
+
+    const updatedProperty = await property.save();
+
+    res.status(200).json({
+      success: true,
+      data: updatedProperty,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -66,6 +66,7 @@ const ManageProperties = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{property.status}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <Link to={`/dashboard/edit-property/${property._id}`} className="text-purple-400 hover:text-purple-300 mr-4">Edit</Link>
+                  <Link to={`/dashboard/properties/${property._id}/photos`} className="text-blue-400 hover:text-blue-300 mr-4">Manage Photos</Link>
                   <button onClick={() => handleDelete(property._id)} className="text-red-400 hover:text-red-300">Delete</button>
                 </td>
               </tr>

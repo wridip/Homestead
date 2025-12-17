@@ -6,8 +6,6 @@ import PropertyCard from '../../components/properties/PropertyCard';
 import { PhotoCard } from '../../components/properties/PhotoCard';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { GoogleMap, useJsApiLoader, Marker, Autocomplete } from '@react-google-maps/api';
-import { libraries } from '../../config/googleMaps.js';
 
 const Home = () => {
   const [properties, setProperties] = useState([]);
@@ -17,13 +15,6 @@ const Home = () => {
   const [location, setLocation] = useState("");
   const [guests, setGuests] = useState("");
   const navigate = useNavigate();
-  const [autocomplete, setAutocomplete] = useState(null);
-
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries
-  });
 
   const handleDeletePhoto = async (photoId) => {
     try {
@@ -99,20 +90,6 @@ const Home = () => {
     );
   };
 
-  const onLoad = (autocomplete) => {
-    setAutocomplete(autocomplete);
-  };
-
-  const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      setLocation(place.formatted_address);
-    } else {
-      console.log('Autocomplete is not loaded yet!');
-    }
-  };
-
-
   const dayClassName = (date) => {
     if (!isDateAvailable(date)) {
       return 'text-red-500 bg-red-200';
@@ -161,19 +138,10 @@ const Home = () => {
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 p-3">
               <div className="flex items-center gap-2 rounded-lg bg-transparent px-3 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#BB86FC]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#BB86FC]"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                {isLoaded ? (
-                  <Autocomplete
-                    onLoad={onLoad}
-                    onPlaceChanged={onPlaceChanged}
-                  >
-                    <input type="text" placeholder="Where to?" className="w-full bg-transparent text-sm placeholder-neutral-400 focus:outline-none text-white" value={location} onChange={(e) => setLocation(e.target.value)} />
-                  </Autocomplete>
-                ) : (
-                  <input type="text" placeholder="Where to?" className="w-full bg-transparent text-sm placeholder-neutral-400 focus:outline-none text-white" value={location} onChange={(e) => setLocation(e.target.value)} />
-                )}
+                <input type="text" placeholder="Where to?" className="w-full bg-transparent text-sm placeholder-neutral-400 focus:outline-none text-white" value={location} onChange={(e) => setLocation(e.target.value)} />
               </div>
               <div className="flex items-center gap-2 rounded-lg bg-transparent px-3 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#BB86FC]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#BB86FC]"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke=".bg-transparent" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#BB86FC]"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
                 <DatePicker
                   selected={startDate}
                   onChange={handleDateChange}

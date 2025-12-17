@@ -6,52 +6,22 @@ import { createBooking } from '../../services/bookingService';
 import AuthContext from '../../context/AuthContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-
-import { libraries } from '../../config/googleMaps.js';
-
-
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const PropertyDetails = () => {
-
   const { id } = useParams();
-
   const { isAuthenticated, user } = useContext(AuthContext);
-
   const [property, setProperty] = useState(null);
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState(null);
-
   const [startDate, setStartDate] = useState(null);
-
   const [endDate, setEndDate] = useState(null);
-
   const [bookingError, setBookingError] = useState(null);
-
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
-
-
   const [reviews, setReviews] = useState([]);
-
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
-
   const [reviewError, setReviewError] = useState(null);
-
-
-
-  const { isLoaded } = useJsApiLoader({
-
-    id: 'google-map-script',
-
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-
-    libraries
-
-  });
 
   const fetchPropertyAndReviews = async () => {
     try {
@@ -127,11 +97,6 @@ const PropertyDetails = () => {
     return <div>Property not found</div>;
   }
 
-  const center = {
-    lat: property.location.coordinates[1],
-    lng: property.location.coordinates[0]
-  };
-
   const nights = startDate && endDate ? (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) : 0;
   const totalPrice = nights > 0 ? nights * property.baseRate : 0;
 
@@ -141,8 +106,18 @@ const PropertyDetails = () => {
       <p className="text-neutral-400">{property.address}</p>
       
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+import { Carousel } from 'react-responsive-carousel';
+
+// ...
+
         <div>
-          <img src={property.images && property.images.length > 0 ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${property.images[0]}` : 'https://via.placeholder.com/300'} alt={property.name} className="w-full object-cover rounded-lg shadow-md" />
+          <Carousel>
+            {property.images.map((image, index) => (
+              <div key={index}>
+                <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}`} alt={property.name} />
+              </div>
+            ))}
+          </Carousel>
           
           <div className="mt-8">
             <h2 className="text-2xl font-semibold text-neutral-200">About this property</h2>
@@ -233,23 +208,6 @@ const PropertyDetails = () => {
             {reviewError && <p className="text-red-400 mt-2">{reviewError}</p>}
           </form>
         )}
-      </div>
-
-      <div className="mt-8">
-        <h2 className="text-2xl font-semibold text-neutral-200">Location</h2>
-        <div className="mt-4">
-          {isLoaded ? (
-            <GoogleMap
-              mapContainerStyle={{ width: '100%', height: '450px' }}
-              center={center}
-              zoom={15}
-            >
-              <Marker position={center} />
-            </GoogleMap>
-          ) : (
-            <div className="text-neutral-200">Loading Map...</div>
-          )}
-        </div>
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import NotFound from '../pages/public/NotFound';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import DashboardHome from '../pages/protected/DashboardHome';
 import ManageProperties from '../pages/protected/ManageProperties';
+import ManagePropertyPhotos from '../pages/protected/ManagePropertyPhotos';
 import AddProperty from '../pages/protected/AddProperty';
 import EditProperty from '../pages/protected/EditProperty';
 import HostBookings from '../pages/protected/HostBookings';
@@ -29,6 +30,7 @@ const AppRouter = () => {
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardHome />} />
             <Route path="properties" element={<ManageProperties />} />
+            <Route path="properties/:id/photos" element={<ManagePropertyPhotos />} />
             <Route path="add-property" element={<AddProperty />} />
             <Route path="edit-property/:id" element={<EditProperty />} />
             <Route path="bookings" element={<HostBookings />} />

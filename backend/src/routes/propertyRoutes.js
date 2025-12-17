@@ -7,6 +7,7 @@ const {
   getPropertyById,
   updateProperty,
   deleteProperty,
+  updatePropertyImages,
 } = require('../controllers/propertyController');
 
 const { protect, authorize } = require('../middlewares/authMiddleware');
@@ -56,6 +57,11 @@ router.get('/:id', getPropertyById);
 // @desc    Update a property
 // @access  Private (Host)
 router.put('/:id', protect, authorize('Host', 'Admin'), updateProperty);
+
+// @route   PUT api/properties/:id/images
+// @desc    Update property images
+// @access  Private (Host)
+router.put('/:id/images', protect, authorize('Host'), upload, updatePropertyImages);
 
 // @route   DELETE api/properties/:id
 // @desc    Delete a property
