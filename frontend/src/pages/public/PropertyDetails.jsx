@@ -9,24 +9,48 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
+import { libraries } from '../../config/googleMaps.js';
+
+
+
 const PropertyDetails = () => {
+
   const { id } = useParams();
+
   const { isAuthenticated, user } = useContext(AuthContext);
+
   const [property, setProperty] = useState(null);
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState(null);
+
   const [startDate, setStartDate] = useState(null);
+
   const [endDate, setEndDate] = useState(null);
+
   const [bookingError, setBookingError] = useState(null);
+
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
+
+
   const [reviews, setReviews] = useState([]);
+
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
+
   const [reviewError, setReviewError] = useState(null);
 
+
+
   const { isLoaded } = useJsApiLoader({
+
     id: 'google-map-script',
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+
+    libraries
+
   });
 
   const fetchPropertyAndReviews = async () => {
