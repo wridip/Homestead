@@ -2,8 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
+      "src": "backend/package.json",
+      "use": "@vercel/node",
+      "config": {
+        "installCommand": "npm install --omit=dev"
+      }
     },
     {
       "src": "frontend/package.json",
