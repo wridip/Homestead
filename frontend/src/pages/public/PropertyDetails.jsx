@@ -123,7 +123,7 @@ const PropertyDetails = () => {
           <Carousel>
             {property.images.map((image, index) => (
               <div key={index}>
-                <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${image}`} alt={property.name} />
+                <img src={image} alt={property.name} />
               </div>
             ))}
           </Carousel>

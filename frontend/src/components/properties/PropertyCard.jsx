@@ -5,7 +5,7 @@ const PropertyCard = ({ property }) => {
   return (
     <article className="group overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[#1E1E1E] shadow-sm" data-animate>
       <div className="relative">
-        <img src={property.images && property.images.length > 0 ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${property.images[0]}` : 'https://via.placeholder.com/300'} alt={property.name} className="h-56 w-full object-cover transition duration-300 group-hover:scale-105" />
+        <img src={property.images && property.images.length > 0 ? property.images[0] : 'https://via.placeholder.com/300'} alt={property.name} className="h-56 w-full object-cover transition duration-300 group-hover:scale-105" />
         {property.isEcoFriendly && (
           <div className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium bg-[#BB86FC]/10 text-[#BB86FC]">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
