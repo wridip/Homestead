@@ -1,16 +1,4 @@
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-const crypto = require('crypto');
 const Property = require('../models/Property');
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
-
-const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 
 // @desc    Create a new property
 // @route   POST /api/properties
@@ -75,7 +63,7 @@ exports.getProperties = async (req, res, next) => {
     let queryStr = JSON.stringify(reqQuery);
 
     // Create operators ($gt, $gte, etc)
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `${match}`);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
     // Finding resource
     query = Property.find(JSON.parse(queryStr));
@@ -238,6 +226,7 @@ exports.updatePropertyImages = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'Not authorized to update this property' });
     }
 
+<<<<<<< HEAD
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map(async (file) => {
         const fileName = generateFileName();
@@ -257,8 +246,12 @@ exports.updatePropertyImages = async (req, res, next) => {
       property.images = property.images.concat(imageUrls);
     } else {
       return res.status(400).json({ success: false, message: 'Please upload one or more files' });
+=======
+    if (req.files) {
+      const images = req.files.map(file => `/uploads/${file.filename}`);
+      property.images = images;
+>>>>>>> parent of dae65d7 (Add AWS S3 SDK and update controllers for S3 integration)
     }
-
 
     const updatedProperty = await property.save();
 
