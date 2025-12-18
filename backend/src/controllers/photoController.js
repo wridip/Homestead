@@ -8,30 +8,7 @@ const asyncHandler = require('express-async-handler');
 // @access  Private
 exports.uploadPhoto = asyncHandler(async (req, res, next) => {
   const { caption, socialLink, property } = req.body;
-<<<<<<< HEAD
-  const file = req.file;
-
-  if (!file) {
-    res.status(400);
-    throw new Error('Please upload a file');
-  }
-
-  const fileName = generateFileName();
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: fileName,
-    Body: file.buffer,
-    ContentType: file.mimetype,
-    ACL: 'public-read',
-  };
-
-  const command = new PutObjectCommand(params);
-  await s3Client.send(command);
-
-  const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
-=======
   const imageUrl = path.relative(path.join(__dirname, '..', '..', 'public'), req.file.path);
->>>>>>> parent of dae65d7 (Add AWS S3 SDK and update controllers for S3 integration)
 
   const photo = await Photo.create({
     user: req.user.id,

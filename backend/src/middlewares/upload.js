@@ -2,7 +2,12 @@ const multer = require('multer');
 const path = require('path');
 
 // Set up storage engine
-const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+  destination: './public/uploads/',
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  },
+});
 
 // Check file type
 function checkFileType(file, cb) {

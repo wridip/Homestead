@@ -39,7 +39,7 @@ const ManagePropertyPhotos = () => {
 
     try {
       await updatePropertyImages(id, formData);
-      navigate(`/properties/${id}`);
+      navigate(`/property/${id}`);
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred while uploading images.');
     }

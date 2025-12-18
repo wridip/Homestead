@@ -123,7 +123,7 @@ const PropertyDetails = () => {
           <Carousel>
             {property.images.map((image, index) => (
               <div key={index}>
-                <img src={image} alt={property.name} />
+                <img src={`http://localhost:5000/${image.replace(/\\/g, '/')}`} alt={property.name} />
               </div>
             ))}
           </Carousel>
