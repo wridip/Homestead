@@ -32,6 +32,7 @@ exports.uploadPhoto = asyncHandler(async (req, res, next) => {
     Key: fileName,
     Body: file.buffer,
     ContentType: file.mimetype,
+    ACL: 'public-read',
   };
 
   const command = new PutObjectCommand(params);

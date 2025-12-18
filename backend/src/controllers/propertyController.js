@@ -246,6 +246,7 @@ exports.updatePropertyImages = async (req, res, next) => {
           Key: fileName,
           Body: file.buffer,
           ContentType: file.mimetype,
+          ACL: 'public-read',
         };
         const command = new PutObjectCommand(params);
         await s3Client.send(command);
