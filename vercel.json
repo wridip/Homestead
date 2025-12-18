@@ -2,11 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/package.json",
-      "use": "@vercel/node",
-      "config": {
-        "installCommand": "npm install --production --ignore-scripts"
-      }
+      "src": "backend/server.js",
+      "use": "@vercel/node"
     },
     {
       "src": "frontend/package.json",
