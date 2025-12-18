@@ -5,7 +5,7 @@
       "src": "backend/package.json",
       "use": "@vercel/node",
       "config": {
-        "installCommand": "npm install --omit=dev"
+        "installCommand": "npm install --production"
       }
     },
     {
