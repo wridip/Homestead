@@ -8,7 +8,6 @@ const {
   updateProperty,
   deleteProperty,
   updatePropertyImages,
-  s3Debug,
 } = require('../controllers/propertyController');
 
 const { protect, authorize } = require('../middlewares/authMiddleware');
@@ -68,10 +67,5 @@ router.put('/:id/images', protect, authorize('Host'), upload, updatePropertyImag
 // @desc    Delete a property
 // @access  Private (Host)
 router.delete('/:id', protect, authorize('Host', 'Admin'), deleteProperty);
-
-// @route   GET api/properties/s3-debug/:key
-// @desc    Debug S3 Object ACL
-// @access  Public
-router.get('/s3-debug/:key', s3Debug);
 
 module.exports = router;
