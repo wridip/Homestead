@@ -1,4 +1,4 @@
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, GetObjectAclCommand } = require('@aws-sdk/client-s3');
 const crypto = require('crypto');
 const Property = require('../models/Property');
 
@@ -195,6 +195,27 @@ exports.updateProperty = async (req, res, next) => {
   }
 };
 
+// @desc    Debug S3 Object ACL
+// @route   GET /api/properties/s3-debug/:key
+// @access  Public
+exports.s3Debug = async (req, res, next) => {
+  try {
+    const { key } = req.params;
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: key,
+    };
+    const command = new GetObjectAclCommand(params);
+    const data = await s3Client.send(command);
+    res.status(200).json({
+      success: true,
+      grants: data.Grants,
+    });
+  } catch (error) {
+    console.error('S3 Debug Error:', error);
+    next(error);
+  }
+};
 // @desc    Delete a property
 // @route   DELETE /api/properties/:id
 // @access  Private (Host)
