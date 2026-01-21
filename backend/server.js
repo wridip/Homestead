@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const csurf = require('@dr.pogodin/csurf');
 const mongoSanitize = require('express-mongo-sanitize');
 
 const rateLimit = require('express-rate-limit');
@@ -34,6 +35,14 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// CSRF Protection
+const csrfProtection = csurf({ cookie: true });
+app.use(csrfProtection);
+
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
 
 if (process.env.NODE_ENV !== 'test') {
   // Sanitize data
