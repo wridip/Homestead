@@ -4,8 +4,9 @@ const dotenv = require('dotenv');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
+
 const rateLimit = require('express-rate-limit');
 
 // Load environment variables
@@ -22,7 +23,7 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security-related HTTP headers
-// app.use(helmet());
+app.use(helmet());
 
 // Log HTTP requests in development mode
 if (process.env.NODE_ENV === 'development') {
@@ -32,20 +33,20 @@ if (process.env.NODE_ENV === 'development') {
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 if (process.env.NODE_ENV !== 'test') {
   // Sanitize data
   app.use(mongoSanitize());
 
-  // Prevent XSS attacks
-  app.use(xss());
+
 
   // Rate limiting
   const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 mins
     max: 100,
   });
-  // app.use(limiter);
+  app.use(limiter);
 }
 
 // --- Database Connection ---

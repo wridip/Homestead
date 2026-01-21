@@ -1,5 +1,6 @@
 const User = require('../models/User');
-const { generateToken } = require('../utils/jwt');
+const { generateAccessToken, generateRefreshToken, clearToken } = require('../utils/jwt');
+const jwt = require('jsonwebtoken');
 
 // @desc    Register a new user
 // @route   POST /api/auth/signup
@@ -17,10 +18,12 @@ exports.signup = async (req, res, next) => {
     const user = await User.create({ name, email, password });
 
     if (user) {
-      const token = generateToken(user._id, user.role);
+      const accessToken = generateAccessToken(res, user._id, user.role);
+      generateRefreshToken(res, user._id);
+
       res.status(201).json({
         success: true,
-        token,
+        token: accessToken,
         user: {
           _id: user._id,
           name: user.name,
@@ -46,10 +49,12 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-      const token = generateToken(user._id, user.role);
+      const accessToken = generateAccessToken(res, user._id, user.role);
+      generateRefreshToken(res, user._id);
+
       res.json({
         success: true,
-        token,
+        token: accessToken,
         user: {
           _id: user._id,
           name: user.name,
@@ -69,12 +74,35 @@ exports.login = async (req, res, next) => {
 // @route   POST /api/auth/logout
 // @access  Private
 exports.logout = (req, res, next) => {
-  res.status(200).json({ success: true, message: 'User logged out successfully (placeholder)' });
+  clearToken(res);
+  res.status(200).json({ success: true, message: 'User logged out successfully' });
 };
 
 // @desc    Refresh access token
 // @route   POST /api/auth/refresh-token
 // @access  Private
-exports.refresh = (req, res, next) => {
-  res.status(200).json({ success: true, token: 'new-dummy-token', message: 'Token refreshed successfully (placeholder)' });
+exports.refresh = async (req, res, next) => {
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken) {
+    return res.status(401).json({ success: false, message: 'No refresh token found' });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid refresh token' });
+    }
+
+    const accessToken = generateAccessToken(res, user._id, user.role);
+
+    res.json({
+      success: true,
+      token: accessToken,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
