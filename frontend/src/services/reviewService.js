@@ -1,4 +1,4 @@
-import api from './authService';
+import api from './api';
 
 export const getReviewsForProperty = async (propertyId) => {
   const response = await api.get(`/properties/${propertyId}/reviews`);

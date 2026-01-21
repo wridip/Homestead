@@ -1,4 +1,4 @@
-import api from './authService';
+import api from './api';
 
 // Get host dashboard stats
 export const getDashboardStats = async () => {

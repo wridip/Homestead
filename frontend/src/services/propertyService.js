@@ -1,4 +1,4 @@
-import api from './authService';
+import api from './api';
 
 // Get all properties
 export const getProperties = async () => {

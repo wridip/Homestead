@@ -1,4 +1,4 @@
-import api from './authService';
+import api from './api';
 
 export const uploadPhoto = async (formData) => {
   const response = await api.post('/photos', formData, {
