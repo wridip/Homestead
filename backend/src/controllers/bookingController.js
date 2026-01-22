@@ -67,12 +67,40 @@ exports.getUserBookings = async (req, res, next) => {
 // @access  Private (Host)
 exports.getHostBookings = async (req, res, next) => {
   try {
-    const bookings = await Booking.find({ hostId: req.user._id }).populate('propertyId', 'name').populate('travelerId', 'name email');
+    const bookings = await Booking.find({ hostId: req.user._id }).populate('propertyId', 'name').populate('travelerId', 'name email avatar');
 
     res.status(200).json({
       success: true,
       count: bookings.length,
       data: bookings,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Approve a booking
+// @route   PUT /api/bookings/:id/approve
+// @access  Private (Host)
+exports.approveBooking = async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: `Booking not found with id of ${req.params.id}` });
+    }
+
+    // Check if user is the host of the property
+    if (booking.hostId.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to approve this booking' });
+    }
+
+    booking.status = 'Confirmed';
+    await booking.save();
+
+    res.status(200).json({
+      success: true,
+      data: booking,
     });
   } catch (error) {
     next(error);

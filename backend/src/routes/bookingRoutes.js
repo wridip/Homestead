@@ -6,6 +6,7 @@ const {
   getUserBookings,
   getHostBookings,
   cancelBooking,
+  approveBooking,
 } = require('../controllers/bookingController');
 
 const { protect, authorize } = require('../middlewares/authMiddleware');
@@ -24,6 +25,11 @@ router.get('/user', protect, authorize('Traveler'), getUserBookings);
 // @desc    Get all bookings for the logged-in host's properties
 // @access  Private (Host)
 router.get('/host', protect, authorize('Host'), getHostBookings);
+
+// @route   PUT api/bookings/:id/approve
+// @desc    Approve a booking
+// @access  Private (Host)
+router.put('/:id/approve', protect, authorize('Host'), approveBooking);
 
 // @route   PUT api/bookings/:id/cancel
 // @desc    Cancel a booking

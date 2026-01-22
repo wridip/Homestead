@@ -11,10 +11,10 @@ exports.protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
 
       // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
       // Get user from the token
-      req.user = await User.findById(decoded.id).select('-password');
+      req.user = await User.findById(decoded.userId).select('-password');
 
       next();
     } catch (error) {
