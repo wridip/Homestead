@@ -107,6 +107,34 @@ exports.approveBooking = async (req, res, next) => {
   }
 };
 
+// @desc    Complete a booking
+// @route   PUT /api/bookings/:id/complete
+// @access  Private (Host)
+exports.completeBooking = async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: `Booking not found with id of ${req.params.id}` });
+    }
+
+    // Check if user is the host of the property
+    if (booking.hostId.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, message: 'Not authorized to complete this booking' });
+    }
+
+    booking.status = 'Completed';
+    await booking.save();
+
+    res.status(200).json({
+      success: true,
+      data: booking,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Cancel a booking
 // @route   PUT /api/bookings/:id/cancel
 // @access  Private (Traveler or Host)

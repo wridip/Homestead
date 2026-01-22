@@ -19,3 +19,13 @@ export const cancelBooking = async (bookingId) => {
   const response = await api.put(`/bookings/${bookingId}/cancel`);
   return response.data;
 };
+
+export const approveBooking = async (bookingId) => {
+  const response = await api.put(`/bookings/${bookingId}/approve`);
+  return response.data;
+};
+
+export const completeBooking = async (bookingId) => {
+  const response = await api.put(`/bookings/${bookingId}/complete`);
+  return response.data;
+};

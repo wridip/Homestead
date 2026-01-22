@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { getHostBookings } from '../../services/bookingService';
+import { getHostBookings, approveBooking, cancelBooking, completeBooking } from '../../services/bookingService';
 
 const HostBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [updating, setUpdating] = useState(null); // To track which booking is being updated
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -19,6 +20,39 @@ const HostBookings = () => {
 
     fetchBookings();
   }, []);
+
+  const handleApprove = async (bookingId) => {
+    setUpdating(bookingId);
+    try {
+      const response = await approveBooking(bookingId);
+      setBookings(bookings.map((b) => (b._id === bookingId ? response.data : b)));
+    } catch (err) {
+      setError(err.message);
+    }
+    setUpdating(null);
+  };
+
+  const handleCancel = async (bookingId) => {
+    setUpdating(bookingId);
+    try {
+      const response = await cancelBooking(bookingId);
+      setBookings(bookings.map((b) => (b._id === bookingId ? response.data : b)));
+    } catch (err) {
+      setError(err.message);
+    }
+    setUpdating(null);
+  };
+
+  const handleComplete = async (bookingId) => {
+    setUpdating(bookingId);
+    try {
+      const response = await completeBooking(bookingId);
+      setBookings(bookings.map((b) => (b._id === bookingId ? response.data : b)));
+    } catch (err) {
+      setError(err.message);
+    }
+    setUpdating(null);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -42,6 +76,7 @@ const HostBookings = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Traveler</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Dates</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-[#1E1E1E] divide-y divide-neutral-800">
@@ -53,6 +88,35 @@ const HostBookings = () => {
                     {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{booking.status}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">
+                    {booking.status === 'Pending' && (
+                      <button
+                        onClick={() => handleApprove(booking._id)}
+                        disabled={updating === booking._id}
+                        className="text-green-500 hover:text-green-700 disabled:opacity-50"
+                      >
+                        {updating === booking._id ? 'Approving...' : 'Approve'}
+                      </button>
+                    )}
+                    {booking.status === 'Confirmed' && (
+                      <button
+                        onClick={() => handleComplete(booking._id)}
+                        disabled={updating === booking._id}
+                        className="text-blue-500 hover:text-blue-700 disabled:opacity-50"
+                      >
+                        {updating === booking._id ? 'Completing...' : 'Complete'}
+                      </button>
+                    )}
+                    {booking.status !== 'Cancelled' && (
+                      <button
+                        onClick={() => handleCancel(booking._id)}
+                        disabled={updating === booking._id}
+                        className="text-red-500 hover:text-red-700 ml-4 disabled:opacity-50"
+                      >
+                        {updating === booking._id ? 'Cancelling...' : 'Cancel'}
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
