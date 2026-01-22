@@ -1,16 +1,21 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { NavLink, Link } from 'react-router-dom';
+import AuthContext from '../../context/AuthContext.jsx';
 
-const Sidebar = () => {
+const Sidebar = ({ isSidebarOpen }) => {
+  const { user } = useContext(AuthContext);
+
   return (
-    <aside className="fixed -translate-x-full md:translate-x-0 transition-transform duration-300 supports-[backdrop-filter]:bg-black/40 bg-black/60 w-72 z-40 border-white/10 border-r top-0 bottom-0 left-0 backdrop-blur" id="sidebar">
+    <aside className={`fixed ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 supports-[backdrop-filter]:bg-black/40 bg-black/60 w-72 z-40 border-white/10 border-r top-0 bottom-0 left-0 backdrop-blur`} id="sidebar">
       <div className="flex items-center gap-3 px-5 h-16 border-b border-white/10">
-        <div>
-          <p className="text-[15px] font-semibold text-white tracking-tight">
-            Homestead
-          </p>
-          <p className="text-[12px] text-neutral-400">Host Console</p>
-        </div>
+        <Link to="/" className="inline-flex items-center gap-2">
+          <div>
+            <p className="text-xl font-semibold tracking-tight text-[#BB86FC]">
+              Homestead
+            </p>
+            <p className="text-[12px] text-neutral-400">Host Console</p>
+          </div>
+        </Link>
       </div>
 
       <nav className="px-3 py-4 space-y-1">
@@ -31,8 +36,8 @@ const Sidebar = () => {
       <div className="mt-auto px-4 py-4 border-t border-white/10">
         <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 cursor-pointer">
           <div className="flex-1">
-            <p className="text-[14px] font-medium">Welcome, Host</p>
-            <p className="text-[12px] text-neutral-400">host@offbeatstays.io</p>
+            <p className="text-[14px] font-medium">Welcome, {user?.name}</p>
+            <p className="text-[12px] text-neutral-400">{user?.email}</p>
           </div>
         </div>
       </div>

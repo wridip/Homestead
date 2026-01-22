@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
 const DashboardLayout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-200 antialiased font-[Inter]">
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
@@ -32,9 +34,9 @@ const DashboardLayout = () => {
       </div>
 
       <div className="flex min-h-screen">
-        <Sidebar />
+        <Sidebar isSidebarOpen={isSidebarOpen} />
         <main className="flex-1 md:ml-72">
-          <Topbar />
+          <Topbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
           <section className="px-4 md:px-6 py-6 space-y-6">
             <Outlet />
           </section>

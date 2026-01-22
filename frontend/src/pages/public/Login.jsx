@@ -21,7 +21,7 @@ const Login = () => {
     try {
       const data = await loginService({ email, password });
       login(data);
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
     }
