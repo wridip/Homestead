@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+const moment = require('moment');
 const Booking = require('../models/Booking');
 const Property = require('../models/Property');
 
@@ -5,12 +7,16 @@ const Property = require('../models/Property');
 // @route   POST /api/bookings
 // @access  Private (Traveler)
 exports.createBooking = async (req, res, next) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
-    const { propertyId, startDate, endDate, totalPrice } = req.body;
+    const { propertyId, startDate, endDate } = req.body; // totalPrice removed
 
-    const property = await Property.findById(propertyId);
+    const property = await Property.findById(propertyId).session(session);
 
     if (!property) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({ success: false, message: `Property not found with id of ${propertyId}` });
     }
 
@@ -21,26 +27,43 @@ exports.createBooking = async (req, res, next) => {
         { startDate: { $lt: endDate }, endDate: { $gt: startDate } },
       ],
       status: { $ne: 'Cancelled' }
-    });
+    }).session(session);
 
     if (overlappingBooking) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({ success: false, message: 'Property is not available for the selected dates' });
     }
 
-    const booking = await Booking.create({
+    // --- Price Calculation ---
+    const start = moment(startDate);
+    const end = moment(endDate);
+    const duration = end.diff(start, 'days');
+
+    // For now, we'll use the baseRate. In the future, we can implement logic
+    // to check for seasonal pricing.
+    const totalPrice = duration * property.baseRate;
+
+
+    const booking = (await Booking.create([{
       travelerId: req.user._id,
       propertyId,
       hostId: property.hostId,
       startDate,
       endDate,
-      totalPrice,
-    });
+      totalPrice, // Use the server-calculated price
+    }], { session }))[0];
+
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(201).json({
       success: true,
       data: booking,
     });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     next(error);
   }
 };
