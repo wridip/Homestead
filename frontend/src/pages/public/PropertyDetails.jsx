@@ -8,7 +8,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // Carousel styles
 import { Carousel } from 'react-responsive-carousel'; // Carousel component
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker } from '@react-google-maps/api';
+import { useGoogleMapsLoader } from '../../context/GoogleMapsLoaderContext';
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -25,11 +26,7 @@ const PropertyDetails = () => {
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
   const [reviewError, setReviewError] = useState(null);
 
-  // Load Google Maps API (without the 'places' library here)
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-  });
+  const { isLoaded } = useGoogleMapsLoader();
 
   const fetchPropertyAndReviews = async () => {
     try {

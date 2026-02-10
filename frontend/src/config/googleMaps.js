@@ -1,1 +1,1 @@
-export const libraries = ["places"];
+export const libraries = ["places", "maps"];

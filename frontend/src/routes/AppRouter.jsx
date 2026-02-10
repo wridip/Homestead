@@ -29,11 +29,16 @@ const MyBookings = lazy(() => import('../pages/protected/MyBookings'));
 const SharePhoto = lazy(() => import('../pages/protected/SharePhoto'));
 
 
+import { GoogleMapsLoaderProvider } from '../context/GoogleMapsLoaderContext.jsx';
+
+
 const AppRouter = () => {
   return (
     <Router>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
+      <GoogleMapsLoaderProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+
           {/* Protected Routes */}
           <Route element={<ProtectedRoute roles={['Host', 'Admin']} />}>
             <Route path="/dashboard" element={<DashboardLayout />}>
@@ -61,10 +66,10 @@ const AppRouter = () => {
             <Route path="/about" element={<About />} />
             <Route path="*" element={<NotFound />} />
           </Route>
-        </Routes>
-      </Suspense>
-    </Router>
-  );
+                  </Routes>
+                </Suspense>
+              </GoogleMapsLoaderProvider>
+            </Router>  );
 };
 
 export default AppRouter;

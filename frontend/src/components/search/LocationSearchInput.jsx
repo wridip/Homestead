@@ -1,12 +1,10 @@
-import React, { useState, useRef } from 'react';
-import { StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
-import { libraries } from '../../config/googleMaps';
+import React, { useRef } from 'react';
+import { StandaloneSearchBox } from '@react-google-maps/api';
+import { useGoogleMapsLoader } from '../../context/GoogleMapsLoaderContext';
 
 const LocationSearchInput = ({ value, onChange, placeholder }) => {
-    const { isLoaded, loadError } = useJsApiLoader({
-        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-        libraries,
-    });
+    const { isLoaded, loadError } = useGoogleMapsLoader();
+
 
     const searchBoxRef = useRef(null);
 
