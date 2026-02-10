@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const moment = require('moment');
 const Booking = require('../models/Booking');
 const Property = require('../models/Property');
-const { sendBookingConfirmation } = require('../utils/notifications');
 
 // @desc    Create a new booking
 // @route   POST /api/bookings
@@ -57,16 +56,6 @@ exports.createBooking = async (req, res, next) => {
 
     await session.commitTransaction();
     session.endSession();
-
-    // Send booking confirmation email
-    try {
-      // We need to get the full user object for the email
-      const user = await req.user.populate('email name');
-      await sendBookingConfirmation(booking, user, property);
-    } catch (emailError) {
-      // Log the error, but don't fail the request because the booking was successful.
-      console.error('Failed to send confirmation email:', emailError);
-    }
 
     res.status(201).json({
       success: true,
