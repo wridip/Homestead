@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext.jsx';
 import { login as loginService } from '../../services/authService';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     email: '',
@@ -13,6 +14,8 @@ const Login = () => {
   const [error, setError] = useState(null);
 
   const { email, password } = formData;
+  
+  const from = location.state?.from?.pathname || '/';
 
   const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -21,7 +24,7 @@ const Login = () => {
     try {
       const data = await loginService({ email, password });
       login(data);
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
     }
