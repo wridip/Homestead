@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext.jsx';
 import { login as loginService } from '../../services/authService';
@@ -12,6 +12,7 @@ const Login = () => {
     password: '',
   });
   const [error, setError] = useState(null);
+  const emailInputRef = useRef(null);
 
   const { email, password } = formData;
   
@@ -30,15 +31,28 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    if (error) {
+      // For more complex forms, you might want to focus the first invalid field
+      // For this form, focusing the email field is a reasonable default.
+      emailInputRef.current.focus();
+    }
+  }, [error]);
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="w-full max-w-md p-8 space-y-6 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
         <h2 className="text-2xl font-bold text-center text-neutral-200">Login</h2>
-        <form onSubmit={onSubmit} className="space-y-6">
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+        <form onSubmit={onSubmit} className="space-y-6" aria-describedby="form-error">
+          {error && (
+            <p id="form-error" className="text-red-500 text-sm" role="alert">
+              {error}
+            </p>
+          )}
           <div>
             <label htmlFor="email" className="text-sm font-bold text-neutral-400 block">Email</label>
             <input
+              ref={emailInputRef}
               id="email"
               type="email"
               name="email"
@@ -46,6 +60,7 @@ const Login = () => {
               onChange={onChange}
               className="w-full p-2 bg-neutral-800 border border-neutral-700 rounded mt-1 text-neutral-200 focus:ring-2 focus:ring-purple-500 focus:outline-none"
               required
+              aria-invalid={!!error}
             />
           </div>
           <div>
@@ -58,6 +73,7 @@ const Login = () => {
               onChange={onChange}
               className="w-full p-2 bg-neutral-800 border border-neutral-700 rounded mt-1 text-neutral-200 focus:ring-2 focus:ring-purple-500 focus:outline-none"
               required
+              aria-invalid={!!error}
             />
           </div>
           <div>

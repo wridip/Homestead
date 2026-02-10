@@ -1,59 +1,68 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
-import Home from '../pages/public/Home';
-import Explore from '../pages/public/Explore';
-import PropertyDetails from '../pages/public/PropertyDetails';
-import Login from '../pages/public/Login';
-import Signup from '../pages/public/Signup';
-import MyBookings from '../pages/protected/MyBookings';
-import About from '../pages/public/About';
-import NotFound from '../pages/public/NotFound';
-import DashboardLayout from '../components/layout/DashboardLayout';
-import DashboardHome from '../pages/protected/DashboardHome';
-import ManageProperties from '../pages/protected/ManageProperties';
-import ManagePropertyPhotos from '../pages/protected/ManagePropertyPhotos';
-import AddProperty from '../pages/protected/AddProperty';
-import EditProperty from '../pages/protected/EditProperty';
-import HostBookings from '../pages/protected/HostBookings';
-import Profile from '../pages/protected/Profile';
-import ProtectedRoute from '../components/common/ProtectedRoute';
-import SharePhoto from '../pages/protected/SharePhoto';
+
+// Layouts
 import MainLayout from '../components/layout/MainLayout.jsx';
+import DashboardLayout from '../components/layout/DashboardLayout';
+
+// Components
+import ProtectedRoute from '../components/common/ProtectedRoute';
+
+// Public Pages
+const Home = lazy(() => import('../pages/public/Home'));
+const Explore = lazy(() => import('../pages/public/Explore'));
+const PropertyDetails = lazy(() => import('../pages/public/PropertyDetails'));
+const Login = lazy(() => import('../pages/public/Login'));
+const Signup = lazy(() => import('../pages/public/Signup'));
+const About = lazy(() => import('../pages/public/About'));
+const NotFound = lazy(() => import('../pages/public/NotFound'));
+
+// Protected Pages
+const DashboardHome = lazy(() => import('../pages/protected/DashboardHome'));
+const ManageProperties = lazy(() => import('../pages/protected/ManageProperties'));
+const ManagePropertyPhotos = lazy(() => import('../pages/protected/ManagePropertyPhotos'));
+const AddProperty = lazy(() => import('../pages/protected/AddProperty'));
+const EditProperty = lazy(() => import('../pages/protected/EditProperty'));
+const HostBookings = lazy(() => import('../pages/protected/HostBookings'));
+const Profile = lazy(() => import('../pages/protected/Profile'));
+const MyBookings = lazy(() => import('../pages/protected/MyBookings'));
+const SharePhoto = lazy(() => import('../pages/protected/SharePhoto'));
+
 
 const AppRouter = () => {
   return (
     <Router>
-      <Routes>
-        {/* Protected Routes */}
-        <Route element={<ProtectedRoute roles={['Host', 'Admin']} />}>
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<DashboardHome />} />
-            <Route path="properties" element={<ManageProperties />} />
-            <Route path="properties/:id/photos" element={<ManagePropertyPhotos />} />
-            <Route path="add-property" element={<AddProperty />} />
-            <Route path="edit-property/:id" element={<EditProperty />} />
-            <Route path="bookings" element={<HostBookings />} />
-            <Route path="profile" element={<Profile />} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute roles={['Host', 'Admin']} />}>
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route index element={<DashboardHome />} />
+              <Route path="properties" element={<ManageProperties />} />
+              <Route path="properties/:id/photos" element={<ManagePropertyPhotos />} />
+              <Route path="add-property" element={<AddProperty />} />
+              <Route path="edit-property/:id" element={<EditProperty />} />
+              <Route path="bookings" element={<HostBookings />} />
+              <Route path="profile" element={<Profile />} />
+            </Route>
           </Route>
-        </Route>
-        <Route element={<ProtectedRoute roles={['Traveler']} />}>
-          <Route path="/my-bookings" element={<MyBookings />} />
-          <Route path="/share-photo" element={<SharePhoto />} />
-        </Route>
+          <Route element={<ProtectedRoute roles={['Traveler']} />}>
+            <Route path="/my-bookings" element={<MyBookings />} />
+            <Route path="/share-photo" element={<SharePhoto />} />
+          </Route>
 
-        {/* Public Routes */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/property/:id" element={<PropertyDetails />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/about" element={<About />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
+          {/* Public Routes */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/property/:id" element={<PropertyDetails />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/about" element={<About />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </Router>
   );
 };
