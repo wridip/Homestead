@@ -7,6 +7,8 @@ import PropertyCard from '../../components/properties/PropertyCard';
 import { PhotoCard } from '../../components/properties/PhotoCard';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "../../assets/datepicker-custom.css";
+import LocationSearchInput from '../../components/search/LocationSearchInput';
 
 const Home = () => {
   const [properties, setProperties] = useState([]);
@@ -86,6 +88,10 @@ const Home = () => {
     setEndDate(end);
   };
 
+  const handleLocationChange = (newLocation) => {
+    setLocation(newLocation);
+  };
+
   const isDateAvailable = (date) => {
     return !bookedDates.some(
       (bookedDate) => new Date(date).toDateString() === new Date(bookedDate).toDateString()
@@ -96,7 +102,7 @@ const Home = () => {
     if (!isDateAvailable(date)) {
       return 'text-red-500 bg-red-200';
     }
-    return 'text-green-500 bg-green-200';
+    return '';
   };
 
   const handleSearch = () => {
@@ -140,7 +146,7 @@ const Home = () => {
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 p-3">
               <div className="flex items-center gap-2 rounded-lg bg-transparent px-3 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#BB86FC]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#BB86FC]"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <input type="text" placeholder="Where to?" className="w-full bg-transparent text-sm placeholder-neutral-400 focus:outline-none text-white" value={location} onChange={(e) => setLocation(e.target.value)} />
+                <LocationSearchInput value={location} onChange={handleLocationChange} placeholder="Where to?" />
               </div>
               <div className="flex items-center gap-2 rounded-lg bg-transparent px-3 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#BB86FC]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#BB86FC]"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
@@ -230,7 +236,7 @@ const Home = () => {
             <h2 className="text-3xl tracking-tight font-medium text-neutral-200">Community Photo Wall</h2>
             <p className="mt-3 text-sm text-neutral-400">Post your favorite moments from your trip or homestay. Tag #Homestead and share them here.</p>
             <div className="mt-4 flex justify-center">
-              <Link to="/share-photo" className="btn-adaptive rounded-md px-4 py-2 text-sm font-semibold border inline-flex items-center text-neutral-200 border-neutral-700 hover:bg-neutral-800">
+              <Link to="/share-photo" className="btn-adaptive rounded-md px-4 py-2 text-sm font-semibold border inline-flex items-center gap-2 text-neutral-200 border-neutral-700 hover:bg-neutral-800">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><path d="M16 5h6"></path><path d="M19 2v6"></path><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"></path><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path><circle cx="9" cy="9" r="2"></circle></svg>
                 Share your photo
               </Link>

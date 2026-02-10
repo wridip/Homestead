@@ -1,10 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
 const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Close sidebar if clicked outside and sidebar is open
+      // Also ensure the click did not originate from the menu button itself,
+      // which is handled by onMenuClick prop of Topbar.
+      if (
+        isSidebarOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        !event.target.closest('button[aria-label="Open sidebar"]') // Exclude the burger icon button
+      ) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSidebarOpen]);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-200 antialiased font-[Inter]">
@@ -34,7 +57,7 @@ const DashboardLayout = () => {
       </div>
 
       <div className="flex min-h-screen">
-        <Sidebar isSidebarOpen={isSidebarOpen} />
+        <Sidebar isSidebarOpen={isSidebarOpen} sidebarRef={sidebarRef} />
         <main className="flex-1 md:ml-72">
           <Topbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
           <section className="px-4 md:px-6 py-6 space-y-6">

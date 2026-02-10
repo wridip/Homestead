@@ -2,11 +2,11 @@ import React, { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext.jsx';
 
-const Sidebar = ({ isSidebarOpen }) => {
+const Sidebar = ({ isSidebarOpen, sidebarRef }) => {
   const { user } = useContext(AuthContext);
 
   return (
-    <aside className={`fixed ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 supports-[backdrop-filter]:bg-black/40 bg-black/60 w-72 z-40 border-white/10 border-r top-0 bottom-0 left-0 backdrop-blur`} id="sidebar">
+    <aside ref={sidebarRef} className={`fixed ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 supports-[backdrop-filter]:bg-black/40 bg-black/60 w-72 z-40 border-white/10 border-r top-0 bottom-0 left-0 backdrop-blur`} id="sidebar">
       <div className="flex items-center gap-3 px-5 h-16 border-b border-white/10">
         <Link to="/" className="inline-flex items-center gap-2">
           <div>
