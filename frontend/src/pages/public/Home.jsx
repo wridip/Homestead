@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../assets/datepicker-custom.css";
 import LocationSearchInput from '../../components/search/LocationSearchInput';
+import GuestSelector from '../../components/search/GuestSelector';
 
 const Home = () => {
   const [properties, setProperties] = useState([]);
@@ -165,7 +166,7 @@ const Home = () => {
               </div>
               <div className="flex items-center gap-2 rounded-lg .bg-transparent px-3 py-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#BB86FC]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#BB86FC]"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                <input type="number" min="1" placeholder="Guests" className="w-full bg-transparent text-sm placeholder-neutral-400 focus:outline-none text-white" value={guests} onChange={(e) => setGuests(e.target.value)} />
+                <GuestSelector guests={guests} setGuests={setGuests} />
               </div>
               <button onClick={handleSearch} className="btn-adaptive rounded-lg px-4 py-2 text-center text-sm font-semibold border flex items-center justify-center gap-2 text-white bg-purple-600 border-purple-600 hover:bg-purple-500 transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
