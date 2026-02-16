@@ -1,8 +1,8 @@
 import api from './api';
 
 // Get host dashboard stats
-export const getDashboardStats = async () => {
-  const response = await api.get('/hosts/stats');
+export const getDashboardStats = async (dateRange) => {
+  const response = await api.get(`/hosts/stats?dateRange=${dateRange}&_=${new Date().getTime()}`);
   return response.data;
 };
 
