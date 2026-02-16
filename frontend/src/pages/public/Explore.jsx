@@ -16,6 +16,20 @@ const Explore = () => {
   });
 
   const [searchParams] = useSearchParams();
+  const [sortBy, setSortBy] = useState('Recommended');
+
+  const handleSortChange = (value) => {
+    setSortBy(value);
+    let sortedProperties = [...filteredProperties];
+    if (value === 'Price: Low to High') {
+      sortedProperties.sort((a, b) => a.baseRate - b.baseRate);
+    } else if (value === 'Price: High to Low') {
+      sortedProperties.sort((a, b) => b.baseRate - a.baseRate);
+    } else if (value === 'Top Rated') {
+      sortedProperties.sort((a, b) => b.averageRating - a.averageRating);
+    }
+    setFilteredProperties(sortedProperties);
+  };
 
   useEffect(() => {
     const location = searchParams.get('location');
@@ -96,72 +110,111 @@ const Explore = () => {
   }
 
   return (
-    <div className="sm:px-6 max-w-6xl mr-auto ml-auto pr-4 pb-24 pl-4">
-      <div className="mb-6 flex flex-col gap-5 md:mb-8 md:flex-row md:items-end md:justify-between">
-        <div className="">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white">Explore stays</h1>
-          <p className="sm:text-base text-sm text-neutral-400 max-w-2xl mt-2">Curated homestays with a focus on sustainability and local impact.</p>
-        </div>
+    <div className="bg-neutral-900 text-white min-h-screen">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+          {/* Filters column */}
+          <aside className="lg:col-span-1 space-y-8">
+            <div className="p-6 bg-neutral-800 rounded-2xl shadow-lg">
+              <h2 className="text-2xl font-bold mb-6 text-neutral-100">Filters</h2>
+              <div className="space-y-6">
+                {/* Search input */}
+                <div>
+                  <label htmlFor="search" className="block text-sm font-medium text-neutral-300 mb-2">Search by name or location</label>
+                  <input
+                    type="text"
+                    id="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="e.g., 'Mountain cabin'"
+                    className="w-full bg-neutral-700 border border-neutral-600 rounded-lg py-2.5 px-4 text-white placeholder-neutral-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+                  />
+                </div>
 
-        <div className="flex w-full items-center gap-2 md:w-[28rem]">
-          <label className="group relative flex w-full items-center rounded-lg border border-neutral-800 bg-neutral-900/50 px-3 py-2 text-sm text-neutral-300 focus-within:border-neutral-700">
-            <i data-lucide="search" className="mr-2 h-4 w-4 text-neutral-500"></i>
-            <input id="searchInput" type="text" placeholder="Search for properties..." className="w-full bg-transparent text-neutral-200 placeholder:text-neutral-500 focus:outline-none" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-          </label>
-          <button id="resetBtn" className="inline-flex items-center gap-1 rounded-lg border border-neutral-800 bg-neutral-900/50 px-3 py-2 text-sm text-neutral-300 hover:border-neutral-700" onClick={resetFilters}>
-            <i data-lucide="rotate-ccw" className="h-4 w-4"></i>
-            <span className="">Reset</span>
-          </button>
-        </div>
-      </div>
+                {/* Price range */}
+                <div>
+                  <label htmlFor="price" className="block text-sm font-medium text-neutral-300 mb-2">Price per night</label>
+                  <div className="flex justify-between text-sm text-neutral-400 mb-1">
+                    <span>₹500</span>
+                    <span>₹{filters.price}</span>
+                  </div>
+                  <input
+                    type="range"
+                    id="price"
+                    min="500"
+                    max="3000"
+                    value={filters.price}
+                    onChange={(e) => handleFilterChange('price', e.target.value)}
+                    className="w-full h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                  />
+                </div>
 
-      <section aria-label="Filters" className="sm:p-6 bg-neutral-900/40 border-neutral-800 border rounded-2xl mb-8 pt-4 pr-4 pb-4 pl-4">
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-wrap gap-2">
-              {['Mountain', 'Riverside', 'Farm', 'Minimal'].map(type => (
-                <button key={type} onClick={() => handleTypeFilter(type)} className={`inline-flex gap-2 hover:border-neutral-700 text-sm text-neutral-200 bg-neutral-900/60 border-neutral-800 border rounded-full pt-1.5 pr-3 pb-1.5 pl-3 gap-x-2 gap-y-2 items-center ${filters.type.includes(type) ? 'ring-1 ring-violet-500/40 border-violet-500/40 bg-violet-500/10 text-violet-300' : ''}`}>
-                  {type}
+                {/* Property Type */}
+                <div>
+                  <h3 className="text-sm font-medium text-neutral-300 mb-2">Property Type</h3>
+                  <div className="space-y-2">
+                    {['Mountain', 'Riverside', 'Farm', 'Minimal'].map(type => (
+                      <div key={type} className="flex items-center">
+                        <input id={`type-${type}`} name="type" type="checkbox" checked={filters.type.includes(type)} onChange={() => handleTypeFilter(type)} className="h-4 w-4 rounded border-neutral-600 bg-neutral-700 text-purple-600 focus:ring-purple-500" />
+                        <label htmlFor={`type-${type}`} className="ml-3 text-sm text-neutral-300">{type}</label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Region */}
+                <div>
+                  <label htmlFor="region" className="block text-sm font-medium text-neutral-300 mb-2">Region</label>
+                  <select id="region" value={filters.region} onChange={(e) => handleFilterChange('region', e.target.value)} className="w-full bg-neutral-700 border border-neutral-600 rounded-lg py-2.5 px-4 text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                    <option>All regions</option>
+                    <option>Himalayas</option>
+                    <option>Western Ghats</option>
+                    <option>North-East</option>
+                  </select>
+                </div>
+                
+                <button onClick={resetFilters} className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-800 focus:ring-purple-500">
+                  Reset Filters
                 </button>
-              ))}
-            </div>
-            <div className="hidden items-center gap-2 text-neutral-400 sm:flex">
-              <i data-lucide="sliders-horizontal" className="h-4 w-4"></i>
-              <span className="text-sm">Filters</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="relative">
-              <select value={filters.region} onChange={e => handleFilterChange('region', e.target.value)} className="flex hover:border-neutral-700 text-sm text-neutral-200 bg-neutral-900/60 w-full border-neutral-800 border rounded-lg pt-2 pr-3 pb-2 pl-3 items-center justify-between">
-                <option value="All regions">All regions</option>
-                <option value="Himalayas">Himalayas</option>
-                <option value="Western Ghats">Western Ghats</option>
-                <option value="North-East">North-East</option>
-              </select>
-            </div>
-
-            <div className="col-span-2">
-              <div className="flex items-center justify-between text-xs text-neutral-400">
-                <span>₹500</span>
-                <span className="inline-flex items-center gap-1">
-                  <i data-lucide="indian-rupee" className="h-3.5 w-3.5"></i>
-                  <span id="priceValue" className="font-medium text-neutral-200">₹{filters.price}</span>
-                </span>
-              </div>
-              <div className="mt-2 rounded-lg border border-neutral-800 bg-neutral-900/60 p-3">
-                <input type="range" min="500" max="3000" step="50" value={filters.price} className="w-full cursor-pointer accent-purple-500/90" id="priceRange" onChange={e => handleFilterChange('price', e.target.value)} />
               </div>
             </div>
+          </aside>
+
+          {/* Properties grid */}
+          <div className="lg:col-span-3">
+            <div className="flex flex-col sm:flex-row justify-between items-baseline mb-8">
+              <h1 className="text-4xl font-extrabold text-neutral-100 tracking-tight">Explore Properties</h1>
+               <div className="relative">
+                <select 
+                  value={sortBy} 
+                  onChange={(e) => handleSortChange(e.target.value)} 
+                  className="appearance-none w-full sm:w-auto bg-neutral-800 border border-neutral-700 text-white py-2 pl-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
+                >
+                  <option>Recommended</option>
+                  <option>Price: Low to High</option>
+                  <option>Price: High to Low</option>
+                  <option>Top Rated</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path></svg>
+                </div>
+              </div>
+            </div>
+
+            {filteredProperties.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                {filteredProperties.map(property => (
+                  <PropertyCard key={property._id} property={property} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <p className="text-xl text-neutral-400">No properties found matching your criteria.</p>
+              </div>
+            )}
           </div>
         </div>
-      </section>
-
-      <section aria-label="Results" className="space-y-6">
-        {filteredProperties.map(property => (
-          <PropertyCard key={property._id} property={property} />
-        ))}
-      </section>
+      </main>
     </div>
   );
 };
