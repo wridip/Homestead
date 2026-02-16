@@ -69,3 +69,8 @@
 .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
     border-color: #a864f7 !important;
 }
+
+.react-datepicker__portal {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+

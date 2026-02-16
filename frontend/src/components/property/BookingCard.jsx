@@ -27,19 +27,19 @@ const BookingCard = ({
         startDate={startDate}
         endDate={endDate}
         selectsRange
-        inline
-        calendarClassName="bg-neutral-800 text-white"
-        dayClassName={() => "text-neutral-300"}
+        withPortal
+        placeholderText="Select your dates"
+        className="w-full p-3 bg-neutral-700 text-white rounded-lg"
       />
       {nights > 0 && (
         <div className="mt-4 text-lg text-neutral-200">
           <div className="flex justify-between">
-            <span>${property.baseRate} x {nights} nights</span>
-            <span>${(property.baseRate * nights).toFixed(2)}</span>
+            <span>₹{property.baseRate} x {nights} nights</span>
+            <span>₹{(property.baseRate * nights).toFixed(2)}</span>
           </div>
           <div className="flex justify-between font-bold border-t border-neutral-700 mt-2 pt-2">
             <span>Total</span>
-            <span>${totalPrice.toFixed(2)}</span>
+            <span>₹{totalPrice.toFixed(2)}</span>
           </div>
         </div>
       )}
