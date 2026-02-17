@@ -70,15 +70,9 @@ exports.getProperties = async (req, res, next) => {
     // Finding resource
     query = Property.find(JSON.parse(queryStr)).populate('hostId');
 
-    // Generic text search for name and address
-    if (req.query.search) {
-      const searchQuery = {
-        $or: [
-          { name: { $regex: req.query.search, $options: 'i' } },
-          { address: { $regex: req.query.search, $options: 'i' } },
-        ],
-      };
-      query = query.find(searchQuery);
+    // Location search from homepage
+    if (req.query.location) {
+      query = query.where('address').regex(new RegExp(req.query.location, 'i'));
     }
 
     // Select Fields

@@ -94,7 +94,7 @@ const Home = () => {
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (location) {
-      params.append('search', location);
+      params.append('location', location);
     }
     if (startDate) {
       params.append('startDate', startDate.toISOString());

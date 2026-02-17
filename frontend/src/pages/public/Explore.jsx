@@ -4,30 +4,43 @@ import { getProperties } from '../../services/propertyService';
 import PropertyCard from '../../components/properties/PropertyCard';
 
 const Explore = () => {
-  const [properties, setProperties] = useState([]);
+  const [properties, setProperties] = useState([]); // The master list from the server
+  const [filteredProperties, setFilteredProperties] = useState([]); // The list to be rendered
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  const [searchParams, setSearchParams] = useSearchParams();
-  
-  // State for the filter controls themselves
-  const [searchInputValue, setSearchInputValue] = useState(searchParams.get('search') || '');
-  const [filters, setFilters] = useState({
-    type: searchParams.getAll('type') || [],
-    price: searchParams.get('price') || 3000,
-  });
-  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'Recommended');
 
+  const [searchParams] = useSearchParams();
+
+  // State for client-side filter controls
+  const [searchQuery, setSearchQuery] = useState(''); // For the text input on this page
+  const [filters, setFilters] = useState({
+    type: [],
+    price: 3000,
+  });
+  const [sortBy, setSortBy] = useState('Recommended');
+
+  // Step 1: Fetch the base list of properties from the server
   useEffect(() => {
     const fetchProperties = async () => {
       setLoading(true);
       try {
-        const params = new URLSearchParams(searchParams);
-        // Ensure we fetch all results that match the criteria
-        params.set('limit', -1);
+        const location = searchParams.get('location');
+        const params = { limit: -1 };
+        if (location) {
+          params.location = location;
+          // Set the client-side search box to match the initial search
+          setSearchQuery(location);
+        }
         
         const response = await getProperties(params);
-        setProperties(response.data);
+        const propertyData = Array.isArray(response) ? response : response?.data;
+
+        if (Array.isArray(propertyData)) {
+          setProperties(propertyData);
+        } else {
+          console.error("Fetched properties data is not an array:", propertyData);
+          setProperties([]);
+        }
       } catch (err) {
         setError(err.message);
       }
@@ -37,57 +50,76 @@ const Explore = () => {
     fetchProperties();
   }, [searchParams]);
 
-  // This function will be called when the user interacts with filters
-  const handleFilterChange = () => {
-    const newParams = new URLSearchParams();
+  // Step 2: Apply all client-side filters whenever the master list or filters change
+  useEffect(() => {
+    let result = properties;
 
-    if (searchInputValue) {
-      newParams.set('search', searchInputValue);
+    // Apply text search on name or address (client-side)
+    if (searchQuery) {
+      result = result.filter(p => 
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        (p.address && p.address.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
     }
-    if (sortBy !== 'Recommended') {
-      newParams.set('sort', sortBy);
-    }
-    if (filters.price < 3000) {
-      newParams.set('price_lte', filters.price);
-    }
-    filters.type.forEach(t => newParams.append('type', t));
 
-    setSearchParams(newParams);
-  };
-  
-  // A specific handler for the text input to update its own state
-  const handleSearchInputChange = (e) => {
-    setSearchInputValue(e.target.value);
-  };
+    // Apply type filters
+    if (filters.type.length > 0) {
+      result = result.filter(p => filters.type.includes(p.type));
+    }
+    
+    // Apply price filter
+    if (filters.price) {
+      result = result.filter(p => p.baseRate <= filters.price);
+    }
 
-  // A handler to trigger the search when the user clicks a button or presses enter
-  const triggerSearch = () => {
-    handleFilterChange();
+    // Apply sorting
+    let sortedProperties = [...result];
+    if (sortBy === 'Price: Low to High') {
+      sortedProperties.sort((a, b) => a.baseRate - b.baseRate);
+    } else if (sortBy === 'Price: High to Low') {
+      sortedProperties.sort((a, b) => b.baseRate - a.baseRate);
+    } else if (sortBy === 'Top Rated') {
+      sortedProperties.sort((a, b) => b.averageRating - a.averageRating);
+    }
+
+    setFilteredProperties(sortedProperties);
+
+  }, [searchQuery, filters, sortBy, properties]);
+
+  const handleFilterChange = (filterType, value) => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      [filterType]: value
+    }));
   };
 
   const handleTypeFilter = (type) => {
-    const newTypeFilters = filters.type.includes(type)
-      ? filters.type.filter(t => t !== type)
-      : [...filters.type, type];
-    
-    setFilters(prev => ({...prev, type: newTypeFilters}));
-    // We can decide to trigger search immediately on checkbox click
-    // Or wait for a button. For now, let's make it immediate.
-    const newParams = new URLSearchParams(searchParams);
-    if (newTypeFilters.length > 0) {
-      newParams.delete('type');
-      newTypeFilters.forEach(t => newParams.append('type', t));
-    } else {
-      newParams.delete('type');
-    }
-    setSearchParams(newParams);
+    setFilters(prevFilters => {
+      const newTypeFilters = prevFilters.type.includes(type) 
+        ? prevFilters.type.filter(t => t !== type) 
+        : [...prevFilters.type, type];
+      return { ...prevFilters, type: newTypeFilters };
+    });
+  };
+
+  const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const triggerSearch = () => {
+    // This function can be used to explicitly trigger a search if needed
+    // For now, client-side filtering happens automatically when searchQuery changes
+    // But if we ever moved to server-side search on button click, this would be the place.
+    console.log("Triggering search with:", searchQuery);
   };
 
   const resetFilters = () => {
-    setSearchInputValue('');
-    setFilters({ type: [], region: 'All regions', price: 3000 });
+    setSearchQuery('');
+    setFilters({
+      type: [],
+      price: 3000,
+    });
     setSortBy('Recommended');
-    setSearchParams(new URLSearchParams());
   };
 
   if (loading) {
@@ -114,9 +146,9 @@ const Explore = () => {
                     <input
                       type="text"
                       id="search"
-                      value={searchInputValue}
+                      value={searchQuery}
                       onChange={handleSearchInputChange}
-                      placeholder="e.g., 'Lachung'"
+                      placeholder="e.g., 'Mountain cabin' or 'Lachung'"
                       className="w-full bg-neutral-700 border border-neutral-600 rounded-lg py-2.5 px-4 text-white placeholder-neutral-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
                     />
                     <button onClick={triggerSearch} className="p-2 bg-purple-600 rounded-lg hover:bg-purple-700">
