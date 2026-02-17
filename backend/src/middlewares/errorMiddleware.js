@@ -1,3 +1,4 @@
+const multer = require('multer');
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
 
@@ -5,6 +6,18 @@ const errorHandler = (err, req, res, next) => {
 
   // Log to console for dev
   console.error(err.stack);
+
+  // Multer errors
+  if (err instanceof multer.MulterError) {
+    error.statusCode = 400;
+    error.message = `File Upload Error: ${err.message}`;
+  }
+
+  // Multer File Filter Error
+  if (error.message && error.message.includes('Images Only!')) {
+    error.statusCode = 400;
+    error.message = 'Invalid file type. Only image files are allowed.';
+  }
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {

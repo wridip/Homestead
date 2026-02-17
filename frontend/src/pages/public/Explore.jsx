@@ -61,7 +61,7 @@ const Explore = () => {
     }
 
     if (filters.type.length > 0) {
-      result = result.filter(p => filters.type.some(t => p.amenities.includes(t)));
+      result = result.filter(p => filters.type.includes(p.type));
     }
 
     if (filters.region && filters.region !== 'All regions') {

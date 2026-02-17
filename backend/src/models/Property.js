@@ -11,6 +11,11 @@ const propertySchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  type: {
+    type: String,
+    enum: ['Mountain', 'Riverside', 'Farm', 'Minimal'],
+    required: true
+  },
   description: {
     type: String,
     required: true

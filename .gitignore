@@ -15,3 +15,14 @@ CONTRIBUTING.md
 # Coverage directory
 
 # Build output
+.github/workflows/gemini-triage.yml
+.github/workflows/gemini-scheduled-triage.yml
+.github/workflows/gemini-review.yml
+.github/workflows/gemini-invoke.yml
+.github/workflows/gemini-dispatch.yml
+.github/commands/gemini-triage.toml
+.github/commands/gemini-scheduled-triage.toml
+.github/commands/gemini-review.toml
+.github/commands/gemini-invoke.toml
+output.txt
+future scope.txt

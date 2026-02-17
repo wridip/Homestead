@@ -8,6 +8,7 @@ exports.createProperty = async (req, res, next) => {
     const {
       name,
       description,
+      type,
       address,
       contact,
       location,
@@ -23,6 +24,7 @@ exports.createProperty = async (req, res, next) => {
       hostId: req.user._id,
       name,
       description,
+      type,
       address,
       contact,
       location,
@@ -158,10 +160,11 @@ exports.updateProperty = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'Not authorized to update this property' });
     }
 
-    const { name, description, address, contact, location, amenities, roomTypes, baseRate, seasonalPricing, images, status } = req.body;
+    const { name, description, type, address, contact, location, amenities, roomTypes, baseRate, seasonalPricing, images, status } = req.body;
 
     property.name = name || property.name;
     property.description = description || property.description;
+    property.type = type || property.type;
     property.address = address || property.address;
     property.contact = contact || property.contact;
     property.location = location || property.location;
