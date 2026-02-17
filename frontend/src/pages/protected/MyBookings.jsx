@@ -64,7 +64,7 @@ const MyBookings = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{booking.status}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    {booking.status !== 'Cancelled' && (
+                    {booking.status !== 'Cancelled' && booking.status !== 'Completed' && (
                       <button onClick={() => handleCancel(booking._id)} className="text-red-400 hover:text-red-300">Cancel</button>
                     )}
                   </td>

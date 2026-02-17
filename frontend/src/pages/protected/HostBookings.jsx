@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getHostBookings, approveBooking, cancelBooking, completeBooking } from '../../services/bookingService';
 
 const HostBookings = () => {
@@ -6,6 +7,7 @@ const HostBookings = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updating, setUpdating] = useState(null); // To track which booking is being updated
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -24,8 +26,8 @@ const HostBookings = () => {
   const handleApprove = async (bookingId) => {
     setUpdating(bookingId);
     try {
-      const response = await approveBooking(bookingId);
-      setBookings(bookings.map((b) => (b._id === bookingId ? response.data : b)));
+      await approveBooking(bookingId);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     }
@@ -35,8 +37,8 @@ const HostBookings = () => {
   const handleCancel = async (bookingId) => {
     setUpdating(bookingId);
     try {
-      const response = await cancelBooking(bookingId);
-      setBookings(bookings.map((b) => (b._id === bookingId ? response.data : b)));
+      await cancelBooking(bookingId);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     }
@@ -46,8 +48,8 @@ const HostBookings = () => {
   const handleComplete = async (bookingId) => {
     setUpdating(bookingId);
     try {
-      const response = await completeBooking(bookingId);
-      setBookings(bookings.map((b) => (b._id === bookingId ? response.data : b)));
+      await completeBooking(bookingId);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     }
@@ -107,7 +109,7 @@ const HostBookings = () => {
                         {updating === booking._id ? 'Completing...' : 'Complete'}
                       </button>
                     )}
-                    {booking.status !== 'Cancelled' && (
+                    {booking.status !== 'Cancelled' && booking.status !== 'Completed' && (
                       <button
                         onClick={() => handleCancel(booking._id)}
                         disabled={updating === booking._id}
