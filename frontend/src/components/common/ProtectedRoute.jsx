@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext.jsx';
-import MainLayout from '../layout/MainLayout.jsx';
 
 const ProtectedRoute = ({ roles }) => {
   const { isAuthenticated, user, loading } = useContext(AuthContext);
@@ -19,11 +18,7 @@ const ProtectedRoute = ({ roles }) => {
     return <Navigate to="/" replace />;
   }
 
-  return (
-    <MainLayout>
-      <Outlet />
-    </MainLayout>
-  );
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

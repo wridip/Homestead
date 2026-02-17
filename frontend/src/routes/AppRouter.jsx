@@ -52,8 +52,10 @@ const AppRouter = () => {
             </Route>
           </Route>
           <Route element={<ProtectedRoute roles={['Traveler']} />}>
-            <Route path="/my-bookings" element={<MyBookings />} />
-            <Route path="/share-photo" element={<SharePhoto />} />
+            <Route element={<MainLayout />}>
+              <Route path="/my-bookings" element={<MyBookings />} />
+              <Route path="/share-photo" element={<SharePhoto />} />
+            </Route>
           </Route>
 
           {/* Public Routes */}
