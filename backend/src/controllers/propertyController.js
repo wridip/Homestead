@@ -68,7 +68,7 @@ exports.getProperties = async (req, res, next) => {
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
     // Finding resource
-    query = Property.find(JSON.parse(queryStr));
+    query = Property.find(JSON.parse(queryStr)).populate('hostId');
 
     // Select Fields
     if (req.query.select) {
