@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 // @route   POST /api/auth/signup
 // @access  Public
 exports.signup = async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -15,7 +15,7 @@ exports.signup = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'User already exists' });
     }
 
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ name, email, password, role });
 
     if (user) {
       const accessToken = generateAccessToken(res, user._id, user.role);

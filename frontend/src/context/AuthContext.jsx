@@ -1,14 +1,17 @@
-import React, { createContext, useReducer, useEffect } from 'react';
+import React, { createContext, useReducer, useEffect, useCallback, useMemo } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext();
 
 const authReducer = (state, action) => {
   switch (action.type) {
-    case 'SET_LOADING':
+    case 'AUTH_STATE_INITIALIZED':
       return {
         ...state,
-        loading: action.payload,
+        isAuthenticated: !!action.payload.user,
+        user: action.payload.user,
+        token: action.payload.token,
+        loading: false,
       };
     case 'LOGIN':
       return {
@@ -46,21 +49,22 @@ export const AuthProvider = ({ children }) => {
           const response = await api.get('/me');
           const user = response.data;
           dispatch({
-            type: 'LOGIN',
+            type: 'AUTH_STATE_INITIALIZED',
             payload: { user, token },
           });
         } catch (error) {
           console.error('Token verification failed', error);
-          dispatch({ type: 'LOGOUT' });
+          dispatch({ type: 'AUTH_STATE_INITIALIZED', payload: { user: null, token: null } });
         }
+      } else {
+        dispatch({ type: 'AUTH_STATE_INITIALIZED', payload: { user: null, token: null } });
       }
-      dispatch({ type: 'SET_LOADING', payload: false });
     };
 
     verifyToken();
   }, []);
 
-  const login = (userData) => {
+  const login = useCallback((userData) => {
     localStorage.setItem('user', JSON.stringify(userData.user));
     localStorage.setItem('token', userData.token);
     api.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
@@ -68,17 +72,23 @@ export const AuthProvider = ({ children }) => {
       type: 'LOGIN',
       payload: { user: userData.user, token: userData.token },
     });
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     delete api.defaults.headers.common['Authorization'];
     dispatch({ type: 'LOGOUT' });
-  };
+  }, []);
+
+  const value = useMemo(() => ({
+    ...state,
+    login,
+    logout,
+  }), [state, login, logout]);
 
   return (
-    <AuthContext.Provider value={{ ...state, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
