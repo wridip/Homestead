@@ -31,17 +31,17 @@ const PhotoCard = ({ photo, onDelete }) => {
             {/* Likes and comments can be added later */}
           </div>
           <div className="flex items-center gap-2">
-            {user && user.role === 'Host' && (
-              <button onClick={handleDelete} className="rounded-md border border-[rgba(255,255,255,0.1)] px-3 py-1.5 text-xs font-medium hover:border-[rgba(255,255,255,0.2)] transition inline-flex items-center text-red-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                Delete
-              </button>
-            )}
-            {user && user.role === 'Host' && (
-              <button onClick={handleShare} className="rounded-md border border-[rgba(255,255,255,0.1)] px-3 py-1.5 text-xs font-medium hover:border-[rgba(255,255,255,0.2)] transition inline-flex items-center text-[#E0E0E0]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg>
-                Share
-              </button>
+            {user && (user._id === photo.user._id || user.role === 'Admin') && (
+              <>
+                <button onClick={handleDelete} className="rounded-md border border-[rgba(255,255,255,0.1)] px-3 py-1.5 text-xs font-medium hover:border-[rgba(255,255,255,0.2)] transition inline-flex items-center text-red-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                  Delete
+                </button>
+                <button onClick={handleShare} className="rounded-md border border-[rgba(255,255,255,0.1)] px-3 py-1.5 text-xs font-medium hover:border-[rgba(255,255,255,0.2)] transition inline-flex items-center text-[#E0E0E0]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg>
+                  Share
+                </button>
+              </>
             )}
           </div>
         </div>

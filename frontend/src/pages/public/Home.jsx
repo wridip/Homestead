@@ -31,14 +31,6 @@ const Home = () => {
     }
   };
 
-  // TODO: Replace with actual API call to fetch bookings
-  const bookedDates = [
-    new Date(2025, 10, 20),
-    new Date(2025, 10, 21),
-    new Date(2025, 10, 28),
-    new Date(2025, 10, 29),
-  ];
-
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -93,19 +85,6 @@ const Home = () => {
     setLocation(newLocation);
   };
 
-  const isDateAvailable = (date) => {
-    return !bookedDates.some(
-      (bookedDate) => new Date(date).toDateString() === new Date(bookedDate).toDateString()
-    );
-  };
-
-  const dayClassName = (date) => {
-    if (!isDateAvailable(date)) {
-      return 'text-red-500 bg-red-200';
-    }
-    return '';
-  };
-
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (location) {
@@ -156,10 +135,8 @@ const Home = () => {
                   onChange={handleDateChange}
                   startDate={startDate}
                   endDate={endDate}
-                  excludeDates={bookedDates}
                   selectsRange
                   popperPlacement="bottom-start"
-                  dayClassName={dayClassName}
                   placeholderText="Dates"
                   className="placeholder-neutral-400 focus:outline-none text-sm bg-transparent w-full text-white"
                 />
@@ -278,14 +255,10 @@ const Home = () => {
               </li>
             </ul>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="/signup" className="btn-adaptive rounded-md px-4 py-2 text-sm font-semibold border inline-flex items-center gap-2 bg-purple-600 text-white hover:bg-purple-500">
+              <Link to="/signup" className="btn-adaptive rounded-md px-4 py-2 text-sm font-semibold border inline-flex items-center gap-2 bg-purple-600 text-white hover:bg-purple-500">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>
                 Become a host
-              </a>
-              <a href="#" className="rounded-md border border-neutral-700 px-4 py-2 text-sm font-medium hover:bg-neutral-800 transition inline-flex items-center gap-2 text-neutral-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>
-                Host guide
-              </a>
+              </Link>
             </div>
           </div>
           <div className="relative" data-animate>
