@@ -27,6 +27,7 @@ const HostBookings = lazy(() => import('../pages/protected/HostBookings'));
 const Profile = lazy(() => import('../pages/protected/Profile'));
 const MyBookings = lazy(() => import('../pages/protected/MyBookings'));
 const SharePhoto = lazy(() => import('../pages/protected/SharePhoto'));
+const EarningsAudit = lazy(() => import('../pages/protected/EarningsAudit'));
 
 
 import { GoogleMapsLoaderProvider } from '../context/GoogleMapsLoaderContext.jsx';
@@ -48,6 +49,7 @@ const AppRouter = () => {
               <Route path="add-property" element={<AddProperty />} />
               <Route path="edit-property/:id" element={<EditProperty />} />
               <Route path="bookings" element={<HostBookings />} />
+              <Route path="audit" element={<EarningsAudit />} />
               <Route path="profile" element={<Profile />} />
             </Route>
           </Route>

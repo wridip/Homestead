@@ -114,3 +114,41 @@ exports.getHostProperties = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Get a detailed earnings audit for a host
+// @route   GET /api/hosts/earnings-audit
+// @access  Private (Host)
+exports.getEarningsAudit = async (req, res, next) => {
+  try {
+    const hostId = req.user._id;
+
+    const completedBookings = await Booking.find({
+      hostId,
+      status: 'Completed',
+    })
+    .populate('travelerId', 'name')
+    .populate('propertyId', 'name')
+    .sort({ endDate: -1 });
+
+    // Group bookings by month
+    const monthlyAudit = completedBookings.reduce((acc, booking) => {
+      const monthYear = moment(booking.endDate).format('MMMM YYYY');
+      if (!acc[monthYear]) {
+        acc[monthYear] = {
+          bookings: [],
+          totalEarnings: 0,
+        };
+      }
+      acc[monthYear].bookings.push(booking);
+      acc[monthYear].totalEarnings += booking.totalPrice;
+      return acc;
+    }, {});
+
+    res.status(200).json({
+      success: true,
+      data: monthlyAudit,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

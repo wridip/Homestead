@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   getDashboardStats,
   getHostProperties,
+  getEarningsAudit,
 } = require('../controllers/hostController');
 
 const { protect, authorize } = require('../middlewares/authMiddleware');
@@ -17,5 +18,10 @@ router.get('/stats', protect, authorize('Host'), getDashboardStats);
 // @desc    Get all properties for a host
 // @access  Private (Host)
 router.get('/properties', protect, authorize('Host'), getHostProperties);
+
+// @route   GET api/hosts/earnings-audit
+// @desc    Get a detailed earnings audit for a host
+// @access  Private (Host)
+router.get('/earnings-audit', protect, authorize('Host'), getEarningsAudit);
 
 module.exports = router;

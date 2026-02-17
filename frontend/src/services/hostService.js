@@ -23,3 +23,9 @@ export const deleteProperty = async (id) => {
   const response = await api.delete(`/properties/${id}`);
   return response.data;
 };
+
+// Get a detailed earnings audit for a host
+export const getEarningsAudit = async () => {
+  const response = await api.get('/hosts/earnings-audit');
+  return response.data;
+};
