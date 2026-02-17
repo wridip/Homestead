@@ -34,8 +34,7 @@ const LocationSearchInput = ({ value, onChange, placeholder }) => {
                 type="text"
                 placeholder={placeholder}
                 className="w-full bg-transparent text-sm placeholder-neutral-400 focus:outline-none text-white"
-                value={value} // Bind to the value prop from the parent
-                onChange={(e) => onChange(e.target.value)} // Call onChange prop on every input change
+                defaultValue={value}
             />
         </StandaloneSearchBox>
     );

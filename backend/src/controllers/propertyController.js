@@ -70,6 +70,17 @@ exports.getProperties = async (req, res, next) => {
     // Finding resource
     query = Property.find(JSON.parse(queryStr)).populate('hostId');
 
+    // Generic text search for name and address
+    if (req.query.search) {
+      const searchQuery = {
+        $or: [
+          { name: { $regex: req.query.search, $options: 'i' } },
+          { address: { $regex: req.query.search, $options: 'i' } },
+        ],
+      };
+      query = query.find(searchQuery);
+    }
+
     // Select Fields
     if (req.query.select) {
       const fields = req.query.select.split(',').join(' ');
@@ -91,7 +102,11 @@ exports.getProperties = async (req, res, next) => {
     const endIndex = page * limit;
     const total = await Property.countDocuments(JSON.parse(queryStr));
 
-    query = query.skip(startIndex).limit(limit);
+    query = query.skip(startIndex);
+
+    if (limit > 0) {
+      query = query.limit(limit);
+    }
 
     // Executing query
     const properties = await query;

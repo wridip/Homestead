@@ -1,8 +1,8 @@
 import api from './api';
 
 // Get all properties
-export const getProperties = async () => {
-  const response = await api.get('/properties');
+export const getProperties = async (params) => {
+  const response = await api.get('/properties', { params });
   return response.data;
 };
 
