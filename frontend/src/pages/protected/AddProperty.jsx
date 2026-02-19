@@ -87,11 +87,13 @@ const AddProperty = () => {
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [formErrors, setFormErrors] = useState({}); // New state for form errors
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setFormErrors({ ...formErrors, [name]: '' }); // Clear error when user types
   };
 
   const handleAmenityChange = (e) => {
@@ -129,6 +131,32 @@ const AddProperty = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const errors = {};
+    if (!formData.name) errors.name = 'Property name is required';
+    if (!formData.description) errors.description = 'Description is required';
+    if (!formData.type) errors.type = 'Property type is required';
+    if (!formData.address) errors.address = 'Address is required';
+    if (!formData.contact) errors.contact = 'Contact is required';
+    if (!formData.baseRate) errors.baseRate = 'Base rate is required';
+    else if (isNaN(formData.baseRate) || parseFloat(formData.baseRate) <= 0) errors.baseRate = 'Base rate must be a positive number';
+
+    if (formData.latitude && isNaN(formData.latitude)) errors.latitude = 'Latitude must be a number';
+    if (formData.longitude && isNaN(formData.longitude)) errors.longitude = 'Longitude must be a number';
+
+    if (formData.roomTypes.length > 0) {
+      formData.roomTypes.forEach((room, index) => {
+        if (!room.name) errors[`roomType-${index}-name`] = `Room name for Room ${index + 1} is required`;
+        if (isNaN(room.beds) || parseInt(room.beds) <= 0) errors[`roomType-${index}-beds`] = `Number of beds for Room ${index + 1} must be a positive integer`;
+        if (isNaN(room.occupancy) || parseInt(room.occupancy) <= 0) errors[`roomType-${index}-occupancy`] = `Max occupancy for Room ${index + 1} must be a positive integer`;
+      });
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return; // Prevent form submission
+    }
+
     try {
       let imageUrls = [];
       if (selectedFiles.length > 0) {
@@ -154,56 +182,76 @@ const AddProperty = () => {
       navigate('/dashboard/properties');
     } catch (error) {
       console.error('Failed to add property', error);
+      // Display a general error message to the user if form submission fails due to backend error
+      setFormErrors({ general: error.response?.data?.message || 'An unexpected error occurred' });
     }
   };
 
   return (
     <div className="container mx-auto p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
       <h1 className="text-3xl font-bold text-neutral-200 mb-8">Add New Property</h1>
+      {formErrors.general && <p className="text-red-500 text-sm mb-4">{formErrors.general}</p>}
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Information */}
         <div className="p-6 border border-neutral-800 rounded-lg bg-[#1E1E1E]">
           <h2 className="text-2xl font-semibold mb-6 text-neutral-200">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input
-              type="text"
-              name="name"
-              placeholder="Property Name"
-              onChange={handleChange}
-              className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
-            />
-            <select
-              name="type"
-              onChange={handleChange}
-              className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500 bg-neutral-800"
-              required
-            >
-              <option value="" className="bg-neutral-800 text-white">Select Property Type</option>
-              <option value="Mountain" className="bg-neutral-800 text-white">Mountain</option>
-              <option value="Riverside" className="bg-neutral-800 text-white">Riverside</option>
-              <option value="Farm" className="bg-neutral-800 text-white">Farm</option>
-              <option value="Minimal" className="bg-neutral-800 text-white">Minimal</option>
-            </select>
-            <input
-              type="text"
-              name="address"
-              placeholder="Address"
-              onChange={handleChange}
-              className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
-            />
-            <textarea
-              name="description"
-              placeholder="Description"
-              onChange={handleChange}
-              className="p-3 bg-transparent border border-neutral-700 rounded-md col-span-2 text-white h-32 resize-none focus:ring-2 focus:ring-purple-500"
-            />
-            <input
-              type="text"
-              name="contact"
-              placeholder="Contact"
-              onChange={handleChange}
-              className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
-            />
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="name"
+                placeholder="Property Name"
+                onChange={handleChange}
+                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+              />
+              {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="type" className="text-sm font-bold text-neutral-400 block mb-1">Property Type</label>
+              <select
+                id="type"
+                name="type"
+                onChange={handleChange}
+                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500 bg-neutral-800"
+                required
+              >
+                <option value="" className="bg-neutral-800 text-white">Select Property Type</option>
+                <option value="Mountain" className="bg-neutral-800 text-white">Mountain</option>
+                <option value="Riverside" className="bg-neutral-800 text-white">Riverside</option>
+                <option value="Farm" className="bg-neutral-800 text-white">Farm</option>
+                <option value="Minimal" className="bg-neutral-800 text-white">Minimal</option>
+              </select>
+              {formErrors.type && <p className="text-red-500 text-sm mt-1">{formErrors.type}</p>}
+            </div>
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="address"
+                placeholder="Address"
+                onChange={handleChange}
+                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+              />
+              {formErrors.address && <p className="text-red-500 text-sm mt-1">{formErrors.address}</p>}
+            </div>
+            <div className="flex flex-col col-span-2">
+              <textarea
+                name="description"
+                placeholder="Description"
+                onChange={handleChange}
+                className="p-3 bg-transparent border border-neutral-700 rounded-md col-span-2 text-white h-32 resize-none focus:ring-2 focus:ring-purple-500"
+              />
+              {formErrors.description && <p className="text-red-500 text-sm mt-1">{formErrors.description}</p>}
+            </div>
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="contact"
+                placeholder="Contact"
+                onChange={handleChange}
+                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+              />
+              {formErrors.contact && <p className="text-red-500 text-sm mt-1">{formErrors.contact}</p>}
+            </div>
           </div>
         </div>
 
@@ -211,20 +259,26 @@ const AddProperty = () => {
         <div className="p-6 border border-neutral-800 rounded-lg bg-[#1E1E1E]">
           <h2 className="text-2xl font-semibold mb-6 text-neutral-200">Location & Maps</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input
-              type="text"
-              name="latitude"
-              placeholder="Latitude"
-              onChange={handleChange}
-              className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
-            />
-            <input
-              type="text"
-              name="longitude"
-              placeholder="Longitude"
-              onChange={handleChange}
-              className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
-            />
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="latitude"
+                placeholder="Latitude"
+                onChange={handleChange}
+                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+              />
+              {formErrors.latitude && <p className="text-red-500 text-sm mt-1">{formErrors.latitude}</p>}
+            </div>
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="longitude"
+                placeholder="Longitude"
+                onChange={handleChange}
+                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+              />
+              {formErrors.longitude && <p className="text-red-500 text-sm mt-1">{formErrors.longitude}</p>}
+            </div>
           </div>
         </div>
 
@@ -268,30 +322,39 @@ const AddProperty = () => {
           <h2 className="text-2xl font-semibold mb-6 text-neutral-200">Room Types</h2>
           {formData.roomTypes.map((room, index) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <input
-                type="text"
-                name="name"
-                placeholder="Room Name"
-                value={room.name}
-                onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
-              />
-              <input
-                type="number"
-                name="beds"
-                placeholder="Number of Beds"
-                value={room.beds}
-                onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
-              />
-              <input
-                type="number"
-                name="occupancy"
-                placeholder="Max Occupancy"
-                value={room.occupancy}
-                onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
-              />
+              <div className="flex flex-col">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Room Name"
+                  value={room.name}
+                  onChange={(e) => handleRoomTypeChange(index, e)}
+                  className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+                />
+                {formErrors[`roomType-${index}-name`] && <p className="text-red-500 text-sm mt-1">{formErrors[`roomType-${index}-name`]}</p>}
+              </div>
+              <div className="flex flex-col">
+                <input
+                  type="number"
+                  name="beds"
+                  placeholder="Number of Beds"
+                  value={room.beds}
+                  onChange={(e) => handleRoomTypeChange(index, e)}
+                  className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+                />
+                {formErrors[`roomType-${index}-beds`] && <p className="text-red-500 text-sm mt-1">{formErrors[`roomType-${index}-beds`]}</p>}
+              </div>
+              <div className="flex flex-col">
+                <input
+                  type="number"
+                  name="occupancy"
+                  placeholder="Max Occupancy"
+                  value={room.occupancy}
+                  onChange={(e) => handleRoomTypeChange(index, e)}
+                  className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500"
+                />
+                {formErrors[`roomType-${index}-occupancy`] && <p className="text-red-500 text-sm mt-1">{formErrors[`roomType-${index}-occupancy`]}</p>}
+              </div>
             </div>
           ))}
           <button
@@ -306,13 +369,16 @@ const AddProperty = () => {
         {/* Pricing & Availability */}
         <div className="p-6 border border-neutral-800 rounded-lg bg-[#1E1E1E]">
           <h2 className="text-2xl font-semibold mb-6 text-neutral-200">Pricing & Availability</h2>
-          <input
-            type="number"
-            name="baseRate"
-            placeholder="Base Rate per Night"
-            onChange={handleChange}
-            className="p-3 bg-transparent border border-neutral-700 rounded-md text-white w-full md:w-1/2 focus:ring-2 focus:ring-purple-500"
-          />
+          <div className="flex flex-col">
+            <input
+              type="number"
+              name="baseRate"
+              placeholder="Base Rate per Night"
+              onChange={handleChange}
+              className="p-3 bg-transparent border border-neutral-700 rounded-md text-white w-full md:w-1/2 focus:ring-2 focus:ring-purple-500"
+            />
+            {formErrors.baseRate && <p className="text-red-500 text-sm mt-1">{formErrors.baseRate}</p>}
+          </div>
         </div>
 
         {/* Images & Media */}
@@ -350,15 +416,19 @@ const AddProperty = () => {
         {/* Status */}
         <div className="p-6 border border-neutral-800 rounded-lg bg-[#1E1E1E]">
           <h2 className="text-2xl font-semibold mb-6 text-neutral-200">Status</h2>
-          <select
-            name="status"
-            onChange={handleChange}
-            className="p-3 bg-transparent border border-neutral-700 rounded-md text-white w-full md:w-1/2 focus:ring-2 focus:ring-purple-500 bg-neutral-800"
-          >
-            <option value="Active" className="bg-neutral-800 text-white">Active</option>
-            <option value="Inactive" className="bg-neutral-800 text-white">Inactive</option>
-            <option value="Under Construction" className="bg-neutral-800 text-white">Under Construction</option>
-          </select>
+          <div className="flex flex-col">
+            <label htmlFor="status" className="text-sm font-bold text-neutral-400 block mb-1">Status</label>
+            <select
+              id="status"
+              name="status"
+              onChange={handleChange}
+              className="p-3 bg-transparent border border-neutral-700 rounded-md text-white w-full md:w-1/2 focus:ring-2 focus:ring-purple-500 bg-neutral-800"
+            >
+              <option value="Active" className="bg-neutral-800 text-white">Active</option>
+              <option value="Inactive" className="bg-neutral-800 text-white">Inactive</option>
+              <option value="Under Construction" className="bg-neutral-800 text-white">Under Construction</option>
+            </select>
+          </div>
         </div>
 
         <button type="submit" className="bg-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-purple-700 transition-colors">

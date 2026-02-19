@@ -87,6 +87,7 @@ const EditProperty = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]); // New state for tracking images to delete
   const [imagePreviews, setImagePreviews] = useState([]); // This will combine existing and new previews
+  const [formErrors, setFormErrors] = useState({}); // New state for form errors
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -115,6 +116,7 @@ const EditProperty = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setFormErrors({ ...formErrors, [name]: '' }); // Clear error when user types
   };
 
   const handleAmenityChange = (e) => {
@@ -173,11 +175,30 @@ const EditProperty = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('handleSubmit called');
 
-    if (!formData.type) {
-      alert('Please select a property type.');
-      return;
+    const errors = {};
+    if (!formData.name) errors.name = 'Property name is required';
+    if (!formData.description) errors.description = 'Description is required';
+    if (!formData.type) errors.type = 'Property type is required';
+    if (!formData.address) errors.address = 'Address is required';
+    if (!formData.contact) errors.contact = 'Contact is required';
+    if (!formData.baseRate) errors.baseRate = 'Base rate is required';
+    else if (isNaN(formData.baseRate) || parseFloat(formData.baseRate) <= 0) errors.baseRate = 'Base rate must be a positive number';
+
+    if (formData.latitude && isNaN(formData.latitude)) errors.latitude = 'Latitude must be a number';
+    if (formData.longitude && isNaN(formData.longitude)) errors.longitude = 'Longitude must be a number';
+
+    if (formData.roomTypes.length > 0) {
+      formData.roomTypes.forEach((room, index) => {
+        if (!room.name) errors[`roomType-${index}-name`] = `Room name for Room ${index + 1} is required`;
+        if (isNaN(room.beds) || parseInt(room.beds) <= 0) errors[`roomType-${index}-beds`] = `Number of beds for Room ${index + 1} must be a positive integer`;
+        if (isNaN(room.occupancy) || parseInt(room.occupancy) <= 0) errors[`roomType-${index}-occupancy`] = `Max occupancy for Room ${index + 1} must be a positive integer`;
+      });
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return; // Prevent form submission
     }
 
     try {
@@ -208,63 +229,78 @@ const EditProperty = () => {
     } catch (error) {
       console.error('Failed to update property', error);
       const errorMessage = error.response ? error.response.data.message : error.message;
-      console.error('Error details:', errorMessage);
-      alert('An error occurred while updating the property: ' + errorMessage);
+      setFormErrors({ general: errorMessage });
     }
   };
 
   return (
     <div className="container mx-auto p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
       <h1 className="text-2xl font-bold text-neutral-200 mb-6">Edit Property</h1>
+      {formErrors.general && <p className="text-red-500 text-sm mb-4">{formErrors.general}</p>}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
         <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
           <h2 className="text-xl font-semibold mb-4 text-neutral-200">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="name"
-              placeholder="Property Name"
-              value={formData.name}
-              onChange={handleChange}
-              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
-            />
-            <select
-              name="type"
-              onChange={handleChange}
-              value={formData.type}
-              className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500 bg-neutral-800"
-              required
-            >
-              <option value="" className="bg-neutral-800 text-white">Select Property Type</option>
-              <option value="Mountain" className="bg-neutral-800 text-white">Mountain</option>
-              <option value="Riverside" className="bg-neutral-800 text-white">Riverside</option>
-              <option value="Farm" className="bg-neutral-800 text-white">Farm</option>
-              <option value="Minimal" className="bg-neutral-800 text-white">Minimal</option>
-            </select>
-            <input
-              type="text"
-              name="address"
-              placeholder="Address"
-              value={formData.address}
-              onChange={handleChange}
-              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
-            />
-            <textarea
-              name="description"
-              placeholder="Description"
-              value={formData.description}
-              onChange={handleChange}
-              className="p-2 bg-transparent border border-neutral-700 rounded col-span-2 text-white"
-            />
-            <input
-              type="text"
-              name="contact"
-              placeholder="Contact"
-              value={formData.contact}
-              onChange={handleChange}
-              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
-            />
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="name"
+                placeholder="Property Name"
+                value={formData.name}
+                onChange={handleChange}
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
+              />
+              {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
+            </div>
+            <div className="flex flex-col">
+              <select
+                name="type"
+                onChange={handleChange}
+                value={formData.type}
+                className="p-3 bg-transparent border border-neutral-700 rounded-md text-white focus:ring-2 focus:ring-purple-500 bg-neutral-800"
+                required
+              >
+                <option value="" className="bg-neutral-800 text-white">Select Property Type</option>
+                <option value="Mountain" className="bg-neutral-800 text-white">Mountain</option>
+                <option value="Riverside" className="bg-neutral-800 text-white">Riverside</option>
+                <option value="Farm" className="bg-neutral-800 text-white">Farm</option>
+                <option value="Minimal" className="bg-neutral-800 text-white">Minimal</option>
+              </select>
+              {formErrors.type && <p className="text-red-500 text-sm mt-1">{formErrors.type}</p>}
+            </div>
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="address"
+                placeholder="Address"
+                value={formData.address}
+                onChange={handleChange}
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
+              />
+              {formErrors.address && <p className="text-red-500 text-sm mt-1">{formErrors.address}</p>}
+            </div>
+            <div className="flex flex-col col-span-2">
+              <textarea
+                name="description"
+                placeholder="Description"
+                value={formData.description}
+                onChange={handleChange}
+                className="p-2 bg-transparent border border-neutral-700 rounded col-span-2 text-white"
+              />
+              {formErrors.description && <p className="text-red-500 text-sm mt-1">{formErrors.description}</p>}
+            </div>
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="contact"
+                placeholder="Contact"
+                value={formData.contact}
+                onChange={handleChange}
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
+              />
+              {formErrors.contact && <p className="text-red-500 text-sm mt-1">{formErrors.contact}</p>}
+            </div>
           </div>
         </div>
 
@@ -272,22 +308,28 @@ const EditProperty = () => {
         <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
           <h2 className="text-xl font-semibold mb-4 text-neutral-200">Location & Maps</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="latitude"
-              placeholder="Latitude"
-              value={formData.latitude}
-              onChange={handleChange}
-              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
-            />
-            <input
-              type="text"
-              name="longitude"
-              placeholder="Longitude"
-              value={formData.longitude}
-              onChange={handleChange}
-              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
-            />
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="latitude"
+                placeholder="Latitude"
+                value={formData.latitude}
+                onChange={handleChange}
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
+              />
+              {formErrors.latitude && <p className="text-red-500 text-sm mt-1">{formErrors.latitude}</p>}
+            </div>
+            <div className="flex flex-col">
+              <input
+                type="text"
+                name="longitude"
+                placeholder="Longitude"
+                value={formData.longitude}
+                onChange={handleChange}
+                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
+              />
+              {formErrors.longitude && <p className="text-red-500 text-sm mt-1">{formErrors.longitude}</p>}
+            </div>
           </div>
         </div>
 
@@ -331,30 +373,39 @@ const EditProperty = () => {
           <h2 className="text-xl font-semibold mb-4 text-neutral-200">Room Types</h2>
           {formData.roomTypes.map((room, index) => (
             <div key={index} className="grid grid-cols-3 gap-2 mb-2">
-              <input
-                type="text"
-                name="name"
-                placeholder="Room Name"
-                value={room.name}
-                onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
-              />
-              <input
-                type="number"
-                name="beds"
-                placeholder="Beds"
-                value={room.beds}
-                onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
-              />
-              <input
-                type="number"
-                name="occupancy"
-                placeholder="Occupancy"
-                value={room.occupancy}
-                onChange={(e) => handleRoomTypeChange(index, e)}
-                className="p-2 bg-transparent border border-neutral-700 rounded text-white"
-              />
+              <div className="flex flex-col">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Room Name"
+                  value={room.name}
+                  onChange={(e) => handleRoomTypeChange(index, e)}
+                  className="p-2 bg-transparent border border-neutral-700 rounded text-white"
+                />
+                {formErrors[`roomType-${index}-name`] && <p className="text-red-500 text-sm mt-1">{formErrors[`roomType-${index}-name`]}</p>}
+              </div>
+              <div className="flex flex-col">
+                <input
+                  type="number"
+                  name="beds"
+                  placeholder="Beds"
+                  value={room.beds}
+                  onChange={(e) => handleRoomTypeChange(index, e)}
+                  className="p-2 bg-transparent border border-neutral-700 rounded text-white"
+                />
+                {formErrors[`roomType-${index}-beds`] && <p className="text-red-500 text-sm mt-1">{formErrors[`roomType-${index}-beds`]}</p>}
+              </div>
+              <div className="flex flex-col">
+                <input
+                  type="number"
+                  name="occupancy"
+                  placeholder="Occupancy"
+                  value={room.occupancy}
+                  onChange={(e) => handleRoomTypeChange(index, e)}
+                  className="p-2 bg-transparent border border-neutral-700 rounded text-white"
+                />
+                {formErrors[`roomType-${index}-occupancy`] && <p className="text-red-500 text-sm mt-1">{formErrors[`roomType-${index}-occupancy`]}</p>}
+              </div>
             </div>
           ))}
           <button
@@ -369,14 +420,17 @@ const EditProperty = () => {
         {/* Pricing & Availability */}
         <div className="p-4 border border-neutral-800 rounded bg-[#1E1E1E]">
           <h2 className="text-xl font-semibold mb-4 text-neutral-200">Pricing & Availability</h2>
-          <input
-            type="number"
-            name="baseRate"
-            placeholder="Base Rate"
-            value={formData.baseRate}
-            onChange={handleChange}
-            className="p-2 bg-transparent border border-neutral-700 rounded text-white"
-          />
+          <div className="flex flex-col">
+            <input
+              type="number"
+              name="baseRate"
+              placeholder="Base Rate"
+              value={formData.baseRate}
+              onChange={handleChange}
+              className="p-2 bg-transparent border border-neutral-700 rounded text-white"
+            />
+            {formErrors.baseRate && <p className="text-red-500 text-sm mt-1">{formErrors.baseRate}</p>}
+          </div>
         </div>
 
         {/* Images & Media */}

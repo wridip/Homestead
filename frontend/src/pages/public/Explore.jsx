@@ -201,7 +201,9 @@ const Explore = () => {
             <div className="flex flex-col sm:flex-row justify-between items-baseline mb-8">
               <h1 className="text-4xl font-extrabold text-neutral-100 tracking-tight">Explore Properties</h1>
                <div className="relative">
+                <label htmlFor="sort-by" className="sr-only">Sort by</label>
                 <select 
+                  id="sort-by"
                   value={sortBy} 
                   onChange={(e) => { setSortBy(e.target.value); handleFilterChange(); }}
                   className="appearance-none w-full sm:w-auto bg-neutral-800 border border-neutral-700 text-white py-2 pl-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"

@@ -26,3 +26,4 @@ CONTRIBUTING.md
 .github/commands/gemini-invoke.toml
 output.txt
 future scope.txt
+frontend/src/theme.js
