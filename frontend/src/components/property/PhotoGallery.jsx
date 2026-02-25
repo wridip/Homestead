@@ -9,9 +9,9 @@ const PhotoGallery = ({ images, propertyName }) => {
   return (
     <div className="relative mb-12 group">
       {/* 5-Photo Grid (Airbnb Style) */}
-      <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[350px] md:h-[500px] overflow-hidden rounded-2xl border border-neutral-800 shadow-2xl">
+      <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-1 md:grid-rows-2 gap-2 h-[300px] md:h-[500px] overflow-hidden rounded-2xl border border-neutral-800 shadow-2xl">
         {/* Main large image */}
-        <div className="col-span-2 row-span-2 relative overflow-hidden group/item">
+        <div className="col-span-1 md:col-span-2 row-span-1 md:row-span-2 relative overflow-hidden group/item">
           <img
             src={getUrl(images[0])}
             alt={propertyName}
@@ -20,9 +20,9 @@ const PhotoGallery = ({ images, propertyName }) => {
           />
         </div>
         
-        {/* Smaller side images */}
+        {/* Smaller side images - hidden on mobile, shown on md and up */}
         {images.slice(1, 5).map((image, index) => (
-          <div key={index} className="col-span-1 row-span-1 relative overflow-hidden group/item">
+          <div key={index} className="hidden md:block col-span-1 row-span-1 relative overflow-hidden group/item">
             <img
               src={getUrl(image)}
               alt={`${propertyName} ${index + 1}`}

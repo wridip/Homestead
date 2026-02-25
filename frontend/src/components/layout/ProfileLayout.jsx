@@ -8,17 +8,17 @@ const ProfileLayout = () => {
   return (
     <div className="pt-24 min-h-screen bg-[#0F0F0F] text-white pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <div className="w-full md:w-64 flex-shrink-0">
+          <div className="w-full lg:w-64 flex-shrink-0">
             <h2 className="text-3xl font-bold mb-8">My Profile</h2>
-            <nav className="space-y-1">
+            <nav className="flex lg:flex-col overflow-x-auto pb-4 lg:pb-0 gap-2 lg:gap-1 scrollbar-hide">
               <NavLink
                 to="/my-profile/About-me"
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                  `flex items-center gap-3 px-4 py-3 rounded-xl transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20'
+                      ? 'bg-[#BB86FC] text-[#121212] shadow-lg shadow-[#BB86FC]/20'
                       : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
                   }`
                 }
@@ -29,9 +29,9 @@ const ProfileLayout = () => {
               <NavLink
                 to="/my-profile/messages"
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                  `flex items-center gap-3 px-4 py-3 rounded-xl transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20'
+                      ? 'bg-[#BB86FC] text-[#121212] shadow-lg shadow-[#BB86FC]/20'
                       : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
                   }`
                 }
@@ -43,9 +43,9 @@ const ProfileLayout = () => {
                 <NavLink
                   to="/my-profile/bookings"
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all whitespace-nowrap ${
                       isActive
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20'
+                        ? 'bg-[#BB86FC] text-[#121212] shadow-lg shadow-[#BB86FC]/20'
                         : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
                     }`
                   }

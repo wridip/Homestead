@@ -104,9 +104,9 @@ const Inbox = () => {
 
       {error && <div className="bg-red-500/20 border border-red-500 text-red-500 p-4 rounded mb-4">{error}</div>}
 
-      <div className="flex-1 flex overflow-hidden bg-neutral-900 rounded-xl border border-neutral-800 min-h-[500px]">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden bg-neutral-900 rounded-xl border border-neutral-800 min-h-[500px]">
         {/* Message List */}
-        <div className="w-1/3 border-r border-neutral-800 overflow-y-auto">
+        <div className="w-full md:w-1/3 h-64 md:h-auto border-b md:border-b-0 md:border-r border-neutral-800 overflow-y-auto flex-shrink-0">
           {messages.length === 0 ? (
             <div className="p-8 text-center text-neutral-500">No {view} messages yet.</div>
           ) : (
