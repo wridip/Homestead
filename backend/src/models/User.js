@@ -28,6 +28,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'default-avatar.png'
   },
+  phone: {
+    type: String,
+    trim: true
+  },
+  address: {
+    type: String,
+    trim: true
+  },
+  bio: {
+    type: String,
+    trim: true
+  },
   isVerified: {
     type: Boolean,
     default: false

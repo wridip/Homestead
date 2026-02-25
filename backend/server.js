@@ -52,7 +52,7 @@ if (process.env.NODE_ENV !== 'test') {
 
   // Rate limiting
   const limiter = rateLimit({
-    windowMs: 10 * 60 * 1000, // 10 mins
+    windowMs: 1 * 60 * 1000, // 1 minute
     max: 100,
   });
   app.use(limiter);
@@ -71,12 +71,16 @@ const bookingRoutes = require('./src/routes/bookingRoutes');
 const reviewRoutes = require('./src/routes/reviewRoutes');
 const hostRoutes = require('./src/routes/hostRoutes');
 const photoRoutes = require('./src/routes/photoRoutes');
+const messageRoutes = require('./src/routes/messageRoutes');
+const userRoutes = require('./src/routes/userRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/hosts', hostRoutes);
 app.use('/api/photos', photoRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/users', userRoutes);
 // Nested reviews route under properties
 app.use('/api/properties/:propertyId/reviews', reviewRoutes);
 
