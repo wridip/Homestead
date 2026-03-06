@@ -1,19 +1,27 @@
 import axios from 'axios';
 
-// In production (Vercel monorepo), we use relative paths.
-// In development, we fallback to localhost.
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// --- Smart API URL Detection ---
+// If we are in production (Vercel), we use relative '/api'
+// If we are in development, we use 'http://localhost:5000/api'
+const isProduction = import.meta.env.PROD;
+export const API_BASE_URL = isProduction 
+  ? '/api' 
+  : (import.meta.env.VITE_API_URL || 'http://localhost:5000/api');
 
-// For images: If it's an S3 URL (starts with http), use it as is. 
-// Otherwise, it's a local fallback.
+// Extract the domain for images
+export const BASE_URL = isProduction 
+  ? window.location.origin 
+  : 'http://localhost:5000';
+
+// For images: If it's an S3 URL (starts with http), use it as is.
 export const getImageUrl = (url) => {
   if (!url) return 'https://via.placeholder.com/300';
-  if (url.startsWith('http')) return url;
-  return `${API_BASE_URL.replace('/api', '')}/${url.replace(/\\/g, '/')}`;
+  if (url.startsWith('http')) return url; // S3 URL
+  
+  // Local/Legacy path: Remove leading slash if present to avoid double slashes
+  const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+  return `${BASE_URL}/${cleanUrl.replace(/\\/g, '/')}`;
 };
-
-// Extract BASE_URL for backward compatibility if needed
-export const BASE_URL = API_BASE_URL.replace('/api', '');
 
 const api = axios.create({
   baseURL: API_BASE_URL,
