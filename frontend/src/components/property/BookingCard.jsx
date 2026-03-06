@@ -56,6 +56,7 @@ const BookingCard = ({
                 selectsStart
                 startDate={startDate}
                 endDate={endDate}
+                minDate={new Date()}
                 placeholderText="Add date"
                 className="w-full bg-transparent text-sm text-white outline-none cursor-pointer"
               />
@@ -68,7 +69,7 @@ const BookingCard = ({
                 selectsEnd
                 startDate={startDate}
                 endDate={endDate}
-                minDate={startDate}
+                minDate={startDate || new Date()}
                 placeholderText="Add date"
                 className="w-full bg-transparent text-sm text-white outline-none cursor-pointer"
               />
