@@ -143,6 +143,7 @@ const Home = () => {
                   startDate={startDate}
                   endDate={endDate}
                   selectsRange
+                  minDate={new Date()}
                   popperPlacement="bottom-start"
                   placeholderText="Dates"
                   className="placeholder-neutral-400 focus:outline-none text-sm bg-transparent w-full text-white"
