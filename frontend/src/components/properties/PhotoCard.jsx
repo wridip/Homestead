@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import AuthContext from '../../context/AuthContext';
-import ShareModal from '../common/ShareModal'; // Import the new modal
+import ShareModal from '../common/ShareModal';
+import { BASE_URL } from '../../services/api';
 
 const PhotoCard = ({ photo, onDelete }) => {
   const { user } = useContext(AuthContext);
@@ -35,7 +36,7 @@ const PhotoCard = ({ photo, onDelete }) => {
   return (
     <>
       <article className="flex flex-col overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[#1E1E1E] hover:border-[rgba(255,255,255,0.2)]" data-animate>
-        <img src={`http://localhost:5000/${photo.imageUrl.replace(/\\/g, '/')}`} alt={photo.caption} className="h-44 w-full object-cover" />
+        <img src={`${BASE_URL}/${photo.imageUrl.replace(/\\/g, '/')}`} alt={photo.caption} className="h-44 w-full object-cover" />
         <div className="p-4">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ring-1 ring-[rgba(255,255,255,0.1)] text-[#E0E0E0]">

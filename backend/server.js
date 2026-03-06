@@ -15,8 +15,16 @@ dotenv.config();
 
 const app = express();
 
+// Enable trust proxy for Vercel/proxies
+app.set('trust proxy', 1);
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://homestead-ui.vercel.app',
+    'https://homestead-9r7jidoyg-wridip-sarkars-projects.vercel.app', // Your current frontend URL
+    process.env.CORS_ORIGIN
+  ],
   credentials: true,
 }));
 
@@ -37,7 +45,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // CSRF Protection
-const csrfProtection = csurf({ cookie: true });
+const csrfProtection = csurf({
+  cookie: {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+  },
+});
 app.use(csrfProtection);
 
 app.get('/api/csrf-token', (req, res) => {
@@ -54,6 +68,7 @@ if (process.env.NODE_ENV !== 'test') {
   const limiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 100,
+    validate: { xForwardedForHeader: false }, // Disable this check for Vercel
   });
   app.use(limiter);
 }

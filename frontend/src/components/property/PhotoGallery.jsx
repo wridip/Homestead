@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { BASE_URL } from '../../services/api';
 
 const PhotoGallery = ({ images, propertyName }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAll, setShowAll] = useState(false);
 
-  const getUrl = (img) => `http://localhost:5000/${img.replace(/\\/g, '/')}`;
+  const getUrl = (img) => `${BASE_URL}/${img.replace(/\\/g, '/')}`;
 
   return (
     <div className="relative mb-12 group">

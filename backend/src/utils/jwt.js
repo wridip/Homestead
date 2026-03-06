@@ -14,8 +14,8 @@ const generateRefreshToken = (res, userId) => {
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: 'strict',
+    secure: true, // Always true for HTTPS (Vercel)
+    sameSite: 'none', // Needed for cross-site cookies
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
@@ -25,6 +25,8 @@ const generateRefreshToken = (res, userId) => {
 const clearToken = (res) => {
   res.cookie('refreshToken', '', {
     httpOnly: true,
+    secure: true,
+    sameSite: 'none',
     expires: new Date(0),
   });
 };
