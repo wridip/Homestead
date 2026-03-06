@@ -25,9 +25,8 @@ router.post('/upload', [protect, authorize('Host', 'Admin'), upload], (req, res)
     }
   
     const files = req.files.map((file) => {
-      // Assuming 'file.path' is where multer stores the file. Adjust if your setup is different.
-      // We are creating a URL-friendly path.
-      return `/uploads/${file.filename}`;
+      // Use the S3 URL provided by multer-s3
+      return file.location;
     });
   
     res.status(200).json({

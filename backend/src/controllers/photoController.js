@@ -8,7 +8,9 @@ const asyncHandler = require('express-async-handler');
 // @access  Private
 exports.uploadPhoto = asyncHandler(async (req, res, next) => {
   const { caption, socialLink, property } = req.body;
-  const imageUrl = path.relative(path.join(__dirname, '..', '..', 'public'), req.file.path);
+  
+  // Use the S3 URL provided by multer-s3
+  const imageUrl = req.file.location;
 
   const photo = await Photo.create({
     user: req.user.id,

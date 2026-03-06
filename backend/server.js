@@ -13,10 +13,18 @@ const rateLimit = require('express-rate-limit');
 // Load environment variables
 dotenv.config();
 
+const connectDB = require('./src/config/db');
+
 const app = express();
 
 // Enable trust proxy for Vercel/proxies
 app.set('trust proxy', 1);
+
+// --- Database Connection Middleware ---
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
 app.use(cors({
   origin: [
@@ -74,10 +82,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 // --- Database Connection ---
-if (process.env.NODE_ENV !== 'test') {
-  const connectDB = require('./src/config/db');
-  connectDB();
-}
+// Handled by middleware for Vercel
 
 // --- API Routes ---
 const authRoutes = require('./src/routes/authRoutes');
