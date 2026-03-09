@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getMe, updateMe } from '../../services/userService';
 import AuthContext from '../../context/AuthContext';
+import { getImageUrl } from '../../services/api';
 
 const AboutMe = () => {
   const { user: authUser } = useContext(AuthContext);
@@ -31,7 +32,7 @@ const AboutMe = () => {
           bio: user.bio || ''
         });
         if (user.avatar) {
-          setAvatarPreview(`http://localhost:5000/uploads/${user.avatar}`);
+          setAvatarPreview(getImageUrl(`uploads/${user.avatar}`));
         }
       } catch (err) {
         setError('Failed to load profile data');
@@ -73,7 +74,11 @@ const AboutMe = () => {
         data.append('photo', avatar);
       }
 
-      await updateMe(data);
+      const response = await updateMe(data);
+      // Update avatar preview if new avatar was uploaded and returned from server
+      if (response.data && response.data.avatar) {
+        setAvatarPreview(getImageUrl(`uploads/${response.data.avatar}`));
+      }
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update profile');
@@ -96,7 +101,7 @@ const AboutMe = () => {
         <div className="flex flex-col items-center gap-4">
           <div className="relative w-40 h-40 group">
             <img
-              src={avatarPreview || 'https://via.placeholder.com/150'}
+              src={avatarPreview || getImageUrl('uploads/default-avatar.png')}
               alt="Avatar"
               className="w-full h-full rounded-full object-cover border-4 border-neutral-800 shadow-xl"
             />
