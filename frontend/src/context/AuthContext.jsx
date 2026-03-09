@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
-          const response = await api.get('/me');
+          const response = await api.get('/users/me');
           const user = response.data;
           dispatch({
             type: 'AUTH_STATE_INITIALIZED',
