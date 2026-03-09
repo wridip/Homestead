@@ -10,7 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../../assets/datepicker-custom.css";
 import LocationSearchInput from '../../components/search/LocationSearchInput';
 import GuestSelector from '../../components/search/GuestSelector';
-import { getImageUrl } from '../../services/api';
+import { BASE_URL } from '../../services/api';
 
 const Home = () => {
   const [properties, setProperties] = useState([]);
@@ -282,14 +282,14 @@ const Home = () => {
             {featuredProperty ? (
               <>
                 <div className="overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
-                  <img src={getImageUrl(featuredProperty.images[0])} alt={featuredProperty.name} className="h-80 sm:h-[400px] w-full object-cover" />
+                  <img src={`${BASE_URL}${featuredProperty.images[0]}`} alt={featuredProperty.name} className="h-80 sm:h-[400px] w-full object-cover" />
                 </div>
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-[#1E1E1E] border-white/10 border rounded-2xl p-4 shadow-2xl min-w-[280px]">
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 overflow-hidden rounded-full ring-2 ring-[#BB86FC]/20 flex-shrink-0">
                       <img 
                         src={featuredProperty.hostId.avatar && featuredProperty.hostId.avatar !== 'default-avatar.png' 
-                          ? getImageUrl(`uploads/${featuredProperty.hostId.avatar}`) 
+                          ? `${BASE_URL}/uploads/${featuredProperty.hostId.avatar}` 
                           : 'https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&q=80'} 
                         alt={`${featuredProperty.hostId.name}'s avatar`} 
                         className="h-full w-full object-cover" 

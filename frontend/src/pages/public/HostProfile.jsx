@@ -4,7 +4,7 @@ import { getUserProfile } from '../../services/userService';
 import { sendMessage } from '../../services/messageService';
 import AuthContext from '../../context/AuthContext';
 import moment from 'moment';
-import { getImageUrl } from '../../services/api';
+import { BASE_URL } from '../../services/api';
 
 const HostProfile = () => {
   const { id } = useParams();
@@ -77,7 +77,7 @@ const HostProfile = () => {
             <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-8 sticky top-32 shadow-2xl">
               <div className="flex flex-col items-center text-center">
                 <img
-                  src={host.avatar ? getImageUrl(`uploads/${host.avatar}`) : 'https://via.placeholder.com/150'}
+                  src={host.avatar ? `${BASE_URL}/uploads/${host.avatar}` : 'https://via.placeholder.com/150'}
                   alt={host.name}
                   className="w-48 h-48 rounded-full object-cover border-4 border-neutral-800 shadow-xl mb-6"
                 />
