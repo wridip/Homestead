@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { getUserProfile } from '../../services/userService';
 import { sendMessage } from '../../services/messageService';
 import AuthContext from '../../context/AuthContext';
@@ -8,6 +8,8 @@ import { BASE_URL } from '../../services/api';
 
 const HostProfile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, user: currentUser } = useContext(AuthContext);
   const [host, setHost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,8 @@ const HostProfile = () => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      return setMessageError('You must be logged in to send a message.');
+      navigate('/login', { state: { from: location } });
+      return;
     }
     if (currentUser.role !== 'Traveler') {
       return setMessageError('Only travelers can send messages to hosts.');

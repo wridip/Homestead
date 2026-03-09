@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { getPropertyById } from '../../services/propertyService';
 import { getReviewsForProperty, createReview } from '../../services/reviewService';
 import { createBooking } from '../../services/bookingService';
@@ -18,6 +18,8 @@ import { BASE_URL } from '../../services/api';
 
 const PropertyDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, user } = useContext(AuthContext);
   const [property, setProperty] = useState(null);
   const [host, setHost] = useState(null);
@@ -41,7 +43,8 @@ const PropertyDetails = () => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      return setMessageError('You must be logged in to send a message.');
+      navigate('/login', { state: { from: location } });
+      return;
     }
     if (user.role !== 'Traveler') {
       return setMessageError('Only travelers can send messages to hosts.');
