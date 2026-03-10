@@ -135,13 +135,13 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="flex justify-center w-full">
+        <div className="flex justify-center w-full mt-4">
           <GoogleLogin
             onSuccess={onGoogleSuccess}
             onError={onGoogleError}
             theme="filled_black"
             shape="pill"
-            width="100%"
+            text="signin_with"
           />
         </div>
 
