@@ -32,7 +32,6 @@ function checkFileType(file, cb) {
 const storage = multerS3({
   s3: s3,
   bucket: process.env.AWS_BUCKET_NAME,
-  acl: 'public-read', // Makes the photo visible to the internet
   contentType: multerS3.AUTO_CONTENT_TYPE,
   key: function (req, file, cb) {
     const fileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
