@@ -5,11 +5,13 @@ const signupSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
   role: Joi.string().valid('Traveler', 'Host').required(),
+  captchaToken: Joi.string().optional(),
 });
 
 const loginSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required(),
+  captchaToken: Joi.string().optional(),
 });
 
 module.exports = {

@@ -18,6 +18,15 @@ export const login = async (userData) => {
   return response.data;
 };
 
+export const googleLogin = async (tokenId) => {
+  const response = await api.post('/auth/google', { tokenId });
+  if (response.data.token) {
+    localStorage.setItem('token', response.data.token);
+    api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+  }
+  return response.data;
+};
+
 export const logout = async () => {
   await api.post('/auth/logout');
   localStorage.removeItem('token');

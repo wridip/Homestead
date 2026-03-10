@@ -1,19 +1,25 @@
 const express = require('express');
 const router = express.Router();
 
-const { signup, login, logout, refresh } = require('../controllers/authController');
+const { signup, login, logout, refresh, googleLogin } = require('../controllers/authController');
 const validationMiddleware = require('../middlewares/validationMiddleware');
 const { signupSchema, loginSchema } = require('../utils/validationSchemas');
+const { verifyCaptcha } = require('../middlewares/captchaMiddleware');
 
 // @route   POST api/auth/signup
 // @desc    Register a new user
 // @access  Public
-router.post('/signup', validationMiddleware(signupSchema), signup);
+router.post('/signup', [verifyCaptcha, validationMiddleware(signupSchema)], signup);
 
 // @route   POST api/auth/login
 // @desc    Authenticate user and get token
 // @access  Public
-router.post('/login', validationMiddleware(loginSchema), login);
+router.post('/login', [verifyCaptcha, validationMiddleware(loginSchema)], login);
+
+// @route   POST api/auth/google
+// @desc    Google login
+// @access  Public
+router.post('/google', googleLogin);
 
 const { protect } = require('../middlewares/authMiddleware');
 
