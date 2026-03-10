@@ -1,7 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext.jsx';
 import { signup as signupService } from '../../services/authService';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -14,7 +15,9 @@ const Signup = () => {
     password2: '',
     role: 'Traveler', // Default role
   });
+  const [captchaToken, setCaptchaToken] = useState(null);
   const [error, setError] = useState(null);
+  const recaptchaRef = useRef(null);
 
   const { name, email, password, password2, role } = formData;
 
@@ -22,82 +25,97 @@ const Signup = () => {
 
   const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  const onCaptchaChange = (token) => {
+    setCaptchaToken(token);
+  };
+
   const onSubmit = async e => {
     e.preventDefault();
     if (password !== password2) {
       return setError('Passwords do not match');
     }
+    if (!captchaToken) {
+      return setError('Please complete the CAPTCHA');
+    }
     try {
-      const data = await signupService({ name, email, password, role }); // Pass role to service
+      const data = await signupService({ name, email, password, role, captchaToken }); // Pass role and captchaToken to service
       login(data);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
+      recaptchaRef.current.reset();
+      setCaptchaToken(null);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-transparent">
+    <div className="flex items-center justify-center min-h-screen bg-transparent py-12 px-4">
       <div className="w-full max-w-md p-8 space-y-6 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
         <h2 className="text-2xl font-bold text-center text-neutral-200">Create an Account</h2>
         <form onSubmit={onSubmit} className="space-y-4">
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-sm bg-red-500/10 border border-red-500/50 p-2 rounded text-center">{error}</p>}
           <div>
             <label htmlFor="name" className="text-sm font-bold text-neutral-400 block">Name</label>
-            <input id="name" type="text" name="name" value={name} onChange={onChange} className="w-full p-2 bg-transparent border border-neutral-700 rounded mt-1 text-white" required />
+            <input id="name" type="text" name="name" value={name} onChange={onChange} className="w-full p-2 bg-neutral-800 border border-neutral-700 rounded mt-1 text-white focus:ring-2 focus:ring-purple-500 outline-none" placeholder="John Doe" required />
           </div>
           <div>
             <label htmlFor="email" className="text-sm font-bold text-neutral-400 block">Email</label>
-            <input id="email" type="email" name="email" value={email} onChange={onChange} className="w-full p-2 bg-transparent border border-neutral-700 rounded mt-1 text-white" required />
+            <input id="email" type="email" name="email" value={email} onChange={onChange} className="w-full p-2 bg-neutral-800 border border-neutral-700 rounded mt-1 text-white focus:ring-2 focus:ring-purple-500 outline-none" placeholder="john@example.com" required />
           </div>
           <div>
             <label htmlFor="password"  className="text-sm font-bold text-neutral-400 block">Password</label>
-            <input id="password" type="password" name="password" value={password} onChange={onChange} className="w-full p-2 bg-transparent border border-neutral-700 rounded mt-1 text-white" required />
+            <input id="password" type="password" name="password" value={password} onChange={onChange} className="w-full p-2 bg-neutral-800 border border-neutral-700 rounded mt-1 text-white focus:ring-2 focus:ring-purple-500 outline-none" placeholder="••••••••" required />
           </div>
           <div>
             <label htmlFor="password2" className="text-sm font-bold text-neutral-400 block">Confirm Password</label>
-            <input id="password2" type="password" name="password2" value={password2} onChange={onChange} className="w-full p-2 bg-transparent border border-neutral-700 rounded mt-1 text-white" required />
+            <input id="password2" type="password" name="password2" value={password2} onChange={onChange} className="w-full p-2 bg-neutral-800 border border-neutral-700 rounded mt-1 text-white focus:ring-2 focus:ring-purple-500 outline-none" placeholder="••••••••" required />
           </div>
           {/* Role Selection */}
-          <div>
-            <label className="text-sm font-bold text-neutral-400 block">I am a:</label>
-            <div className="flex items-center mt-2">
-              <input
-                id="role-traveler"
-                type="radio"
-                name="role"
-                value="Traveler"
-                checked={role === 'Traveler'}
-                onChange={onChange}
-                className="h-4 w-4 text-purple-600 bg-transparent border-neutral-700 focus:ring-purple-500"
-              />
-              <label htmlFor="role-traveler" className="ml-2 block text-sm text-neutral-200">
-                Traveler
+          <div className="bg-neutral-800/50 p-3 rounded-xl border border-neutral-700">
+            <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest block mb-3">I want to join as a:</label>
+            <div className="grid grid-cols-2 gap-4">
+              <label className={`flex items-center justify-center p-3 rounded-xl border-2 cursor-pointer transition-all ${role === 'Traveler' ? 'border-purple-600 bg-purple-600/10' : 'border-neutral-700 hover:border-neutral-600'}`}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="Traveler"
+                  checked={role === 'Traveler'}
+                  onChange={onChange}
+                  className="hidden"
+                />
+                <span className={`text-sm font-bold ${role === 'Traveler' ? 'text-purple-400' : 'text-neutral-400'}`}>Traveler</span>
               </label>
-            </div>
-            <div className="flex items-center mt-2">
-              <input
-                id="role-host"
-                type="radio"
-                name="role"
-                value="Host"
-                checked={role === 'Host'}
-                onChange={onChange}
-                className="h-4 w-4 text-purple-600 bg-transparent border-neutral-700 focus:ring-purple-500"
-              />
-              <label htmlFor="role-host" className="ml-2 block text-sm text-neutral-200">
-                Host
+              <label className={`flex items-center justify-center p-3 rounded-xl border-2 cursor-pointer transition-all ${role === 'Host' ? 'border-purple-600 bg-purple-600/10' : 'border-neutral-700 hover:border-neutral-600'}`}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="Host"
+                  checked={role === 'Host'}
+                  onChange={onChange}
+                  className="hidden"
+                />
+                <span className={`text-sm font-bold ${role === 'Host' ? 'text-purple-400' : 'text-neutral-400'}`}>Host</span>
               </label>
             </div>
           </div>
+
+          <div className="flex justify-center py-2">
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              onChange={onCaptchaChange}
+              theme="dark"
+            />
+          </div>
+
           <div>
-            <button type="submit" className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-md text-white text-sm">
-              Sign Up
+            <button type="submit" className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 rounded-xl text-white font-bold text-sm shadow-lg shadow-purple-900/20 transition-all duration-200 active:scale-[0.98]">
+              Create Account
             </button>
           </div>
         </form>
-        <p className="text-sm text-center text-neutral-400">
-          Already have an account? <Link to="/login" className="text-purple-400 hover:underline">Login</Link>
+        <p className="text-sm text-center text-neutral-400 font-medium pt-2">
+          Already have an account? <Link to="/login" className="text-purple-400 hover:text-purple-300 font-bold ml-1 transition-colors">Login</Link>
         </p>
       </div>
     </div>

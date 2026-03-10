@@ -1,6 +1,63 @@
 const User = require('../models/User');
 const { generateAccessToken, generateRefreshToken, clearToken } = require('../utils/jwt');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+const axios = require('axios');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// @desc    Google Login
+// @route   POST /api/auth/google
+// @access  Public
+exports.googleLogin = async (req, res, next) => {
+  const { tokenId } = req.body;
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: tokenId,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const { name, email, sub: googleId, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      if (!user.googleId) {
+        user.googleId = googleId;
+        if (!user.avatar || user.avatar === 'default-avatar.png') {
+          user.avatar = picture;
+        }
+        await user.save();
+      }
+    } else {
+      user = await User.create({
+        name,
+        email,
+        googleId,
+        avatar: picture,
+        role: 'Traveler', // Default role
+      });
+    }
+
+    const accessToken = generateAccessToken(res, user._id, user.role);
+    generateRefreshToken(res, user._id);
+
+    res.json({
+      success: true,
+      token: accessToken,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // @desc    Register a new user
 // @route   POST /api/auth/signup
