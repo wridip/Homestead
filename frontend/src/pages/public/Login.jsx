@@ -30,7 +30,7 @@ const Login = () => {
 
   const onSubmit = async e => {
     e.preventDefault();
-    if (!captchaToken) {
+    if (import.meta.env.VITE_RECAPTCHA_SITE_KEY && !captchaToken) {
       setError("Please complete the CAPTCHA");
       return;
     }
@@ -40,7 +40,9 @@ const Login = () => {
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
-      recaptchaRef.current.reset();
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
       setCaptchaToken(null);
     }
   };
@@ -111,12 +113,18 @@ const Login = () => {
           </div>
 
           <div className="flex justify-center">
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-              onChange={onCaptchaChange}
-              theme="dark"
-            />
+            {import.meta.env.VITE_RECAPTCHA_SITE_KEY ? (
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                onChange={onCaptchaChange}
+                theme="dark"
+              />
+            ) : (
+              <p className="text-amber-500 text-xs text-center bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
+                reCAPTCHA Site Key missing. Please check your .env file.
+              </p>
+            )}
           </div>
 
           <div>

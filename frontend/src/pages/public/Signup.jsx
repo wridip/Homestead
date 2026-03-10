@@ -34,7 +34,7 @@ const Signup = () => {
     if (password !== password2) {
       return setError('Passwords do not match');
     }
-    if (!captchaToken) {
+    if (import.meta.env.VITE_RECAPTCHA_SITE_KEY && !captchaToken) {
       return setError('Please complete the CAPTCHA');
     }
     try {
@@ -43,7 +43,9 @@ const Signup = () => {
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
-      recaptchaRef.current.reset();
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
       setCaptchaToken(null);
     }
   };
@@ -100,12 +102,18 @@ const Signup = () => {
           </div>
 
           <div className="flex justify-center py-2">
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-              onChange={onCaptchaChange}
-              theme="dark"
-            />
+            {import.meta.env.VITE_RECAPTCHA_SITE_KEY ? (
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                onChange={onCaptchaChange}
+                theme="dark"
+              />
+            ) : (
+              <p className="text-amber-500 text-xs text-center bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
+                reCAPTCHA Site Key missing. Please check your .env file.
+              </p>
+            )}
           </div>
 
           <div>
