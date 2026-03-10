@@ -32,7 +32,7 @@ const AboutMe = () => {
           bio: user.bio || ''
         });
         if (user.avatar) {
-          setAvatarPreview(getImageUrl(`uploads/${user.avatar}`));
+          setAvatarPreview(getImageUrl(user.avatar));
         }
       } catch (err) {
         setError('Failed to load profile data');
@@ -77,7 +77,7 @@ const AboutMe = () => {
       const response = await updateMe(data);
       // Update avatar preview if new avatar was uploaded and returned from server
       if (response.data && response.data.avatar) {
-        setAvatarPreview(getImageUrl(`uploads/${response.data.avatar}`));
+        setAvatarPreview(getImageUrl(response.data.avatar));
       }
       setSuccess(true);
     } catch (err) {
@@ -101,7 +101,7 @@ const AboutMe = () => {
         <div className="flex flex-col items-center gap-4">
           <div className="relative w-40 h-40 group">
             <img
-              src={avatarPreview || getImageUrl('uploads/default-avatar.png')}
+              src={avatarPreview || getImageUrl('default-avatar.png')}
               alt="Avatar"
               className="w-full h-full rounded-full object-cover border-4 border-neutral-800 shadow-xl"
             />

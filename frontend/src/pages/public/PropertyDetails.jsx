@@ -14,7 +14,7 @@ import BookingCard from '../../components/property/BookingCard';
 import Reviews from '../../components/property/Reviews';
 import ReviewForm from '../../components/property/ReviewForm';
 import LocationMap from '../../components/property/LocationMap';
-import { BASE_URL } from '../../services/api';
+import { getImageUrl } from '../../services/api';
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -175,7 +175,7 @@ const PropertyDetails = () => {
               <div className="flex items-center gap-6">
                 <Link to={`/host/${host._id}`} className="group relative">
                   <img
-                    src={host.avatar ? `${BASE_URL}/uploads/${host.avatar}` : 'https://via.placeholder.com/150'}
+                    src={host.avatar ? getImageUrl(host.avatar) : getImageUrl('default-avatar.png')}
                     alt={host.name}
                     className="w-24 h-24 rounded-full object-cover border-4 border-[#121212] shadow-lg group-hover:scale-105 transition-transform"
                   />
