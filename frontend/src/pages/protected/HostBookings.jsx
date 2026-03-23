@@ -84,8 +84,8 @@ const HostBookings = () => {
             <tbody className="bg-[#1E1E1E] divide-y divide-neutral-800">
               {bookings.map((booking) => (
                 <tr key={booking._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-200">{booking.propertyId.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{booking.travelerId.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-200">{booking.propertyId?.name || 'Deleted Property'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{booking.travelerId?.name || 'Deleted User'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">
                     {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                   </td>
