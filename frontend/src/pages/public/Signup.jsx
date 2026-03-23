@@ -104,13 +104,17 @@ const Signup = () => {
           </div>
 
           <div className="flex justify-center py-2">
-            {import.meta.env.VITE_RECAPTCHA_SITE_KEY ? (
+            {import.meta.env.VITE_RECAPTCHA_SITE_KEY && import.meta.env.VITE_SKIP_CAPTCHA !== 'true' ? (
               <ReCAPTCHA
                 ref={recaptchaRef}
                 sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
                 onChange={onCaptchaChange}
                 theme="dark"
               />
+            ) : import.meta.env.VITE_SKIP_CAPTCHA === 'true' ? (
+              <p className="text-green-500 text-xs text-center bg-green-500/10 p-2 rounded-lg border border-green-500/20">
+                CAPTCHA skipped for testing.
+              </p>
             ) : (
               <p className="text-amber-500 text-xs text-center bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
                 reCAPTCHA Site Key missing. Please check your .env file.
