@@ -3,8 +3,12 @@ const axios = require('axios');
 const verifyCaptcha = async (req, res, next) => {
   const { captchaToken } = req.body;
 
-  if (!process.env.RECAPTCHA_SECRET_KEY) {
-    console.warn('RECAPTCHA_SECRET_KEY is not set. Skipping CAPTCHA verification.');
+  if (process.env.SKIP_CAPTCHA === 'true' || !process.env.RECAPTCHA_SECRET_KEY) {
+    if (process.env.SKIP_CAPTCHA === 'true') {
+      console.log('CAPTCHA verification skipped via SKIP_CAPTCHA flag.');
+    } else {
+      console.warn('RECAPTCHA_SECRET_KEY is not set. Skipping CAPTCHA verification.');
+    }
     return next();
   }
 

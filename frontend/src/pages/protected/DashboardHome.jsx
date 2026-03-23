@@ -137,16 +137,16 @@ const DashboardHome = () => {
           <div className="space-y-4">
             {stats?.upcomingBookings.slice(0, 3).map(booking => (
               <div key={booking._id} className="flex items-start gap-4 p-4 rounded-lg bg-neutral-900/50 border border-neutral-800 hover:border-purple-500 transition-colors">
-                <img src={booking.propertyId.images && booking.propertyId.images.length > 0 ? getImageUrl(booking.propertyId.images[0]) : 'https://via.placeholder.com/150'} className="h-16 w-16 rounded-lg object-cover" alt="property" />
+                <img src={booking.propertyId?.images?.length > 0 ? getImageUrl(booking.propertyId.images[0]) : 'https://via.placeholder.com/150'} className="h-16 w-16 rounded-lg object-cover" alt="property" />
                 <div className="flex-1">
                   <p className="font-semibold text-white">
-                    {booking.propertyId.name}
+                    {booking.propertyId?.name || 'Deleted Property'}
                   </p>
                   <p className="text-sm text-neutral-400">
                     {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                   </p>
                   <p className="text-sm text-neutral-300 mt-1">
-                    Booked by {booking.travelerId.name} for {booking.nights} nights.
+                    Booked by {booking.travelerId?.name || 'Deleted User'} for {booking.nights} nights.
                   </p>
                 </div>
               </div>
