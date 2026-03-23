@@ -34,7 +34,9 @@ const Signup = () => {
     if (password !== password2) {
       return setError('Passwords do not match');
     }
-    if (import.meta.env.VITE_RECAPTCHA_SITE_KEY && !captchaToken) {
+    const isSkipCaptcha = import.meta.env.VITE_SKIP_CAPTCHA === 'true';
+
+    if (import.meta.env.VITE_RECAPTCHA_SITE_KEY && !captchaToken && !isSkipCaptcha) {
       return setError('Please complete the CAPTCHA');
     }
     try {
