@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { getPropertyById } from '../../services/propertyService';
 import { getReviewsForProperty, createReview } from '../../services/reviewService';
-import { createBooking } from '../../services/bookingService';
+import { createBooking, verifyPayment } from '../../services/bookingService';
 import { sendMessage } from '../../services/messageService';
 import { getUserProfile } from '../../services/userService';
 import AuthContext from '../../context/AuthContext';
@@ -90,6 +90,20 @@ const PropertyDetails = () => {
     fetchPropertyAndReviews();
   }, [id]);
 
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+
   const handleBooking = async () => {
     if (!isAuthenticated) {
       return setBookingError('You must be logged in to book a property.');
@@ -103,19 +117,64 @@ const PropertyDetails = () => {
       return setBookingError('Please select a start and end date.');
     }
 
+    const res = await loadRazorpay();
+
+    if (!res) {
+      return setBookingError('Razorpay SDK failed to load. Are you online?');
+    }
+
     const bookingData = {
       propertyId: property._id,
       startDate,
       endDate,
-      totalPrice: (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) * property.baseRate,
     };
 
     try {
-      await createBooking(bookingData);
-      setBookingSuccess(true);
-      setBookingError(null);
+      const result = await createBooking(bookingData);
+      const { razorpayOrder, data: booking } = result;
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'Homestead',
+        description: `Booking for ${property.name}`,
+        image: getImageUrl('favicon.ico'),
+        order_id: razorpayOrder.id,
+        handler: async (response) => {
+          try {
+            await verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            setBookingSuccess(true);
+            setBookingError(null);
+          } catch (err) {
+            setBookingError(err.response?.data?.message || 'Payment verification failed.');
+          }
+        },
+        prefill: {
+          name: user.name,
+          email: user.email,
+        },
+        notes: {
+          address: property.address,
+        },
+        theme: {
+          color: '#BB86FC',
+        },
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+      
+      paymentObject.on('payment.failed', function (response) {
+        setBookingError(response.error.description);
+      });
+
     } catch (err) {
-      setBookingError(err.response?.data?.message || 'An error occurred while booking.');
+      setBookingError(err.response?.data?.message || 'An error occurred while initiating booking.');
     }
   };
 

@@ -1,16 +1,24 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
 const Booking = require('../models/Booking');
 const Property = require('../models/Property');
 
-// @desc    Create a new booking
+// Initialize Razorpay
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+// @desc    Create a new booking and Razorpay order
 // @route   POST /api/bookings
 // @access  Private (Traveler)
 exports.createBooking = async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const { propertyId, startDate, endDate } = req.body; // totalPrice removed
+    const { propertyId, startDate, endDate } = req.body;
 
     const property = await Property.findById(propertyId).session(session);
 
@@ -40,10 +48,16 @@ exports.createBooking = async (req, res, next) => {
     const end = moment(endDate);
     const duration = end.diff(start, 'days');
 
-    // For now, we'll use the baseRate. In the future, we can implement logic
-    // to check for seasonal pricing.
     const totalPrice = duration * property.baseRate;
 
+    // --- Razorpay Order Creation ---
+    const options = {
+      amount: totalPrice * 100, // Razorpay expects amount in paise (₹1 = 100 paise)
+      currency: 'INR',
+      receipt: `receipt_${Date.now()}`,
+    };
+
+    const razorpayOrder = await razorpay.orders.create(options);
 
     const booking = (await Booking.create([{
       travelerId: req.user._id,
@@ -51,7 +65,10 @@ exports.createBooking = async (req, res, next) => {
       hostId: property.hostId,
       startDate,
       endDate,
-      totalPrice, // Use the server-calculated price
+      totalPrice,
+      razorpayOrderId: razorpayOrder.id,
+      paymentStatus: 'Unpaid',
+      status: 'Pending',
     }], { session }))[0];
 
     await session.commitTransaction();
@@ -60,10 +77,60 @@ exports.createBooking = async (req, res, next) => {
     res.status(201).json({
       success: true,
       data: booking,
+      razorpayOrder,
     });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
+    next(error);
+  }
+};
+
+// @desc    Verify Razorpay Payment
+// @route   POST /api/bookings/verify
+// @access  Private (Traveler)
+exports.verifyPayment = async (req, res, next) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(body.toString())
+      .digest("hex");
+
+    const isSignatureValid = expectedSignature === razorpay_signature;
+
+    if (isSignatureValid) {
+      const booking = await Booking.findOneAndUpdate(
+        { razorpayOrderId: razorpay_order_id },
+        {
+          paymentStatus: 'Paid',
+          status: 'Confirmed',
+          razorpayPaymentId: razorpay_payment_id,
+          razorpaySignature: razorpay_signature,
+        },
+        { new: true }
+      );
+
+      if (!booking) {
+        return res.status(404).json({ success: false, message: 'Booking not found' });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Payment verified successfully',
+        data: booking,
+      });
+    } else {
+      await Booking.findOneAndUpdate(
+        { razorpayOrderId: razorpay_order_id },
+        { paymentStatus: 'Failed' }
+      );
+      res.status(400).json({ success: false, message: 'Invalid payment signature' });
+    }
+  } catch (error) {
     next(error);
   }
 };

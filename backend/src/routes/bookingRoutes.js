@@ -8,6 +8,7 @@ const {
   cancelBooking,
   approveBooking,
   completeBooking,
+  verifyPayment,
 } = require('../controllers/bookingController');
 
 const { protect, authorize } = require('../middlewares/authMiddleware');
@@ -16,6 +17,11 @@ const { protect, authorize } = require('../middlewares/authMiddleware');
 // @desc    Create a new booking
 // @access  Private (Traveler)
 router.post('/', protect, authorize('Traveler'), createBooking);
+
+// @route   POST api/bookings/verify
+// @desc    Verify Razorpay payment
+// @access  Private (Traveler)
+router.post('/verify', protect, authorize('Traveler'), verifyPayment);
 
 // @route   GET api/bookings/user
 // @desc    Get all bookings for the logged-in user
