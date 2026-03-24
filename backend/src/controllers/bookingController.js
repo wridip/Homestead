@@ -5,11 +5,21 @@ const crypto = require('crypto');
 const Booking = require('../models/Booking');
 const Property = require('../models/Property');
 
-// Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// Initialize Razorpay lazily or safely
+let razorpay;
+try {
+  if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+    console.log('Razorpay initialized successfully.');
+  } else {
+    console.warn('Razorpay keys are missing. Razorpay functionality will not work.');
+  }
+} catch (error) {
+  console.error(`Razorpay initialization failed: ${error.message}`);
+}
 
 // @desc    Create a new booking and Razorpay order
 // @route   POST /api/bookings
@@ -19,6 +29,12 @@ exports.createBooking = async (req, res, next) => {
   session.startTransaction();
   try {
     const { propertyId, startDate, endDate } = req.body;
+
+    if (!razorpay) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(500).json({ success: false, message: 'Razorpay is not configured on the server' });
+    }
 
     const property = await Property.findById(propertyId).session(session);
 
@@ -92,6 +108,10 @@ exports.createBooking = async (req, res, next) => {
 exports.verifyPayment = async (req, res, next) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).json({ success: false, message: 'Razorpay Key Secret is not configured' });
+    }
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 

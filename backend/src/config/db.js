@@ -11,13 +11,17 @@ const connectDB = async () => {
     return;
   }
 
+  if (!process.env.DB_URI) {
+    throw new Error('DB_URI is not defined in environment variables');
+  }
+
   try {
     const db = await mongoose.connect(process.env.DB_URI);
     isConnected = db.connections[0].readyState;
     console.log('MongoDB connected successfully.');
   } catch (error) {
     console.error(`MongoDB connection failed: ${error.message}`);
-    // Don't exit process in serverless
+    throw error;
   }
 };
 
