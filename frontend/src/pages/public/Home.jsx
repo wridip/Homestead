@@ -181,35 +181,47 @@ const Home = () => {
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="border-y border-border pt-14 pb-14 bg-transparent" data-bg="dark">
+      {/* How it works - Bento Grid Redesign */}
+      <section className="border-y border-border pt-20 pb-20 bg-background" data-bg="dark">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center" data-animate>
-            <h2 className="text-3xl tracking-tight font-medium text-foreground">Plan with purpose</h2>
-            <p className="mt-3 text-sm text-muted-foreground">Every step is built around safety, trust, and local impact.</p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12" data-animate>
+            <div className="max-w-2xl">
+              <h2 className="text-4xl sm:text-5xl tracking-tighter font-serif text-foreground">Travel with <span className="italic text-primary">Purpose</span></h2>
+              <p className="mt-4 text-lg text-muted-foreground font-light">Every step on Homestead is built around safety, trust, and real local impact. Ditch the crowds and discover the untouched.</p>
+            </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-xl border border-border bg-card p-5 hover:border-primary/50 transition-all duration-300" data-animate>
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-background">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-primary"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path><circle cx="12" cy="12" r="10"></circle></svg>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:grid-rows-2 auto-rows-fr">
+            {/* Large Feature Card */}
+            <div className="md:col-span-2 md:row-span-2 rounded-3xl border border-border bg-card p-8 sm:p-10 hover:border-primary/40 transition-all duration-500 relative overflow-hidden group shadow-sm" data-animate>
+              <div className="absolute -right-8 -top-8 w-64 h-64 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors duration-500"></div>
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-background shadow-inner mb-8">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 text-primary"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path><circle cx="12" cy="12" r="10"></circle></svg>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-serif tracking-tight text-foreground mb-4">Discover Hidden Gems</h3>
+                  <p className="text-lg text-muted-foreground leading-relaxed font-light max-w-md">Find handpicked, offbeat stays verified for authenticity and sustainability. From mountain cabins to riverside retreats, experience hospitality rooted in local culture.</p>
+                </div>
               </div>
-              <h3 className="mt-3 text-base font-semibold tracking-tight text-foreground">Discover</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Find handpicked, offbeat stays verified for authenticity and sustainability.</p>
             </div>
-            <div className="rounded-xl border border-border bg-card p-5 hover:border-primary/50 transition-all duration-300" data-animate>
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-background">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-primary"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1-1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+
+            {/* Small Feature Card 1 */}
+            <div className="rounded-3xl border border-border bg-card p-8 hover:border-primary/40 transition-all duration-500 shadow-sm flex flex-col justify-center group" data-animate>
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-background shadow-inner mb-6 group-hover:scale-110 transition-transform duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
               </div>
-              <h3 className="mt-3 text-base font-semibold tracking-tight text-foreground">Book securely</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Protected payments, clear policies, and responsive host support.</p>
+              <h3 className="text-xl font-bold tracking-tight text-foreground mb-2">Book Securely</h3>
+              <p className="text-muted-foreground font-light leading-relaxed">Protected payments, clear cancellation policies, and 24/7 responsive host support.</p>
             </div>
-            <div className="rounded-xl border border-border bg-card p-5 hover:border-primary/50 transition-all duration-300" data-animate>
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-background">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-primary"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
+
+            {/* Small Feature Card 2 */}
+            <div className="rounded-3xl border border-border bg-card p-8 hover:border-primary/40 transition-all duration-500 shadow-sm flex flex-col justify-center group" data-animate>
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-background shadow-inner mb-6 group-hover:scale-110 transition-transform duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
               </div>
-              <h3 className="mt-3 text-base font-semibold tracking-tight text-foreground">Travel responsibly</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Support local livelihoods and low-impact travel practices.</p>
+              <h3 className="text-xl font-bold tracking-tight text-foreground mb-2">Travel Responsibly</h3>
+              <p className="text-muted-foreground font-light leading-relaxed">Your stay directly supports local livelihoods and promotes low-impact travel practices.</p>
             </div>
           </div>
         </div>
@@ -333,6 +345,16 @@ const Home = () => {
                   </div>
                 </div>
               </>
+            )}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+};
+
+export default Home;
+         </>
             )}
           </div>
         </div>

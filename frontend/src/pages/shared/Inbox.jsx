@@ -80,22 +80,22 @@ const Inbox = () => {
     }
   };
 
-  if (loading && messages.length === 0) return <div className="text-white p-8">Loading messages...</div>;
+  if (loading && messages.length === 0) return <div className="text-foreground p-8">Loading messages...</div>;
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">Messages</h1>
-        <div className="flex bg-neutral-800 rounded-lg p-1">
+        <h1 className="text-2xl font-bold text-foreground">Messages</h1>
+        <div className="flex bg-secondary rounded-lg p-1">
           <button
             onClick={() => { setView('inbox'); setSelectedMessage(null); }}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${view === 'inbox' ? 'bg-blue-600 text-white' : 'text-neutral-400 hover:text-white'}`}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${view === 'inbox' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
           >
             Inbox
           </button>
           <button
             onClick={() => { setView('sent'); setSelectedMessage(null); }}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${view === 'sent' ? 'bg-blue-600 text-white' : 'text-neutral-400 hover:text-white'}`}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${view === 'sent' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
           >
             Sent
           </button>
@@ -104,56 +104,56 @@ const Inbox = () => {
 
       {error && <div className="bg-red-500/20 border border-red-500 text-red-500 p-4 rounded mb-4">{error}</div>}
 
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden bg-neutral-900 rounded-xl border border-neutral-800 min-h-[500px]">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden bg-card rounded-xl border border-border min-h-[500px]">
         {/* Message List */}
-        <div className="w-full md:w-1/3 h-64 md:h-auto border-b md:border-b-0 md:border-r border-neutral-800 overflow-y-auto flex-shrink-0">
+        <div className="w-full md:w-1/3 h-64 md:h-auto border-b md:border-b-0 md:border-r border-border overflow-y-auto flex-shrink-0">
           {messages.length === 0 ? (
-            <div className="p-8 text-center text-neutral-500">No {view} messages yet.</div>
+            <div className="p-8 text-center text-muted-foreground">No {view} messages yet.</div>
           ) : (
             messages.map((msg) => (
               <div
                 key={msg._id}
                 onClick={() => handleSelectMessage(msg._id)}
-                className={`p-4 border-b border-neutral-800 cursor-pointer hover:bg-neutral-800 transition-colors ${
-                  selectedMessage?._id === msg._id ? 'bg-neutral-800' : ''
-                } ${view === 'inbox' && !msg.read ? 'border-l-4 border-l-blue-500' : ''}`}
+                className={`p-4 border-b border-border cursor-pointer hover:bg-muted transition-colors ${
+                  selectedMessage?._id === msg._id ? 'bg-muted' : ''
+                } ${view === 'inbox' && !msg.read ? 'border-l-4 border-l-primary' : ''}`}
               >
                 <div className="flex justify-between items-start mb-1">
-                  <h3 className={`font-medium ${view === 'inbox' && !msg.read ? 'text-white' : 'text-neutral-300'}`}>
+                  <h3 className={`font-medium ${view === 'inbox' && !msg.read ? 'text-foreground' : 'text-muted-foreground'}`}>
                     {view === 'inbox' ? msg.sender.name : msg.receiver.name}
                   </h3>
-                  <span className="text-xs text-neutral-500">
+                  <span className="text-xs text-muted-foreground">
                     {moment(msg.createdAt).format('MMM D')}
                   </span>
                 </div>
-                <p className="text-sm text-neutral-400 truncate">{msg.subject || 'No Subject'}</p>
-                <p className="text-xs text-neutral-500 mt-1 truncate">{msg.content}</p>
+                <p className="text-sm text-muted-foreground truncate">{msg.subject || 'No Subject'}</p>
+                <p className="text-xs text-muted-foreground mt-1 truncate">{msg.content}</p>
               </div>
             ))
           )}
         </div>
 
         {/* Message Content */}
-        <div className="flex-1 overflow-y-auto p-6 bg-neutral-900">
+        <div className="flex-1 overflow-y-auto p-6 bg-card">
           {selectedMessage ? (
             <div>
-              <div className="flex justify-between items-start mb-6 pb-6 border-b border-neutral-800">
+              <div className="flex justify-between items-start mb-6 pb-6 border-b border-border">
                 <div>
-                  <h2 className="text-xl font-bold text-white mb-1">{selectedMessage.subject || 'No Subject'}</h2>
-                  <div className="text-sm text-neutral-400">
+                  <h2 className="text-xl font-bold text-foreground mb-1">{selectedMessage.subject || 'No Subject'}</h2>
+                  <div className="text-sm text-muted-foreground">
                     {view === 'inbox' ? 'From: ' : 'To: '}
-                    <span className="text-blue-400 font-medium">
+                    <span className="text-primary font-medium">
                       {view === 'inbox' ? selectedMessage.sender.name : selectedMessage.receiver.name}
                     </span> 
                     {' '}
                     ({view === 'inbox' ? selectedMessage.sender.email : selectedMessage.receiver.email})
                   </div>
                   {selectedMessage.property && (
-                    <div className="text-sm text-neutral-500 mt-1">
-                      Regarding: <span className="text-neutral-300 italic">{selectedMessage.property.name}</span>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      Regarding: <span className="text-foreground italic">{selectedMessage.property.name}</span>
                     </div>
                   )}
-                  <div className="text-xs text-neutral-500 mt-1">
+                  <div className="text-xs text-muted-foreground mt-1">
                     {moment(selectedMessage.createdAt).format('MMMM D, YYYY h:mm A')}
                   </div>
                 </div>
@@ -164,13 +164,13 @@ const Inbox = () => {
                   Delete
                 </button>
               </div>
-              <div className="text-neutral-300 whitespace-pre-wrap leading-relaxed">
+              <div className="text-foreground whitespace-pre-wrap leading-relaxed">
                 {selectedMessage.content}
               </div>
 
               {/* Reply Form */}
-              <div className="mt-12 pt-8 border-t border-neutral-800">
-                <h3 className="text-lg font-semibold text-white mb-4">
+              <div className="mt-12 pt-8 border-t border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   {view === 'inbox' ? 'Reply to Message' : 'Send another message'}
                 </h3>
                 <form onSubmit={handleSendReply} className="space-y-4">
@@ -178,14 +178,14 @@ const Inbox = () => {
                     value={replyContent}
                     onChange={(e) => setReplyContent(e.target.value)}
                     placeholder="Type your message here..."
-                    className="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-white placeholder-neutral-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none min-h-[150px]"
+                    className="w-full bg-muted border border-border rounded-lg p-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring outline-none transition-all resize-none min-h-[150px]"
                   />
                   {replySuccess && <p className="text-green-500 text-sm">Message sent successfully!</p>}
                   <div className="flex justify-end">
                     <button
                       type="submit"
                       disabled={!replyContent.trim() || sendingReply}
-                      className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors shadow-lg shadow-blue-900/20"
+                      className="px-6 py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground font-medium rounded-lg transition-colors shadow-lg shadow-primary/20"
                     >
                       {sendingReply ? 'Sending...' : 'Send'}
                     </button>
@@ -194,7 +194,7 @@ const Inbox = () => {
               </div>
             </div>
           ) : (
-            <div className="h-full flex items-center justify-center text-neutral-500 italic">
+            <div className="h-full flex items-center justify-center text-muted-foreground italic">
               Select a message to read
             </div>
           )}

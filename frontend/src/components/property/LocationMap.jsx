@@ -3,7 +3,7 @@ import { GoogleMap, Marker } from '@react-google-maps/api';
 
 const LocationMap = ({ center, isLoaded }) => (
   <div className="mt-8">
-    <h2 className="text-2xl font-semibold text-neutral-200 border-b border-neutral-700 pb-2">
+    <h2 className="text-2xl font-semibold text-foreground border-b border-border pb-2">
       Location
     </h2>
     <div className="mt-4 rounded-lg overflow-hidden">
@@ -23,7 +23,7 @@ const LocationMap = ({ center, isLoaded }) => (
           <Marker position={center} />
         </GoogleMap>
       ) : (
-        <div className="text-neutral-200">Loading Map...</div>
+        <div className="text-foreground">Loading Map...</div>
       )}
     </div>
   </div>
