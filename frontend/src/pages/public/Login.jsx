@@ -71,22 +71,22 @@ const Login = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md p-8 space-y-8 bg-neutral-900/50 rounded-2xl shadow-xl backdrop-blur-sm border border-neutral-800">
+      <div className="w-full max-w-md p-8 space-y-8 bg-card/50 rounded-2xl shadow-xl backdrop-blur-sm border border-border">
         <div>
-          <h2 className="text-3xl font-extrabold text-center text-white tracking-tight">Login</h2>
-          <p className="mt-2 text-center text-sm text-neutral-400 italic">Welcome back to Homestead</p>
+          <h2 className="text-3xl font-extrabold text-center text-foreground tracking-tight">Login</h2>
+          <p className="mt-2 text-center text-sm text-muted-foreground italic">Welcome back to Homestead</p>
         </div>
         
         <form onSubmit={onSubmit} className="mt-8 space-y-6">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg text-sm text-center animate-shake" role="alert">
+            <div className="bg-destructive/10 border border-destructive/50 text-destructive p-3 rounded-lg text-sm text-center animate-shake" role="alert">
               {error}
             </div>
           )}
           
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1">Email Address</label>
+              <label htmlFor="email" className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">Email Address</label>
               <input
                 ref={emailInputRef}
                 id="email"
@@ -94,20 +94,20 @@ const Login = () => {
                 name="email"
                 value={email}
                 onChange={onChange}
-                className="w-full p-3 bg-neutral-800 border border-neutral-700 rounded-xl text-neutral-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all placeholder-neutral-600"
+                className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-muted-foreground/50"
                 placeholder="you@example.com"
                 required
               />
             </div>
             <div>
-              <label htmlFor="password" name="password" className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1">Password</label>
+              <label htmlFor="password" name="password" className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">Password</label>
               <input
                 id="password"
                 type="password"
                 name="password"
                 value={password}
                 onChange={onChange}
-                className="w-full p-3 bg-neutral-800 border border-neutral-700 rounded-xl text-neutral-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all placeholder-neutral-600"
+                className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-muted-foreground/50"
                 placeholder="••••••••"
                 required
               />
@@ -123,7 +123,7 @@ const Login = () => {
                 theme="dark"
               />
             ) : import.meta.env.VITE_SKIP_CAPTCHA === 'true' ? (
-              <p className="text-green-500 text-xs text-center bg-green-500/10 p-2 rounded-lg border border-green-500/20">
+              <p className="text-primary text-xs text-center bg-primary/10 p-2 rounded-lg border border-primary/20">
                 CAPTCHA skipped for testing.
               </p>
             ) : (
@@ -134,7 +134,7 @@ const Login = () => {
           </div>
 
           <div>
-            <button type="submit" className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] rounded-xl text-white font-bold text-sm shadow-lg shadow-purple-900/20 transition-all duration-200">
+            <button type="submit" className="w-full py-3 px-4 bg-primary hover:bg-primary/90 active:scale-[0.98] rounded-xl text-primary-foreground font-bold text-sm shadow-lg shadow-primary/20 transition-all duration-200">
               Sign In
             </button>
           </div>
@@ -142,10 +142,10 @@ const Login = () => {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center" aria-hidden="true">
-            <div className="w-full border-t border-neutral-800"></div>
+            <div className="w-full border-t border-border"></div>
           </div>
           <div className="relative flex justify-center text-sm uppercase tracking-tighter">
-            <span className="px-3 bg-[#121212] text-neutral-500 font-medium">Or continue with</span>
+            <span className="px-3 bg-background text-muted-foreground font-medium">Or continue with</span>
           </div>
         </div>
 
@@ -159,8 +159,8 @@ const Login = () => {
           />
         </div>
 
-        <p className="mt-8 text-center text-sm text-neutral-400 font-medium">
-          Don't have an account? <Link to="/signup" className="text-purple-400 hover:text-purple-300 transition-colors font-bold ml-1">Create Account</Link>
+        <p className="mt-8 text-center text-sm text-muted-foreground font-medium">
+          Don't have an account? <Link to="/signup" className="text-primary hover:text-primary/80 transition-colors font-bold ml-1">Create Account</Link>
         </p>
       </div>
     </div>

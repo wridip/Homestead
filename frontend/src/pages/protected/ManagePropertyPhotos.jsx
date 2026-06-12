@@ -59,13 +59,13 @@ const ManagePropertyPhotos = () => {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold text-neutral-200">Manage Photos for {property.name}</h1>
-      <div className="mt-8">
+    <div className="p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border">
+      <h1 className="text-3xl font-bold text-foreground">Manage Photos for {property.name}</h1>
+      <div className="mt-8 bg-card p-6 rounded-xl border border-border">
         <form onSubmit={handleFormSubmit}>
           <div className="mt-4">
-            <label htmlFor="images" className="block text-sm font-medium text-neutral-400">
-              Upload new images (up to 5)
+            <label htmlFor="images" className="block text-sm font-medium text-muted-foreground">
+              Upload new images
             </label>
             <input
               type="file"
@@ -74,16 +74,16 @@ const ManagePropertyPhotos = () => {
               multiple
               accept="image/*"
               onChange={handleFileChange}
-              className="mt-1 block w-full text-sm text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+              className="mt-2 block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-all"
             />
           </div>
-          <div className="mt-6">
+          <div className="mt-8">
             <button
               type="submit"
-              className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700"
+              className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
               disabled={uploading}
             >
-              {uploading ? 'Uploading...' : 'Upload'}
+              {uploading ? 'Uploading...' : 'Upload Images'}
             </button>
           </div>
         </form>

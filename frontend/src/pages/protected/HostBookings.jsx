@@ -65,37 +65,46 @@ const HostBookings = () => {
   }
 
   return (
-    <div className="p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
-      <h1 className="text-2xl font-bold text-neutral-200 mb-6">Manage Bookings</h1>
+    <div className="p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border">
+      <h1 className="text-2xl font-bold text-foreground mb-6">Manage Bookings</h1>
       {bookings.length === 0 ? (
-        <p className="text-neutral-200">You have no bookings.</p>
+        <p className="text-foreground">You have no bookings.</p>
       ) : (
-        <div className="bg-[#1E1E1E] shadow-md rounded-lg overflow-x-auto">
-          <table className="min-w-full divide-y divide-neutral-800">
-            <thead className="bg-neutral-900/50">
+        <div className="bg-card shadow-md rounded-lg overflow-x-auto border border-border">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Property</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Traveler</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Dates</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Property</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Traveler</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Dates</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-[#1E1E1E] divide-y divide-neutral-800">
+            <tbody className="bg-card divide-y divide-border">
               {bookings.map((booking) => (
-                <tr key={booking._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-200">{booking.propertyId?.name || 'Deleted Property'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{booking.travelerId?.name || 'Deleted User'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">
+                <tr key={booking._id} className="hover:bg-accent/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{booking.propertyId?.name || 'Deleted Property'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{booking.travelerId?.name || 'Deleted User'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                     {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{booking.status}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      booking.status === 'Confirmed' ? 'bg-green-500/10 text-green-500' :
+                      booking.status === 'Pending' ? 'bg-yellow-500/10 text-yellow-500' :
+                      booking.status === 'Cancelled' ? 'bg-red-500/10 text-red-500' :
+                      'bg-blue-500/10 text-blue-500'
+                    }`}>
+                      {booking.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                     {booking.status === 'Pending' && (
                       <button
                         onClick={() => handleApprove(booking._id)}
                         disabled={updating === booking._id}
-                        className="text-green-500 hover:text-green-700 disabled:opacity-50"
+                        className="text-green-500 hover:text-green-600 font-medium disabled:opacity-50"
                       >
                         {updating === booking._id ? 'Approving...' : 'Approve'}
                       </button>
@@ -104,7 +113,7 @@ const HostBookings = () => {
                       <button
                         onClick={() => handleComplete(booking._id)}
                         disabled={updating === booking._id}
-                        className="text-blue-500 hover:text-blue-700 disabled:opacity-50"
+                        className="text-blue-500 hover:text-blue-600 font-medium disabled:opacity-50"
                       >
                         {updating === booking._id ? 'Completing...' : 'Complete'}
                       </button>
@@ -113,7 +122,7 @@ const HostBookings = () => {
                       <button
                         onClick={() => handleCancel(booking._id)}
                         disabled={updating === booking._id}
-                        className="text-red-500 hover:text-red-700 ml-4 disabled:opacity-50"
+                        className="text-red-500 hover:text-red-600 font-medium ml-4 disabled:opacity-50"
                       >
                         {updating === booking._id ? 'Cancelling...' : 'Cancel'}
                       </button>

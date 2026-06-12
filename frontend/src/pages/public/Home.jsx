@@ -219,10 +219,10 @@ const Home = () => {
       <section className="pt-14 pb-14 bg-transparent" data-bg="dark">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center" data-animate>
-            <h2 className="text-3xl tracking-tight font-medium text-neutral-200">Community Photo Wall</h2>
-            <p className="mt-3 text-sm text-neutral-400">Post your favorite moments from your trip or homestay. Tag #Homestead and share them here.</p>
+            <h2 className="text-3xl tracking-tight font-medium text-foreground">Community Photo Wall</h2>
+            <p className="mt-3 text-sm text-muted-foreground">Post your favorite moments from your trip or homestay. Tag #Homestead and share them here.</p>
             <div className="mt-4 flex justify-center">
-              <Link to="/share-photo" className="btn-adaptive rounded-md px-4 py-2 text-sm font-semibold border inline-flex items-center gap-2 text-neutral-200 border-neutral-700 hover:bg-neutral-800">
+              <Link to="/share-photo" className="btn-adaptive rounded-md px-4 py-2 text-sm font-semibold border inline-flex items-center gap-2 text-foreground border-border hover:bg-accent">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><path d="M16 5h6"></path><path d="M19 2v6"></path><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"></path><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path><circle cx="9" cy="9" r="2"></circle></svg>
                 Share your photo
               </Link>

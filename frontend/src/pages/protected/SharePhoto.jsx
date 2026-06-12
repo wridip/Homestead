@@ -51,13 +51,13 @@ const SharePhoto = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
-      <h1 className="text-3xl font-bold mb-4 text-neutral-200">Share Your Photo</h1>
-      {error && <div className="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
-      {success && <div className="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded relative mb-4" role="alert">{success}</div>}
-      <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-8 bg-[#1E1E1E] rounded-lg shadow-md">
-        <div className="mb-4">
-          <label htmlFor="photo" className="block text-sm font-medium text-neutral-400">
+    <div className="p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border">
+      <h1 className="text-3xl font-bold mb-6 text-foreground">Share Your Photo</h1>
+      {error && <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
+      {success && <div className="bg-green-500/10 border border-green-500/20 text-green-500 px-4 py-3 rounded relative mb-4" role="alert">{success}</div>}
+      <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-8 bg-card rounded-xl border border-border shadow-md">
+        <div className="mb-6">
+          <label htmlFor="photo" className="block text-sm font-medium text-muted-foreground mb-2">
             Photo
           </label>
           <input
@@ -65,16 +65,16 @@ const SharePhoto = () => {
             id="photo"
             accept="image/*"
             onChange={handlePhotoChange}
-            className="mt-1 block w-full bg-transparent border border-neutral-700 rounded-md text-white"
+            className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-all"
           />
         </div>
         {preview && (
-          <div className="mb-4">
-            <img src={preview} alt="Preview" className="max-w-full h-auto" />
+          <div className="mb-6">
+            <img src={preview} alt="Preview" className="max-w-full h-auto rounded-lg border border-border shadow-sm" />
           </div>
         )}
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-neutral-400">
+        <div className="mb-6">
+          <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-2">
             Your Name
           </label>
           <input
@@ -82,11 +82,12 @@ const SharePhoto = () => {
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full rounded-md bg-transparent border border-neutral-700 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm text-white"
+            className="mt-1 block w-full rounded-md bg-transparent border border-border shadow-sm focus:border-primary focus:ring-primary sm:text-sm text-foreground p-3"
+            placeholder="Enter your name"
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="socialLink" className="block text-sm font-medium text-neutral-400">
+        <div className="mb-8">
+          <label htmlFor="socialLink" className="block text-sm font-medium text-muted-foreground mb-2">
             Social Media Link
           </label>
           <input
@@ -94,14 +95,15 @@ const SharePhoto = () => {
             id="socialLink"
             value={socialLink}
             onChange={(e) => setSocialLink(e.target.value)}
-            className="mt-1 block w-full rounded-md bg-transparent border border-neutral-700 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm text-white"
+            className="mt-1 block w-full rounded-md bg-transparent border border-border shadow-sm focus:border-primary focus:ring-primary sm:text-sm text-foreground p-3"
+            placeholder="https://instagram.com/..."
           />
         </div>
         <button
           type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+          className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-md font-semibold text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
         >
-          Upload
+          Upload Photo
         </button>
       </form>
     </div>

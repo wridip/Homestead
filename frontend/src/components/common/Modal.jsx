@@ -8,9 +8,9 @@ const Modal = ({ isOpen, onClose, children }) => {
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="bg-neutral-900 rounded-lg shadow-lg p-6 w-full max-w-md m-4">
+      <div className="bg-background rounded-lg shadow-lg p-6 w-full max-w-md m-4 border border-border">
         <div className="flex justify-end">
-          <button onClick={onClose} className="text-neutral-400 hover:text-neutral-200">
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
             &times;
           </button>
         </div>
