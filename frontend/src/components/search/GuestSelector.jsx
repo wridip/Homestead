@@ -21,7 +21,7 @@ const GuestSelector = ({ guests, setGuests }) => {
         <button
             type="button"
             onClick={handleDecrement}
-            className="p-0.5 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 transition"
+            className="p-0.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition"
             aria-label="Decrement guests"
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M5 12h14"/></svg>
@@ -37,7 +37,7 @@ const GuestSelector = ({ guests, setGuests }) => {
         <button
             type="button"
             onClick={handleIncrement}
-            className="p-0.5 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 transition"
+            className="p-0.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition"
             aria-label="Increment guests"
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
