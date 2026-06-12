@@ -30,11 +30,11 @@ const DashboardLayout = () => {
   }, [isSidebarOpen]);
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 antialiased font-[Inter]">
+    <div className="min-h-screen bg-background text-foreground antialiased font-[Inter]">
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute inset-0" style={{
           background:
-            'radial-gradient(120% 100% at 50% 0%, rgba(255,255,255,0.03), rgba(0,0,0,0) 55%) , radial-gradient(120% 120% at 50% 100%, rgba(255,255,255,0.025), rgba(0,0,0,0) 55%), linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.6))',
+            'radial-gradient(120% 100% at 50% 0%, hsl(var(--primary) / 0.05), rgba(0,0,0,0) 55%) , radial-gradient(120% 120% at 50% 100%, hsl(var(--primary) / 0.03), rgba(0,0,0,0) 55%), linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.6))',
         }}></div>
         <div className="absolute -top-1/3 -left-1/4 w-[120vw] h-[120vh] blur-3xl opacity-60" style={{
           background:
