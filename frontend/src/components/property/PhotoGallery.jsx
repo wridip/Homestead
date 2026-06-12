@@ -8,6 +8,9 @@ const PhotoGallery = ({ images, propertyName }) => {
 
   const getUrl = (img) => getImageUrl(img);
 
+  // If we don't have enough images for a grid, fallback safely for layout
+  const displayImages = images.length >= 5 ? images : [...images, ...Array(5 - images.length).fill('default-property.png')];
+
   const openImage = (index) => {
     if (index < images.length) {
       setSelectedIndex(index);
@@ -41,44 +44,47 @@ const PhotoGallery = ({ images, propertyName }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedIndex, showAll]);
 
-  // Limit images shown on the main page to prevent extremely long scrolls, 
-  // but allow viewing all in the modal.
-  const previewImages = images.slice(0, 6);
-
   return (
-    <div className="relative mb-16 mt-8">
+    <div className="relative mb-16 mt-8 group">
       
-      {/* Uncropped Masonry Layout */}
-      <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4 relative">
-        {previewImages.map((img, index) => (
+      {/* Structured 5-Image Grid with Blurred Backdrops (No Zooming/Cropping) */}
+      <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-1 md:grid-rows-2 gap-2 h-[300px] md:h-[500px] overflow-hidden rounded-[2rem] border border-border bg-background">
+        
+        {/* Large Hero Image (Left, 2 cols, 2 rows) */}
+        <motion.div 
+          className="col-span-1 md:col-span-2 row-span-1 md:row-span-2 relative overflow-hidden group/item cursor-pointer bg-card"
+          whileHover={{ scale: 0.995 }}
+          onClick={() => openImage(0)}
+        >
+          {/* Blurred Background to fill empty space */}
+          <img src={getUrl(displayImages[0])} className="absolute inset-0 w-full h-full object-cover opacity-30 blur-2xl scale-110 pointer-events-none" alt="" />
+          {/* Uncropped Foreground Image */}
+          <img src={getUrl(displayImages[0])} alt={propertyName} className="relative z-10 w-full h-full object-contain group-hover/item:scale-105 transition-transform duration-700" />
+        </motion.div>
+        
+        {/* 4 Small Images (Right side) */}
+        {displayImages.slice(1, 5).map((img, index) => (
           <motion.div 
-            key={index}
-            className="relative overflow-hidden rounded-2xl group cursor-pointer break-inside-avoid shadow-sm border border-border"
-            whileHover={{ scale: 0.985 }}
-            onClick={() => openImage(index)}
+            key={index + 1}
+            className="hidden md:block col-span-1 row-span-1 relative overflow-hidden group/item cursor-pointer bg-card"
+            whileHover={{ scale: 0.98 }}
+            onClick={() => openImage(index + 1)}
           >
-            <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 mix-blend-overlay rounded-2xl"></div>
-            <img
-              src={getUrl(img)}
-              alt={`${propertyName} - Photo ${index + 1}`}
-              className="w-full h-auto object-contain rounded-2xl transition-transform duration-500 bg-card"
-              loading="lazy"
-            />
+            {/* Blurred Background */}
+            <img src={getUrl(img)} className="absolute inset-0 w-full h-full object-cover opacity-30 blur-2xl scale-110 pointer-events-none" alt="" />
+            {/* Uncropped Foreground Image */}
+            <img src={getUrl(img)} alt={`${propertyName} ${index + 2}`} className="relative z-10 w-full h-full object-contain group-hover/item:scale-110 transition-transform duration-700" />
           </motion.div>
         ))}
 
-        {/* View Gallery Button overlay on the bottom right of the masonry container */}
-        {images.length > previewImages.length && (
-          <div className="absolute bottom-6 right-6 z-20">
-            <button 
-              onClick={(e) => { e.stopPropagation(); setShowAll(true); }}
-              className="flex items-center gap-2 px-6 py-3 bg-background/80 backdrop-blur-xl border border-border hover:bg-primary hover:border-primary text-foreground hover:text-primary-foreground text-sm font-bold tracking-wide uppercase rounded-full shadow-2xl transition-all duration-300 active:scale-95"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
-              View all {images.length} photos
-            </button>
-          </div>
-        )}
+        {/* Show All Photos Button Overlay */}
+        <button 
+          onClick={(e) => { e.stopPropagation(); setShowAll(true); }}
+          className="absolute bottom-6 right-6 z-20 flex items-center gap-2 px-5 py-3 bg-background/80 backdrop-blur-md border border-border hover:bg-primary text-foreground hover:text-primary-foreground text-sm font-bold tracking-wide uppercase rounded-full shadow-2xl transition-all duration-300 active:scale-95"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+          View Gallery
+        </button>
       </div>
 
       {/* Full View Modal */}
@@ -115,18 +121,21 @@ const PhotoGallery = ({ images, propertyName }) => {
             
             <div className="flex-1 overflow-y-auto p-4 md:p-12 space-y-8" onClick={(e) => e.stopPropagation()}>
               {showAll && selectedIndex === null ? (
-                /* GRID VIEW (Masonry) */
-                <div className="max-w-7xl mx-auto space-y-12 pb-12">
+                /* GRID VIEW (Modal overview) */
+                <div className="max-w-5xl mx-auto space-y-12 pb-12">
                   <h2 className="text-4xl font-serif text-foreground mb-12 text-center">Gallery — <span className="italic text-primary">{propertyName}</span></h2>
-                  <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {images.map((img, i) => (
-                      <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="break-inside-avoid">
-                        <img 
-                          src={getUrl(img)} 
-                          className="w-full h-auto rounded-2xl shadow-xl hover:scale-[1.02] transition-transform duration-500 cursor-zoom-in bg-card border border-border/50" 
-                          onClick={() => setSelectedIndex(i)} 
-                          loading="lazy"
-                        />
+                      <motion.div 
+                        key={i} 
+                        initial={{ opacity: 0 }} 
+                        whileInView={{ opacity: 1 }} 
+                        viewport={{ once: true }} 
+                        className="relative h-64 bg-card rounded-2xl border border-border/50 overflow-hidden cursor-zoom-in group"
+                        onClick={() => setSelectedIndex(i)}
+                      >
+                         <img src={getUrl(img)} className="absolute inset-0 w-full h-full object-cover opacity-20 blur-xl scale-110 pointer-events-none" alt="" />
+                         <img src={getUrl(img)} className="relative z-10 w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                       </motion.div>
                     ))}
                   </div>
