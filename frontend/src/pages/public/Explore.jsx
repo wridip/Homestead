@@ -156,29 +156,29 @@ const Explore = () => {
       <div className="w-full md:w-[60%] flex flex-col h-[calc(100vh-64px)] overflow-hidden border-r border-border">
         
         {/* Horizontal Filters Bar (Sticky) */}
-        <div className="p-4 bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-10 space-y-4">
+        <div className="py-6 px-6 lg:px-10 bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-10 space-y-5">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <h1 className="text-3xl font-serif text-foreground tracking-tight"><span className="italic text-primary">{filteredProperties.length}</span> stays found</h1>
              <div className="relative w-full sm:w-auto">
               <select 
                 value={sortBy} 
                 onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none w-full sm:w-auto bg-card border border-border text-foreground py-2 pl-4 pr-10 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm font-medium shadow-sm transition-all"
+                className="appearance-none w-full sm:w-auto bg-card border border-border text-foreground py-2.5 pl-5 pr-12 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm font-medium shadow-sm transition-all cursor-pointer"
               >
                 <option>Recommended</option>
                 <option>Price: Low to High</option>
                 <option>Price: High to Low</option>
                 <option>Top Rated</option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-primary">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-primary">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"></path></svg>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-4">
              <div className="relative flex-1 min-w-[200px]">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
                 </div>
                 <input
@@ -186,11 +186,11 @@ const Explore = () => {
                   value={searchQuery}
                   onChange={handleSearchInputChange}
                   placeholder="Search destination..."
-                  className="w-full bg-card border border-border rounded-full py-2 pl-10 pr-4 text-sm text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-sm"
+                  className="w-full bg-card border border-border rounded-full py-2.5 pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-sm"
                 />
              </div>
 
-             <div className="flex items-center gap-2 bg-card border border-border rounded-full px-3 py-1.5 shadow-sm">
+             <div className="flex items-center gap-3 bg-card border border-border rounded-full px-4 py-2 shadow-sm">
                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">Max ₹{filters.price}</span>
                 <input
                   type="range"
@@ -207,22 +207,22 @@ const Explore = () => {
                 <button 
                   key={type} 
                   onClick={() => handleTypeFilter(type)} 
-                  className={`px-4 py-1.5 text-xs font-semibold rounded-full border transition-all shadow-sm ${filters.type.includes(type) ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:border-primary/50'}`}
+                  className={`px-5 py-2 text-xs font-semibold rounded-full border transition-all shadow-sm ${filters.type.includes(type) ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:border-primary/50'}`}
                 >
                   {type}
                 </button>
              ))}
 
              {(filters.type.length > 0 || searchQuery || filters.price < 3000) && (
-               <button onClick={resetFilters} className="text-xs text-primary font-bold hover:underline underline-offset-2 ml-2">Clear</button>
+               <button onClick={resetFilters} className="text-xs text-primary font-bold hover:underline underline-offset-2 ml-2">Clear filters</button>
              )}
           </div>
         </div>
 
         {/* Scrollable Properties List */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 scroll-smooth">
+        <div className="flex-1 overflow-y-auto p-6 lg:p-10 pb-32 scroll-smooth">
           {filteredProperties.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {filteredProperties.map((property, idx) => (
                 <motion.div 
                   key={property._id}
@@ -239,57 +239,60 @@ const Explore = () => {
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center p-8">
-               <div className="w-16 h-16 rounded-full bg-card border border-border flex items-center justify-center mb-4">
+               <div className="w-16 h-16 rounded-full bg-card border border-border flex items-center justify-center mb-4 shadow-sm">
                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
                </div>
-              <h3 className="text-xl font-serif text-foreground">No matches found</h3>
-              <p className="mt-2 text-sm text-muted-foreground">Try adjusting your filters or searching a different area.</p>
-              <button onClick={resetFilters} className="mt-6 px-6 py-2 bg-primary text-primary-foreground rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">Reset all filters</button>
+              <h3 className="text-2xl font-serif text-foreground">No escapes found</h3>
+              <p className="mt-3 text-base text-muted-foreground">Try adjusting your filters or exploring a different location.</p>
+              <button onClick={resetFilters} className="mt-8 px-8 py-3 bg-primary text-primary-foreground rounded-full text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">Reset all filters</button>
             </div>
           )}
         </div>
       </div>
 
       {/* Right Pane: Sticky Interactive Map (approx 40%) */}
-      <div className="hidden md:block w-[40%] bg-card sticky top-16 h-[calc(100vh-64px)] z-0">
-        {isLoaded ? (
-          <GoogleMap
-            mapContainerStyle={{ width: '100%', height: '100%' }}
-            center={mapCenter}
-            zoom={6}
-            options={{
-              styles: mapStyles,
-              disableDefaultUI: true,
-              zoomControl: true,
-            }}
-          >
-            {filteredProperties.map(property => {
-              if (property.location && property.location.coordinates) {
-                const isHovered = hoveredProperty === property._id;
-                return (
-                  <Marker 
-                    key={property._id}
-                    position={{ lat: property.location.coordinates[1], lng: property.location.coordinates[0] }}
-                    icon={{
-                      path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
-                      fillColor: isHovered ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
-                      fillOpacity: 1,
-                      strokeWeight: 2,
-                      strokeColor: "hsl(var(--background))",
-                      scale: isHovered ? 1.5 : 1.2,
-                    }}
-                    zIndex={isHovered ? 100 : 1}
-                  />
-                );
-              }
-              return null;
-            })}
-          </GoogleMap>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-card">
-            <span className="text-muted-foreground text-sm font-medium animate-pulse">Loading map...</span>
-          </div>
-        )}
+      <div className="hidden md:block w-[40%] bg-background p-6 lg:p-8 sticky top-16 h-[calc(100vh-64px)] z-0">
+        <div className="w-full h-full rounded-[2rem] overflow-hidden shadow-2xl border border-border">
+          {isLoaded ? (
+            <GoogleMap
+              mapContainerStyle={{ width: '100%', height: '100%' }}
+              center={mapCenter}
+              zoom={6}
+              options={{
+                styles: mapStyles,
+                disableDefaultUI: true,
+                zoomControl: true,
+              }}
+            >
+              {filteredProperties.map(property => {
+                if (property.location && property.location.coordinates) {
+                  const isHovered = hoveredProperty === property._id;
+                  return (
+                    <Marker 
+                      key={property._id}
+                      position={{ lat: property.location.coordinates[1], lng: property.location.coordinates[0] }}
+                      icon={{
+                        path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+                        fillColor: isHovered ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+                        fillOpacity: 1,
+                        strokeWeight: 2,
+                        strokeColor: "hsl(var(--background))",
+                        scale: isHovered ? 1.5 : 1.2,
+                      }}
+                      zIndex={isHovered ? 100 : 1}
+                    />
+                  );
+                }
+                return null;
+              })}
+            </GoogleMap>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-card">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary animate-pulse mb-4"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span className="text-muted-foreground font-serif italic tracking-widest text-sm">Loading map...</span>
+            </div>
+          )}
+        </div>
       </div>
       
     </div>

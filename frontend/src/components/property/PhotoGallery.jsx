@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getImageUrl } from '../../services/api';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PhotoGallery = ({ images, propertyName }) => {
   const [selectedImage, setSelectedImage] = useState(null);
