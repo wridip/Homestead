@@ -29,3 +29,8 @@ export const completeBooking = async (bookingId) => {
   const response = await api.put(`/bookings/${bookingId}/complete`);
   return response.data;
 };
+
+export const verifyPayment = async (paymentData) => {
+  const response = await api.post('/bookings/verify', paymentData);
+  return response.data;
+};

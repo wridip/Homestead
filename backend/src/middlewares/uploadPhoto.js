@@ -6,14 +6,24 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-// Initialize S3 client
-const s3 = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
+// Initialize S3 client safely
+let s3;
+try {
+  if (process.env.AWS_REGION && process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+    s3 = new S3Client({
+      region: process.env.AWS_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
+    });
+    console.log('S3 Client initialized successfully.');
+  } else {
+    console.warn('AWS credentials or region missing. S3 uploads will not work.');
+  }
+} catch (error) {
+  console.error(`S3 Client initialization failed: ${error.message}`);
+}
 
 // Check file type
 function checkFileType(file, cb) {
@@ -29,7 +39,7 @@ function checkFileType(file, cb) {
 }
 
 // Multer S3 Storage Configuration
-const storage = multerS3({
+const storage = s3 ? multerS3({
   s3: s3,
   bucket: process.env.AWS_BUCKET_NAME,
   contentType: multerS3.AUTO_CONTENT_TYPE,
@@ -37,7 +47,7 @@ const storage = multerS3({
     const fileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
     cb(null, `uploads/${fileName}`); // Saves it in an 'uploads' folder in the bucket
   },
-});
+}) : multer.memoryStorage();
 
 const uploadPhoto = multer({
   storage: storage,

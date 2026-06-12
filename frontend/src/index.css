@@ -2,40 +2,97 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Cozy Dark Forest Background */
+    --background: 150 11% 8%;      /* #111613 - Very deep, rich charcoal green */
+    --foreground: 150 15% 95%;     /* Crisp, soft off-white text */
+
+    /* Surface Cards & Sidebars */
+    --card: 150 11% 11%;           /* #171d19 - Slightly lighter for containers */
+    --card-foreground: 150 15% 95%;
+    --popover: 150 11% 11%;
+    --popover-foreground: 150 15% 95%;
+
+    /* The Cozy Accent Colors */
+    --primary: 142 26% 36%;        /* #437354 - Beautiful soft forest green for buttons */
+    --primary-foreground: 0 0% 98%;
+    
+    /* Active states / Highlights */
+    --accent: 142 20% 18%;         /* Deep green tint for item hover states */
+    --accent-foreground: 140 30% 90%;
+
+    /* Subtle UI Borders and Dividers */
+    --border: 150 10% 16%;         /* Soft dark border line */
+    --input: 150 10% 16%;
+    --ring: 142 26% 36%;           /* Focus rings match primary green */
+
+    /* Muted Secondary Text (The "Sage" color) */
+    --muted: 150 8% 14%;
+    --muted-foreground: 145 10% 62%; /* #96a69a - Helps headers stand out */
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+  }
+}
+
 body {
-  background-color: #121212;
-  color: #E5E5E5;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
 /* Custom styles for react-datepicker */
 .react-datepicker {
-  background-color: #1E1E1E !important;
-  border-color: #2E2E2E !important;
+  background-color: hsl(var(--card)) !important;
+  border-color: hsl(var(--border)) !important;
 }
 
 .react-datepicker__header {
-  background-color: #1E1E1E !important;
-  border-bottom-color: #2E2E2E !important;
+  background-color: hsl(var(--card)) !important;
+  border-bottom-color: hsl(var(--border)) !important;
 }
 
 .react-datepicker__current-month, .react-datepicker-time__header, .react-datepicker-year-header {
-  color: #FFFFFF !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .react-datepicker__day-name, .react-datepicker__day, .react-datepicker__time-name {
-  color: #A0A0A0 !important;
+  color: hsl(var(--muted-foreground)) !important;
 }
 
 .react-datepicker__day--selected, .react-datepicker__day--in-selecting-range, .react-datepicker__day--in-range {
-  background-color: #BB86FC !important;
-  color: #000000 !important;
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
 }
 
 .react-datepicker__day--keyboard-selected {
-    background-color: #BB86FC !important;
-    color: #000000 !important;
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
 }
 
 .react-datepicker__day:hover {
-    background-color: #3c3c3c !important;
+    background-color: hsl(var(--accent)) !important;
 }

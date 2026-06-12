@@ -36,25 +36,25 @@ const EarningsAudit = () => {
   const sortedMonths = auditData ? Object.keys(auditData).sort((a, b) => new Date(b) - new Date(a)) : [];
 
   return (
-    <div className="p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
-      <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-6">
+    <div className="p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border">
+      <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-6">
         Earnings Audit
       </h1>
       <div className="space-y-4">
         {sortedMonths.length > 0 ? (
           sortedMonths.map((monthYear) => (
-            <div key={monthYear} className="bg-[#1E1E1E] border border-neutral-800 rounded-lg overflow-hidden">
+            <div key={monthYear} className="bg-card border border-border rounded-lg overflow-hidden shadow-sm">
               <button
                 onClick={() => toggleMonth(monthYear)}
-                className="w-full flex justify-between items-center p-4 bg-neutral-900/50 hover:bg-neutral-800 transition-colors"
+                className="w-full flex justify-between items-center p-4 bg-muted/20 hover:bg-accent transition-colors"
               >
-                <span className="text-lg font-semibold text-neutral-200">{monthYear}</span>
+                <span className="text-lg font-semibold text-foreground">{monthYear}</span>
                 <div className="flex items-center gap-4">
-                   <span className="text-lg font-bold text-green-400">
+                   <span className="text-lg font-bold text-green-500">
                     ₹{auditData[monthYear].totalEarnings.toFixed(2)}
                   </span>
                   <svg
-                    className={`w-6 h-6 text-neutral-400 transition-transform ${openMonth === monthYear ? 'transform rotate-180' : ''}`}
+                    className={`w-6 h-6 text-muted-foreground transition-transform ${openMonth === monthYear ? 'transform rotate-180' : ''}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -65,25 +65,26 @@ const EarningsAudit = () => {
                 </div>
               </button>
               {openMonth === monthYear && (
-                <div className="p-4">
+                <div className="p-4 border-t border-border bg-card">
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-neutral-700">
-                      <thead className="bg-neutral-800/50">
+                    <table className="min-w-full divide-y divide-border">
+                      <thead className="bg-muted/50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Property</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Traveler</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Dates</th>
-                          <th className="px-6 py-3 text-right text-xs font-medium text-neutral-400 uppercase tracking-wider">Earning</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Property</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Traveler</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Dates</th>
+                          <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Earning</th>
                         </tr>
                       </thead>
-                      <tbody className="bg-[#1E1E1E] divide-y divide-neutral-700">
+                      <tbody className="bg-card divide-y divide-border">
                         {auditData[monthYear].bookings.map((booking) => (
-                          <tr key={booking._id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-200">{booking.propertyId?.name || 'Deleted Property'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{booking.travelerId?.name || 'Deleted User'}</td>                            <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">
+                          <tr key={booking._id} className="hover:bg-accent/30 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{booking.propertyId?.name || 'Deleted Property'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{booking.travelerId?.name || 'Deleted User'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                               {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-green-400">₹{booking.totalPrice.toFixed(2)}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-green-500">₹{booking.totalPrice.toFixed(2)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -94,7 +95,7 @@ const EarningsAudit = () => {
             </div>
           ))
         ) : (
-          <p className="text-neutral-400 text-center py-8">No completed bookings found to generate an audit.</p>
+          <p className="text-muted-foreground text-center py-8">No completed bookings found to generate an audit.</p>
         )}
       </div>
     </div>

@@ -22,8 +22,12 @@ app.set('trust proxy', 1);
 
 // --- Database Connection Middleware ---
 app.use(async (req, res, next) => {
-  await connectDB();
-  next();
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.use(cors({

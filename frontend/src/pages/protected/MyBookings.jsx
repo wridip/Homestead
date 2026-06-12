@@ -40,32 +40,41 @@ const MyBookings = () => {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12 p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
-      <h1 className="text-3xl font-bold text-neutral-200 mb-6">My Bookings</h1>
+    <div className="p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border">
+      <h1 className="text-3xl font-bold text-foreground mb-6">My Bookings</h1>
       {bookings.length === 0 ? (
-        <p className="text-neutral-400">You have no bookings.</p>
+        <p className="text-muted-foreground">You have no bookings.</p>
       ) : (
-        <div className="bg-[#1E1E1E] shadow-md rounded-lg overflow-x-auto">
-          <table className="min-w-full divide-y divide-neutral-800">
-            <thead className="bg-[#121212]">
+        <div className="bg-card shadow-md rounded-lg overflow-x-auto border border-border">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Property</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Dates</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-neutral-400 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Property</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Dates</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-[#1E1E1E] divide-y divide-neutral-800">
+            <tbody className="bg-card divide-y divide-border">
               {bookings.map((booking) => (
-                <tr key={booking._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-200">{booking.propertyId?.name || 'Deleted Property'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">
+                <tr key={booking._id} className="hover:bg-accent/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{booking.propertyId?.name || 'Deleted Property'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                     {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{booking.status}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      booking.status === 'Confirmed' ? 'bg-green-500/10 text-green-500' :
+                      booking.status === 'Pending' ? 'bg-yellow-500/10 text-yellow-500' :
+                      booking.status === 'Cancelled' ? 'bg-red-500/10 text-red-500' :
+                      'bg-blue-500/10 text-blue-500'
+                    }`}>
+                      {booking.status}
+                    </span>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     {booking.status !== 'Cancelled' && booking.status !== 'Completed' && (
-                      <button onClick={() => handleCancel(booking._id)} className="text-red-400 hover:text-red-300">Cancel</button>
+                      <button onClick={() => handleCancel(booking._id)} className="text-red-400 hover:text-red-300 transition-colors">Cancel</button>
                     )}
                   </td>
                 </tr>

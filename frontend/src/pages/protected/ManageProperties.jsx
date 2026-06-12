@@ -47,34 +47,42 @@ const ManageProperties = () => {
 
   return (
     <>
-      <div className="p-8 bg-neutral-900/50 rounded-2xl shadow-lg backdrop-blur-sm border border-neutral-800">
+      <div className="p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-neutral-200">Manage Properties</h1>
-          <Link to="/dashboard/add-property" className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+          <h1 className="text-2xl font-bold text-foreground">Manage Properties</h1>
+          <Link to="/dashboard/add-property" className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90 transition-colors">
             Add New Property
           </Link>
         </div>
         {deleteError && <p className="text-red-500 text-sm mb-4">{deleteError}</p>}
-        <div className="bg-[#1E1E1E] shadow-md rounded-lg overflow-x-auto">
-          <table className="min-w-full divide-y divide-neutral-800">
-            <thead className="bg-neutral-900/50">
+        <div className="bg-card shadow-md rounded-lg overflow-x-auto border border-border">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Address</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-neutral-400 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Address</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-[#1E1E1E] divide-y divide-neutral-800">
+            <tbody className="bg-card divide-y divide-border">
               {properties && properties.map((property) => (
-                <tr key={property._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-200">{property.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{property.address}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">{property.status}</td>
+                <tr key={property._id} className="hover:bg-accent/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{property.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{property.address}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      property.status === 'Active' ? 'bg-green-500/10 text-green-500' :
+                      property.status === 'Inactive' ? 'bg-red-500/10 text-red-500' :
+                      'bg-blue-500/10 text-blue-500'
+                    }`}>
+                      {property.status}
+                    </span>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link to={`/dashboard/edit-property/${property._id}`} className="text-purple-400 hover:text-purple-300 mr-4">Edit</Link>
+                    <Link to={`/dashboard/edit-property/${property._id}`} className="text-primary hover:text-primary/80 mr-4">Edit</Link>
                     <Link to={`/dashboard/properties/${property._id}/photos`} className="text-blue-400 hover:text-blue-300 mr-4">Manage Photos</Link>
-                    <button onClick={() => openDeleteDialog(property._id)} className="text-red-400 hover:text-red-300">Delete</button>
+                    <button onClick={() => openDeleteDialog(property._id)} className="text-red-400 hover:text-red-300 transition-colors">Delete</button>
                   </td>
                 </tr>
               ))}

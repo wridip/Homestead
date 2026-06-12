@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { getPropertyById } from '../../services/propertyService';
 import { getReviewsForProperty, createReview } from '../../services/reviewService';
-import { createBooking } from '../../services/bookingService';
+import { createBooking, verifyPayment } from '../../services/bookingService';
 import { sendMessage } from '../../services/messageService';
 import { getUserProfile } from '../../services/userService';
 import AuthContext from '../../context/AuthContext';
@@ -90,6 +90,20 @@ const PropertyDetails = () => {
     fetchPropertyAndReviews();
   }, [id]);
 
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+
   const handleBooking = async () => {
     if (!isAuthenticated) {
       return setBookingError('You must be logged in to book a property.');
@@ -103,19 +117,64 @@ const PropertyDetails = () => {
       return setBookingError('Please select a start and end date.');
     }
 
+    const res = await loadRazorpay();
+
+    if (!res) {
+      return setBookingError('Razorpay SDK failed to load. Are you online?');
+    }
+
     const bookingData = {
       propertyId: property._id,
       startDate,
       endDate,
-      totalPrice: (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) * property.baseRate,
     };
 
     try {
-      await createBooking(bookingData);
-      setBookingSuccess(true);
-      setBookingError(null);
+      const result = await createBooking(bookingData);
+      const { razorpayOrder, data: booking } = result;
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'Homestead',
+        description: `Booking for ${property.name}`,
+        image: getImageUrl('favicon.ico'),
+        order_id: razorpayOrder.id,
+        handler: async (response) => {
+          try {
+            await verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            setBookingSuccess(true);
+            setBookingError(null);
+          } catch (err) {
+            setBookingError(err.response?.data?.message || 'Payment verification failed.');
+          }
+        },
+        prefill: {
+          name: user.name,
+          email: user.email,
+        },
+        notes: {
+          address: property.address,
+        },
+        theme: {
+          color: '#437354',
+        },
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+      
+      paymentObject.on('payment.failed', function (response) {
+        setBookingError(response.error.description);
+      });
+
     } catch (err) {
-      setBookingError(err.response?.data?.message || 'An error occurred while booking.');
+      setBookingError(err.response?.data?.message || 'An error occurred while initiating booking.');
     }
   };
 
@@ -170,50 +229,50 @@ const PropertyDetails = () => {
           
           {/* Professional Host Section */}
           {host && (
-            <div className="mt-12 mb-8 p-8 bg-neutral-900 rounded-3xl border border-white/10 shadow-xl transition-all hover:border-[#BB86FC]/30">
-              <h2 className="text-2xl font-bold text-white mb-6 italic">Meet your Host</h2>
+            <div className="mt-12 mb-8 p-8 bg-card rounded-3xl border border-border shadow-xl transition-all hover:border-primary/30">
+              <h2 className="text-2xl font-bold text-foreground mb-6 italic">Meet your Host</h2>
               <div className="flex items-center gap-6">
                 <Link to={`/host/${host._id}`} className="group relative">
                   <img
                     src={host.avatar ? getImageUrl(host.avatar) : getImageUrl('default-avatar.png')}
                     alt={host.name}
-                    className="w-24 h-24 rounded-full object-cover border-4 border-[#121212] shadow-lg group-hover:scale-105 transition-transform"
+                    className="w-24 h-24 rounded-full object-cover border-4 border-background shadow-lg group-hover:scale-105 transition-transform"
                   />
-                  <div className="absolute -bottom-1 -right-1 bg-[#BB86FC] rounded-full p-1.5 border-4 border-[#121212]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#121212" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1.5 border-4 border-background">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-primary-foreground"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   </div>
                 </Link>
                 <div>
-                  <Link to={`/host/${host._id}`} className="text-xl font-bold text-white hover:text-[#BB86FC] transition-colors">
+                  <Link to={`/host/${host._id}`} className="text-xl font-bold text-foreground hover:text-primary transition-colors">
                     {host.name}
                   </Link>
-                  <p className="text-neutral-400 text-sm mt-1">Host since {new Date(host.createdAt).getFullYear()}</p>
+                  <p className="text-muted-foreground text-sm mt-1">Host since {new Date(host.createdAt).getFullYear()}</p>
                   <div className="flex items-center gap-4 mt-3">
                     <div className="flex items-center gap-1.5">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#BB86FC" stroke="#BB86FC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                      <span className="text-sm font-semibold text-white">{property.averageRating > 0 ? property.averageRating.toFixed(1) : 'New'}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-primary"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                      <span className="text-sm font-semibold text-foreground">{property.averageRating > 0 ? property.averageRating.toFixed(1) : 'New'}</span>
                       {property.numReviews > 0 && (
                         <>
-                          <span className="text-sm text-neutral-500 underline ml-1">{property.numReviews} Reviews</span>
+                          <span className="text-sm text-muted-foreground underline ml-1">{property.numReviews} Reviews</span>
                         </>
                       )}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="mt-6 text-neutral-300 line-clamp-3 italic">
+              <div className="mt-6 text-muted-foreground line-clamp-3 italic">
                 {host.bio || "Hi, I'm " + host.name.split(' ')[0] + "! I love hosting travelers and sharing the beauty of our homestay. Looking forward to meeting you!"}
               </div>
               <div className="mt-6 flex flex-wrap gap-4">
                 <Link
                   to={`/host/${host._id}#message-section`}
-                  className="px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white text-sm font-bold rounded-xl border border-white/10 transition-all shadow-lg"
+                  className="px-6 py-2.5 bg-accent/20 hover:bg-accent/40 text-foreground text-sm font-bold rounded-xl border border-border transition-all shadow-lg"
                 >
                   Contact Host
                 </Link>
                 <Link
                   to={`/host/${host._id}`}
-                  className="px-6 py-2.5 bg-[#BB86FC]/10 hover:bg-[#BB86FC]/20 text-[#BB86FC] text-sm font-bold rounded-xl border border-[#BB86FC]/20 transition-all"
+                  className="px-6 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary text-sm font-bold rounded-xl border border-primary/20 transition-all"
                 >
                   View Profile
                 </Link>

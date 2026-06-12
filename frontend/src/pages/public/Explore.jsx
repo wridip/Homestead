@@ -131,17 +131,17 @@ const Explore = () => {
   }
 
   return (
-    <div className="bg-neutral-900 text-white min-h-screen">
+    <div className="bg-background text-foreground min-h-screen">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
           {/* Filters column */}
           <aside className="lg:col-span-1 space-y-8">
-            <div className="p-6 bg-neutral-800 rounded-2xl shadow-lg">
-              <h2 className="text-2xl font-bold mb-6 text-neutral-100">Filters</h2>
+            <div className="p-6 bg-card rounded-2xl shadow-lg border border-border">
+              <h2 className="text-2xl font-bold mb-6 text-foreground">Filters</h2>
               <div className="space-y-6">
                 {/* Search input */}
                 <div>
-                  <label htmlFor="search" className="block text-sm font-medium text-neutral-300 mb-2">Search by name or location</label>
+                  <label htmlFor="search" className="block text-sm font-medium text-muted-foreground mb-2">Search by name or location</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -149,9 +149,9 @@ const Explore = () => {
                       value={searchQuery}
                       onChange={handleSearchInputChange}
                       placeholder="e.g., 'Mountain cabin' or 'Lachung'"
-                      className="w-full bg-neutral-700 border border-neutral-600 rounded-lg py-2.5 px-4 text-white placeholder-neutral-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+                      className="w-full bg-background border border-border rounded-lg py-2.5 px-4 text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary transition"
                     />
-                    <button onClick={triggerSearch} className="p-2 bg-purple-600 rounded-lg hover:bg-purple-700">
+                    <button onClick={triggerSearch} className="p-2 bg-primary rounded-lg hover:bg-primary/90 text-primary-foreground">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
                     </button>
                   </div>
@@ -159,8 +159,8 @@ const Explore = () => {
 
                 {/* Price range */}
                 <div>
-                  <label htmlFor="price" className="block text-sm font-medium text-neutral-300 mb-2">Price per night</label>
-                  <div className="flex justify-between text-sm text-neutral-400 mb-1">
+                  <label htmlFor="price" className="block text-sm font-medium text-muted-foreground mb-2">Price per night</label>
+                  <div className="flex justify-between text-sm text-muted-foreground mb-1">
                     <span>₹500</span>
                     <span>₹{filters.price}</span>
                   </div>
@@ -172,24 +172,24 @@ const Explore = () => {
                     value={filters.price}
                     onChange={(e) => setFilters(prev => ({...prev, price: e.target.value}))}
                     onMouseUp={handleFilterChange}
-                    className="w-full h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                    className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
                   />
                 </div>
 
                 {/* Property Type */}
                 <div>
-                  <h3 className="text-sm font-medium text-neutral-300 mb-2">Property Type</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Property Type</h3>
                   <div className="space-y-2">
                     {['Mountain', 'Riverside', 'Farm', 'Minimal'].map(type => (
                       <div key={type} className="flex items-center">
-                        <input id={`type-${type}`} name="type" type="checkbox" checked={filters.type.includes(type)} onChange={() => handleTypeFilter(type)} className="h-4 w-4 rounded border-neutral-600 bg-neutral-700 text-purple-600 focus:ring-purple-500" />
-                        <label htmlFor={`type-${type}`} className="ml-3 text-sm text-neutral-300">{type}</label>
+                        <input id={`type-${type}`} name="type" type="checkbox" checked={filters.type.includes(type)} onChange={() => handleTypeFilter(type)} className="h-4 w-4 rounded border-border bg-background text-primary focus:ring-primary" />
+                        <label htmlFor={`type-${type}`} className="ml-3 text-sm text-muted-foreground">{type}</label>
                       </div>
                     ))}
                   </div>
                 </div>
                 
-                <button onClick={resetFilters} className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-800 focus:ring-purple-500">
+                <button onClick={resetFilters} className="w-full py-2.5 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-primary">
                   Reset Filters
                 </button>
               </div>
@@ -199,21 +199,21 @@ const Explore = () => {
           {/* Properties grid */}
           <div className="lg:col-span-3">
             <div className="flex flex-col sm:flex-row justify-between items-baseline mb-8">
-              <h1 className="text-4xl font-extrabold text-neutral-100 tracking-tight">Explore Properties</h1>
+              <h1 className="text-4xl font-extrabold text-foreground tracking-tight">Explore Properties</h1>
                <div className="relative">
                 <label htmlFor="sort-by" className="sr-only">Sort by</label>
                 <select 
                   id="sort-by"
                   value={sortBy} 
                   onChange={(e) => { setSortBy(e.target.value); handleFilterChange(); }}
-                  className="appearance-none w-full sm:w-auto bg-neutral-800 border border-neutral-700 text-white py-2 pl-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
+                  className="appearance-none w-full sm:w-auto bg-card border border-border text-foreground py-2 pl-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm"
                 >
                   <option>Recommended</option>
                   <option>Price: Low to High</option>
                   <option>Price: High to Low</option>
                   <option>Top Rated</option>
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-400">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-muted-foreground">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path></svg>
                 </div>
               </div>
@@ -227,7 +227,7 @@ const Explore = () => {
               </div>
             ) : (
               <div className="text-center py-20">
-                <p className="text-xl text-neutral-400">No properties found matching your criteria.</p>
+                <p className="text-xl text-muted-foreground">No properties found matching your criteria.</p>
               </div>
             )}
           </div>

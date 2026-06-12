@@ -21,7 +21,7 @@ const GuestSelector = ({ guests, setGuests }) => {
         <button
             type="button"
             onClick={handleDecrement}
-            className="p-0.5 rounded-full bg-neutral-700 text-white hover:bg-neutral-600 transition"
+            className="p-0.5 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 transition"
             aria-label="Decrement guests"
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M5 12h14"/></svg>
@@ -29,7 +29,7 @@ const GuestSelector = ({ guests, setGuests }) => {
         <input
             type="text"
             placeholder="Guests"
-            className="w-full bg-transparent text-sm text-center placeholder-neutral-400 focus:outline-none text-white"
+            className="w-full bg-transparent text-sm text-center placeholder:text-muted-foreground focus:outline-none text-foreground"
             value={guests}
             onChange={handleChange}
             aria-label="Number of guests"
@@ -37,7 +37,7 @@ const GuestSelector = ({ guests, setGuests }) => {
         <button
             type="button"
             onClick={handleIncrement}
-            className="p-0.5 rounded-full bg-neutral-700 text-white hover:bg-neutral-600 transition"
+            className="p-0.5 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 transition"
             aria-label="Increment guests"
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M5 12h14"/><path d="M12 5v14"/></svg>

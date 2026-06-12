@@ -6,7 +6,7 @@ const ProfileLayout = () => {
   const { user } = useContext(AuthContext);
 
   return (
-    <div className="pt-24 min-h-screen bg-[#0F0F0F] text-white pb-12">
+    <div className="pt-24 min-h-screen bg-background text-foreground pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
@@ -18,8 +18,8 @@ const ProfileLayout = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-[#BB86FC] text-[#121212] shadow-lg shadow-[#BB86FC]/20'
-                      : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                   }`
                 }
               >
@@ -31,8 +31,8 @@ const ProfileLayout = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-[#BB86FC] text-[#121212] shadow-lg shadow-[#BB86FC]/20'
-                      : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                   }`
                 }
               >
@@ -45,8 +45,8 @@ const ProfileLayout = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-4 py-3 rounded-xl transition-all whitespace-nowrap ${
                       isActive
-                        ? 'bg-[#BB86FC] text-[#121212] shadow-lg shadow-[#BB86FC]/20'
-                        : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
+                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                        : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                     }`
                   }
                 >
@@ -58,7 +58,7 @@ const ProfileLayout = () => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 bg-neutral-900/50 rounded-3xl border border-neutral-800 p-6 md:p-8 min-h-[600px]">
+          <div className="flex-1 bg-card rounded-3xl border border-border p-6 md:p-8 min-h-[600px]">
             <Outlet />
           </div>
         </div>
