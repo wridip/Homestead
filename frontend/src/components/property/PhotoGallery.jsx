@@ -14,7 +14,7 @@ const PhotoGallery = ({ images, propertyName }) => {
   return (
     <div className="relative mb-16 mt-8">
       {/* Editorial Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 h-[400px] md:h-[600px] overflow-hidden rounded-[2rem]">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 h-[300px] md:h-[460px] overflow-hidden rounded-[2rem]">
         
         {/* Massive Hero Image (Left, 7 columns) */}
         <motion.div 
@@ -26,7 +26,7 @@ const PhotoGallery = ({ images, propertyName }) => {
           <img
             src={getUrl(displayImages[0])}
             alt={propertyName}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
           />
         </motion.div>
         
@@ -36,16 +36,16 @@ const PhotoGallery = ({ images, propertyName }) => {
           {/* Top Row (Split into 2) */}
           <div className="grid grid-cols-2 gap-3 h-full">
             <motion.div className="h-full relative overflow-hidden group cursor-pointer" whileHover={{ scale: 0.98 }} onClick={() => setSelectedImage(getUrl(displayImages[1]))}>
-               <img src={getUrl(displayImages[1])} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+               <img src={getUrl(displayImages[1])} className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" />
             </motion.div>
             <motion.div className="h-full relative overflow-hidden group cursor-pointer" whileHover={{ scale: 0.98 }} onClick={() => setSelectedImage(getUrl(displayImages[2]))}>
-               <img src={getUrl(displayImages[2])} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+               <img src={getUrl(displayImages[2])} className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" />
             </motion.div>
           </div>
           
           {/* Bottom Row (Full width of the right side) */}
           <motion.div className="h-full relative overflow-hidden group cursor-pointer" whileHover={{ scale: 0.99 }} onClick={() => setSelectedImage(getUrl(displayImages[3]))}>
-             <img src={getUrl(displayImages[3])} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+             <img src={getUrl(displayImages[3])} className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" />
              
              {/* Gradient overlay for the button */}
              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent"></div>

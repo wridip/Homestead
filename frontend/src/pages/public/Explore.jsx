@@ -220,7 +220,7 @@ const Explore = () => {
         </div>
 
         {/* Scrollable Properties List */}
-        <div className="flex-1 overflow-y-auto p-6 lg:p-10 pb-32 scroll-smooth">
+        <div className="flex-1 overflow-y-auto scrollbar-hide p-6 lg:p-10 pb-32 scroll-smooth">
           {filteredProperties.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {filteredProperties.map((property, idx) => (
