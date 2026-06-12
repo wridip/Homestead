@@ -354,13 +354,3 @@ const Home = () => {
 };
 
 export default Home;
-         </>
-            )}
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-};
-
-export default Home;
