@@ -1,6 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { getAdminStats, getAllUsers, getAllProperties } = require('../controllers/adminController');
+const { 
+  getAdminStats, 
+  getAllUsers, 
+  getAllProperties,
+  getUserAudit,
+  togglePropertyStatus,
+  getMonthlyRevenueDetail
+} = require('../controllers/adminController');
 const { protect, authorize } = require('../middlewares/authMiddleware');
 
 // All routes require Admin role
