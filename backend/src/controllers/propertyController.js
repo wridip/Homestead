@@ -56,7 +56,7 @@ exports.getProperties = async (req, res, next) => {
     const reqQuery = { ...req.query };
 
     // Fields to exclude
-    const removeFields = ['select', 'sort', 'page', 'limit'];
+    const removeFields = ['select', 'sort', 'page', 'limit', 'location'];
 
     // Loop over removeFields and delete them from reqQuery
     removeFields.forEach(param => delete reqQuery[param]);
@@ -71,9 +71,10 @@ exports.getProperties = async (req, res, next) => {
     if (req.query.location) {
       const searchTerms = req.query.location.split(',').map(term => term.trim()).filter(term => term.length > 0);
       if (searchTerms.length > 0) {
-        // Create an OR condition to match any of the terms (e.g., city or state)
+        // Create an AND condition to match all of the terms (e.g., city AND state)
+        // This is more precise than OR which would match anything in the same country
         const locationQuery = {
-          $or: searchTerms.map(term => ({
+          $and: searchTerms.map(term => ({
             address: { $regex: new RegExp(term, 'i') }
           }))
         };

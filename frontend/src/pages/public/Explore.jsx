@@ -7,17 +7,6 @@ import { useGoogleMapsLoader } from '../../context/GoogleMapsLoaderContext.jsx';
 import { motion } from 'framer-motion';
 import { mapId } from '../../config/googleMaps';
 
-const mapStyles = [
-  { elementType: 'geometry', stylers: [{ color: '#0f1410' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#0f1410' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#4d5c50' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#090c0a' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1a221c' }] },
-  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#131a15' }] },
-  { featureType: 'poi.business', stylers: [{ visibility: 'off' }] },
-  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-];
-
 const Explore = () => {
   const [properties, setProperties] = useState([]); // The master list from the server
   const [filteredProperties, setFilteredProperties] = useState([]); // The list to be rendered
@@ -148,6 +137,8 @@ const Explore = () => {
       price: 10000,
     });
     setSortBy('Recommended');
+    // Clear URL parameters
+    navigate('/explore', { replace: true });
   };
 
   // Calculate dynamic map center based on filtered properties
@@ -305,9 +296,8 @@ const Explore = () => {
           {isLoaded ? (
             <Map
               mapId={mapId}
-              center={mapCenter}
-              zoom={6}
-              styles={mapStyles}
+              defaultCenter={mapCenter}
+              defaultZoom={6}
               disableDefaultUI={true}
               zoomControl={true}
               style={{ width: '100%', height: '100%' }}
