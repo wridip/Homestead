@@ -15,12 +15,21 @@ export const BASE_URL = isProduction
 
 // For images: If it's an S3 URL (starts with http), use it as is.
 export const getImageUrl = (url) => {
-  if (!url) return 'https://via.placeholder.com/300';
+  if (!url || url === 'undefined' || url.includes('undefined')) {
+    return 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'; // high quality house placeholder
+  }
   if (url.startsWith('http')) return url; // S3 URL
   
-  // Local/Legacy path: Remove leading slash if present to avoid double slashes
-  const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
-  return `${BASE_URL}/${cleanUrl.replace(/\\/g, '/')}`;
+  // Normalize slashes (especially for Windows backslashes)
+  const normalizedUrl = url.replace(/\\/g, '/');
+  
+  // Remove leading slash if present
+  const cleanUrl = normalizedUrl.startsWith('/') ? normalizedUrl.substring(1) : normalizedUrl;
+  
+  // If the URL doesn't already start with 'uploads/', prepend it
+  const finalPath = cleanUrl.startsWith('uploads/') ? cleanUrl : `uploads/${cleanUrl}`;
+  
+  return `${BASE_URL}/${finalPath}`;
 };
 
 const api = axios.create({

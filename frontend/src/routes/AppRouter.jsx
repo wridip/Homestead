@@ -31,6 +31,9 @@ const HostBookings = lazy(() => import('../pages/protected/HostBookings'));
 const MyBookings = lazy(() => import('../pages/protected/MyBookings'));
 const SharePhoto = lazy(() => import('../pages/protected/SharePhoto'));
 const EarningsAudit = lazy(() => import('../pages/protected/EarningsAudit'));
+const AdminDashboard = lazy(() => import('../pages/protected/AdminDashboard'));
+const ManageUsers = lazy(() => import('../pages/protected/ManageUsers'));
+const ManageAllProperties = lazy(() => import('../pages/protected/ManageAllProperties'));
 
 // Shared Pages
 const Inbox = lazy(() => import('../pages/shared/Inbox'));
@@ -58,6 +61,16 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         {/* Protected Routes */}
+        <Route element={<ProtectedRoute roles={['Admin']} />}>
+          <Route path="/admin" element={<PageTransition><DashboardLayout /></PageTransition>}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<ManageUsers />} />
+            <Route path="properties" element={<ManageAllProperties />} />
+            <Route path="messages" element={<Inbox />} />
+            <Route path="profile" element={<AboutMe />} />
+          </Route>
+        </Route>
+
         <Route element={<ProtectedRoute roles={['Host', 'Admin']} />}>
           <Route path="/dashboard" element={<PageTransition><DashboardLayout /></PageTransition>}>
             <Route index element={<DashboardHome />} />

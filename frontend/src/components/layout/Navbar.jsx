@@ -33,10 +33,10 @@ const Navbar = () => {
         <nav className="hidden md:flex items-center gap-8 text-sm">
           <Link to="/" className="transition-colors hover:text-primary text-foreground">Home</Link>
           <Link to="/explore" className="transition-colors hover:text-primary text-foreground">Explore</Link>
-          {isAuthenticated && user?.role === 'Host' && (
+          {isAuthenticated && (user?.role === 'Host' || user?.role === 'Admin') && (
             <Link to="/dashboard" className="transition-colors hover:text-primary text-foreground">Dashboard</Link>
           )}
-          {isAuthenticated && user?.role !== 'Host' && (
+          {isAuthenticated && user?.role === 'Traveler' && (
             <Link to="/my-profile/About-me" className="transition-colors hover:text-primary text-foreground">My Profile</Link>
           )}
         </nav>
@@ -62,10 +62,10 @@ const Navbar = () => {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-1">
             <Link to="/" className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-accent">Home</Link>
             <Link to="/explore" className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-accent">Explore</Link>
-            {isAuthenticated && user?.role === 'Host' && (
+            {isAuthenticated && (user?.role === 'Host' || user?.role === 'Admin') && (
               <Link to="/dashboard" className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-accent">Dashboard</Link>
             )}
-            {isAuthenticated && user?.role !== 'Host' && (
+            {isAuthenticated && user?.role === 'Traveler' && (
               <Link to="/my-profile/About-me" className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-accent">My Profile</Link>
             )}
           </div>
