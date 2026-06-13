@@ -32,6 +32,8 @@ const MyBookings = lazy(() => import('../pages/protected/MyBookings'));
 const SharePhoto = lazy(() => import('../pages/protected/SharePhoto'));
 const EarningsAudit = lazy(() => import('../pages/protected/EarningsAudit'));
 const AdminDashboard = lazy(() => import('../pages/protected/AdminDashboard'));
+const ManageUsers = lazy(() => import('../pages/protected/ManageUsers'));
+const ManageAllProperties = lazy(() => import('../pages/protected/ManageAllProperties'));
 
 // Shared Pages
 const Inbox = lazy(() => import('../pages/shared/Inbox'));
@@ -62,8 +64,8 @@ const AnimatedRoutes = () => {
         <Route element={<ProtectedRoute roles={['Admin']} />}>
           <Route path="/admin" element={<PageTransition><DashboardLayout /></PageTransition>}>
             <Route index element={<AdminDashboard />} />
-            <Route path="users" element={<div>Manage Users (Coming Soon)</div>} />
-            <Route path="properties" element={<div>Manage All Properties (Coming Soon)</div>} />
+            <Route path="users" element={<ManageUsers />} />
+            <Route path="properties" element={<ManageAllProperties />} />
             <Route path="messages" element={<Inbox />} />
             <Route path="profile" element={<AboutMe />} />
           </Route>

@@ -31,6 +31,28 @@ exports.getAdminStats = async (req, res, next) => {
     const newUsers = await User.countDocuments({ createdAt: { $gte: thirtyDaysAgo } });
     const newBookings = await Booking.countDocuments({ createdAt: { $gte: thirtyDaysAgo } });
 
+    // Monthly Revenue Audit (Last 6 months)
+    const sixMonthsAgo = moment().subtract(6, 'months').startOf('month').toDate();
+    const monthlyRevenue = await Booking.aggregate([
+      {
+        $match: {
+          status: 'Completed',
+          endDate: { $gte: sixMonthsAgo }
+        }
+      },
+      {
+        $group: {
+          _id: { 
+            month: { $month: "$endDate" },
+            year: { $year: "$endDate" }
+          },
+          totalRevenue: { $sum: "$totalPrice" },
+          bookingCount: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.year": -1, "_id.month": -1 } }
+    ]);
+
     res.status(200).json({
       success: true,
       data: {
@@ -38,7 +60,8 @@ exports.getAdminStats = async (req, res, next) => {
         properties: { total: totalProperties, active: activeProperties },
         bookings: { total: totalBookings, completed: completedBookings.length, new: newBookings },
         revenue: totalRevenue,
-        recentBookings
+        recentBookings,
+        monthlyRevenue
       }
     });
   } catch (error) {

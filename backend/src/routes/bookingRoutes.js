@@ -30,18 +30,18 @@ router.get('/user', protect, authorize('Traveler'), getUserBookings);
 
 // @route   GET api/bookings/host
 // @desc    Get all bookings for the logged-in host's properties
-// @access  Private (Host)
-router.get('/host', protect, authorize('Host'), getHostBookings);
+// @access  Private (Host or Admin)
+router.get('/host', protect, authorize('Host', 'Admin'), getHostBookings);
 
 // @route   PUT api/bookings/:id/approve
 // @desc    Approve a booking
-// @access  Private (Host)
-router.put('/:id/approve', protect, authorize('Host'), approveBooking);
+// @access  Private (Host or Admin)
+router.put('/:id/approve', protect, authorize('Host', 'Admin'), approveBooking);
 
 // @route   PUT api/bookings/:id/complete
 // @desc    Complete a booking
-// @access  Private (Host)
-router.put('/:id/complete', protect, authorize('Host'), completeBooking);
+// @access  Private (Host or Admin)
+router.put('/:id/complete', protect, authorize('Host', 'Admin'), completeBooking);
 
 // @route   PUT api/bookings/:id/cancel
 // @desc    Cancel a booking
