@@ -67,6 +67,8 @@ exports.getProperties = async (req, res, next) => {
     // Create operators ($gt, $gte, etc)
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
+    let totalCountQuery = {};
+
     // Location search from homepage
     if (req.query.location) {
       const searchTerms = req.query.location.split(',').map(term => term.trim()).filter(term => term.length > 0);
@@ -84,6 +86,9 @@ exports.getProperties = async (req, res, next) => {
         query = Property.find(mergedQuery).populate('hostId');
         // Update total count for pagination with the new query
         totalCountQuery = mergedQuery;
+      } else {
+        query = Property.find(JSON.parse(queryStr)).populate('hostId');
+        totalCountQuery = JSON.parse(queryStr);
       }
     } else {
       // Finding resource

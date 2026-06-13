@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getProperties } from '../../services/propertyService';
 import PropertyCard from '../../components/properties/PropertyCard';
 import { Map, AdvancedMarker } from '@vis.gl/react-google-maps';
@@ -16,6 +16,7 @@ const Explore = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { isLoaded } = useGoogleMapsLoader();
 
   // State for client-side filter controls
