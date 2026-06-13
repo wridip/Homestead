@@ -1,19 +1,28 @@
 import React, { createContext, useContext } from 'react';
-import { useJsApiLoader } from '@react-google-maps/api';
+import { APIProvider, useApiIsLoaded } from '@vis.gl/react-google-maps';
 import { libraries } from '../config/googleMaps';
 
 const GoogleMapsLoaderContext = createContext(null);
 
-export const GoogleMapsLoaderProvider = ({ children }) => {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries: libraries, // This should now include both "maps" and "places"
-  });
-
+const LoaderStateWrapper = ({ children }) => {
+  const isLoaded = useApiIsLoaded();
   return (
-    <GoogleMapsLoaderContext.Provider value={{ isLoaded, loadError }}>
+    <GoogleMapsLoaderContext.Provider value={{ isLoaded, loadError: null }}>
       {children}
     </GoogleMapsLoaderContext.Provider>
+  );
+};
+
+export const GoogleMapsLoaderProvider = ({ children }) => {
+  return (
+    <APIProvider 
+      apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} 
+      libraries={libraries}
+    >
+      <LoaderStateWrapper>
+        {children}
+      </LoaderStateWrapper>
+    </APIProvider>
   );
 };
 

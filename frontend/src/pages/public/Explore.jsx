@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getProperties } from '../../services/propertyService';
 import PropertyCard from '../../components/properties/PropertyCard';
-import { GoogleMap, AdvancedMarker } from '@react-google-maps/api';
+import { Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 import { useGoogleMapsLoader } from '../../context/GoogleMapsLoaderContext.jsx';
 import { motion } from 'framer-motion';
 import { mapId } from '../../config/googleMaps';
@@ -102,13 +102,6 @@ const Explore = () => {
     setFilteredProperties(sortedProperties);
 
   }, [searchQuery, filters, sortBy, properties]);
-
-  const handleFilterChange = (filterType, value) => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      [filterType]: value
-    }));
-  };
 
   const handleTypeFilter = (type) => {
     setFilters(prevFilters => {
@@ -257,16 +250,14 @@ const Explore = () => {
       <div className="hidden md:block w-[40%] bg-background p-6 lg:p-8 sticky top-16 h-[calc(100vh-64px)] z-0">
         <div className="w-full h-full rounded-[2rem] overflow-hidden shadow-2xl border border-border">
           {isLoaded ? (
-            <GoogleMap
-              mapContainerStyle={{ width: '100%', height: '100%' }}
+            <Map
+              mapId={mapId}
               center={mapCenter}
               zoom={6}
-              options={{
-                mapId: mapId,
-                styles: mapStyles,
-                disableDefaultUI: true,
-                zoomControl: true,
-              }}
+              styles={mapStyles}
+              disableDefaultUI={true}
+              zoomControl={true}
+              style={{ width: '100%', height: '100%' }}
             >
               {filteredProperties.map(property => {
                 if (property.location && property.location.coordinates) {
@@ -302,7 +293,7 @@ const Explore = () => {
                 }
                 return null;
               })}
-            </GoogleMap>
+            </Map>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-card">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary animate-pulse mb-4"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { GoogleMap, AdvancedMarker } from '@react-google-maps/api';
+import { Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 import { mapId } from '../../config/googleMaps';
 
 const LocationMap = ({ center, isLoaded, loadError }) => {
@@ -24,98 +24,95 @@ const LocationMap = ({ center, isLoaded, loadError }) => {
       </h2>
       <div className="mt-4 rounded-xl overflow-hidden border border-border shadow-inner bg-muted/30">
         {isLoaded ? (
-          <GoogleMap
-            mapContainerStyle={{ width: '100%', height: '450px' }}
+          <Map
+            style={{ width: '100%', height: '450px' }}
             center={center}
             zoom={15}
-            options={{
-              mapId: mapId, // Required for AdvancedMarker
-              disableDefaultUI: false,
-              clickableIcons: false,
-              styles: [
-                { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-                { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
-                { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-                {
-                  featureType: 'administrative.locality',
-                  elementType: 'labels.text.fill',
-                  stylers: [{ color: '#d59563' }],
-                },
-                {
-                  featureType: 'poi',
-                  elementType: 'labels.text.fill',
-                  stylers: [{ color: '#d59563' }],
-                },
-                {
-                  featureType: 'poi.park',
-                  elementType: 'geometry',
-                  stylers: [{ color: '#263c3f' }],
-                },
-                {
-                  featureType: 'poi.park',
-                  elementType: 'labels.text.fill',
-                  stylers: [{ color: '#6b9a76' }],
-                },
-                {
-                  featureType: 'road',
-                  elementType: 'geometry',
-                  stylers: [{ color: '#38414e' }],
-                },
-                {
-                  featureType: 'road',
-                  elementType: 'geometry.stroke',
-                  stylers: [{ color: '#212a37' }],
-                },
-                {
-                  featureType: 'road',
-                  elementType: 'labels.text.fill',
-                  stylers: [{ color: '#9ca5b3' }],
-                },
-                {
-                  featureType: 'road.highway',
-                  elementType: 'geometry',
-                  stylers: [{ color: '#746855' }],
-                },
-                {
-                  featureType: 'road.highway',
-                  elementType: 'geometry.stroke',
-                  stylers: [{ color: '#1f2835' }],
-                },
-                {
-                  featureType: 'road.highway',
-                  elementType: 'labels.text.fill',
-                  stylers: [{ color: '#f3d19c' }],
-                },
-                {
-                  featureType: 'transit',
-                  elementType: 'geometry',
-                  stylers: [{ color: '#2f3948' }],
-                },
-                {
-                  featureType: 'transit.station',
-                  elementType: 'labels.text.fill',
-                  stylers: [{ color: '#d59563' }],
-                },
-                {
-                  featureType: 'water',
-                  elementType: 'geometry',
-                  stylers: [{ color: '#17263c' }],
-                },
-                {
-                  featureType: 'water',
-                  elementType: 'labels.text.fill',
-                  stylers: [{ color: '#515c6d' }],
-                },
-                {
-                  featureType: 'water',
-                  elementType: 'labels.text.stroke',
-                  stylers: [{ color: '#17263c' }],
-                },
-              ],
-            }}
+            mapId={mapId}
+            disableDefaultUI={false}
+            styles={[
+              { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+              { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+              { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+              {
+                featureType: 'administrative.locality',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#d59563' }],
+              },
+              {
+                featureType: 'poi',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#d59563' }],
+              },
+              {
+                featureType: 'poi.park',
+                elementType: 'geometry',
+                stylers: [{ color: '#263c3f' }],
+              },
+              {
+                featureType: 'poi.park',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#6b9a76' }],
+              },
+              {
+                featureType: 'road',
+                elementType: 'geometry',
+                stylers: [{ color: '#38414e' }],
+              },
+              {
+                featureType: 'road',
+                elementType: 'geometry.stroke',
+                stylers: [{ color: '#212a37' }],
+              },
+              {
+                featureType: 'road',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#9ca5b3' }],
+              },
+              {
+                featureType: 'road.highway',
+                elementType: 'geometry',
+                stylers: [{ color: '#746855' }],
+              },
+              {
+                featureType: 'road.highway',
+                elementType: 'geometry.stroke',
+                stylers: [{ color: '#1f2835' }],
+              },
+              {
+                featureType: 'road.highway',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#f3d19c' }],
+              },
+              {
+                featureType: 'transit',
+                elementType: 'geometry',
+                stylers: [{ color: '#2f3948' }],
+              },
+              {
+                featureType: 'transit.station',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#d59563' }],
+              },
+              {
+                featureType: 'water',
+                elementType: 'geometry',
+                stylers: [{ color: '#17263c' }],
+              },
+              {
+                featureType: 'water',
+                elementType: 'labels.text.fill',
+                stylers: [{ color: '#515c6d' }],
+              },
+              {
+                featureType: 'water',
+                elementType: 'labels.text.stroke',
+                stylers: [{ color: '#17263c' }],
+              },
+            ]}
           >
             <AdvancedMarker position={center} />
-          </GoogleMap>
+          </Map>
         ) : (
           <div className="flex items-center justify-center h-[450px] text-muted-foreground animate-pulse">
             <div className="flex flex-col items-center gap-2">
