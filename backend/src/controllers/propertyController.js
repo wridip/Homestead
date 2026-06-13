@@ -61,10 +61,17 @@ exports.getProperties = async (req, res, next) => {
 
     let filter = {};
     
-    // Direct filtering (e.g., status) - only add if value is truthy
+    // Direct filtering (e.g., status) - only add if value is truthy and not an empty string
     Object.keys(reqQuery).forEach(key => {
-      if (reqQuery[key]) filter[key] = reqQuery[key];
+      if (reqQuery[key] && reqQuery[key] !== "") {
+        filter[key] = reqQuery[key];
+      }
     });
+
+    // Default to only showing Active properties if no status is specified
+    if (!filter.status) {
+      filter.status = 'Active';
+    }
 
     // Price Range Filter
     if (req.query.minPrice || req.query.maxPrice) {
