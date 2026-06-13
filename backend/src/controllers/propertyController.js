@@ -59,7 +59,12 @@ exports.getProperties = async (req, res, next) => {
     const removeFields = ['select', 'sort', 'page', 'limit', 'location', 'keyword', 'minPrice', 'maxPrice', 'amenities'];
     removeFields.forEach(param => delete reqQuery[param]);
 
-    let filter = { ...reqQuery };
+    let filter = {};
+    
+    // Direct filtering (e.g., status) - only add if value is truthy
+    Object.keys(reqQuery).forEach(key => {
+      if (reqQuery[key]) filter[key] = reqQuery[key];
+    });
 
     // Price Range Filter
     if (req.query.minPrice || req.query.maxPrice) {
@@ -68,15 +73,15 @@ exports.getProperties = async (req, res, next) => {
       if (req.query.maxPrice) filter.baseRate.$lte = Number(req.query.maxPrice);
     }
 
-    // Amenities Filter (Exact match for all specified)
-    if (req.query.amenities) {
+    // Amenities Filter
+    if (req.query.amenities && req.query.amenities.trim() !== "") {
       const amenitiesArr = req.query.amenities.split(',');
       filter.amenities = { $all: amenitiesArr };
     }
 
-    // Keyword Search (Name, Description, Address)
-    if (req.query.keyword) {
-      const regex = new RegExp(req.query.keyword, 'i');
+    // Keyword Search
+    if (req.query.keyword && req.query.keyword.trim() !== "") {
+      const regex = new RegExp(req.query.keyword.trim(), 'i');
       filter.$or = [
         { name: regex },
         { description: regex },
