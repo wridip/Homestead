@@ -69,12 +69,16 @@ exports.getProperties = async (req, res, next) => {
 
     // Location search from homepage
     if (req.query.location) {
-      const searchTerms = req.query.location.split(',').map(term => term.trim()).filter(term => term.length > 0);
+      const searchTerms = req.query.location
+        .split(',')
+        .map(term => term.trim())
+        .filter(term => term.length > 0 && term.toLowerCase() !== 'india'); // Ignore generic country for better matching
+
       if (searchTerms.length > 0) {
-        // Create an AND condition to match all of the terms (e.g., city AND state)
-        // This is more precise than OR which would match anything in the same country
+        // Use OR logic for the first 2 terms (usually City and State) to be more flexible
+        // Google Maps strings often have more detail than property addresses
         const locationQuery = {
-          $and: searchTerms.map(term => ({
+          $or: searchTerms.slice(0, 2).map(term => ({
             address: { $regex: new RegExp(term, 'i') }
           }))
         };

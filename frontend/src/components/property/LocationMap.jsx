@@ -29,6 +29,7 @@ const LocationMap = ({ center, isLoaded, loadError }) => {
             center={center}
             zoom={15}
             mapId={mapId}
+            colorScheme="DARK"
             disableDefaultUI={false}
           >
             <AdvancedMarker position={center} />
