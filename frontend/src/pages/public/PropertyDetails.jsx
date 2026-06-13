@@ -38,7 +38,7 @@ const PropertyDetails = () => {
   const [messageError, setMessageError] = useState(null);
   const [messageSuccess, setMessageSuccess] = useState(false);
 
-  const { isLoaded } = useGoogleMapsLoader();
+  const { isLoaded, loadError } = useGoogleMapsLoader();
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -205,10 +205,10 @@ const PropertyDetails = () => {
     return <div className="text-center p-8">Property not found</div>;
   }
 
-  const center = {
+  const center = property?.location?.coordinates?.length === 2 ? {
     lat: property.location.coordinates[1],
     lng: property.location.coordinates[0],
-  };
+  } : { lat: 0, lng: 0 };
 
   const nights = startDate && endDate ? (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) : 0;
   const totalPrice = nights > 0 ? nights * property.baseRate : 0;
@@ -308,7 +308,7 @@ const PropertyDetails = () => {
         reviewError={reviewError}
       />
 
-      <LocationMap center={center} isLoaded={isLoaded} />
+      <LocationMap center={center} isLoaded={isLoaded} loadError={loadError} />
     </div>
   );
 };

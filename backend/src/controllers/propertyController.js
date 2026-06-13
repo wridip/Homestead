@@ -67,26 +67,27 @@ exports.getProperties = async (req, res, next) => {
     // Create operators ($gt, $gte, etc)
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
-    // Finding resource
-    query = Property.find(JSON.parse(queryStr)).populate('hostId');
-
     // Location search from homepage
     if (req.query.location) {
-      query = query.where('address').regex(new RegExp(req.query.location, 'i'));
-    }
-
-    // Select Fields
-    if (req.query.select) {
-      const fields = req.query.select.split(',').join(' ');
-      query = query.select(fields);
-    }
-
-    // Sort
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      query = query.sort(sortBy);
+      const searchTerms = req.query.location.split(',').map(term => term.trim()).filter(term => term.length > 0);
+      if (searchTerms.length > 0) {
+        // Create an OR condition to match any of the terms (e.g., city or state)
+        const locationQuery = {
+          $or: searchTerms.map(term => ({
+            address: { $regex: new RegExp(term, 'i') }
+          }))
+        };
+        // Merge with existing query
+        const currentQuery = JSON.parse(queryStr);
+        const mergedQuery = { ...currentQuery, ...locationQuery };
+        query = Property.find(mergedQuery).populate('hostId');
+        // Update total count for pagination with the new query
+        totalCountQuery = mergedQuery;
+      }
     } else {
-      query = query.sort('-createdAt');
+      // Finding resource
+      query = Property.find(JSON.parse(queryStr)).populate('hostId');
+      totalCountQuery = JSON.parse(queryStr);
     }
 
     // Pagination
@@ -94,7 +95,7 @@ exports.getProperties = async (req, res, next) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
-    const total = await Property.countDocuments(JSON.parse(queryStr));
+    const total = await Property.countDocuments(totalCountQuery);
 
     query = query.skip(startIndex);
 

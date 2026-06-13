@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getProperties } from '../../services/propertyService';
 import PropertyCard from '../../components/properties/PropertyCard';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap, AdvancedMarker } from '@react-google-maps/api';
 import { useGoogleMapsLoader } from '../../context/GoogleMapsLoaderContext.jsx';
 import { motion } from 'framer-motion';
+import { mapId } from '../../config/googleMaps';
 
 const mapStyles = [
   { elementType: 'geometry', stylers: [{ color: '#171d19' }] }, // card background
@@ -69,7 +70,9 @@ const Explore = () => {
     let result = properties;
 
     // Apply text search on name or address (client-side)
-    if (searchQuery) {
+    // Only apply if searchQuery is DIFFERENT from the initial location param to allow broader search
+    const initialLocation = searchParams.get('location');
+    if (searchQuery && searchQuery !== initialLocation) {
       result = result.filter(p => 
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
         (p.address && p.address.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -259,6 +262,7 @@ const Explore = () => {
               center={mapCenter}
               zoom={6}
               options={{
+                mapId: mapId,
                 styles: mapStyles,
                 disableDefaultUI: true,
                 zoomControl: true,
@@ -268,19 +272,32 @@ const Explore = () => {
                 if (property.location && property.location.coordinates) {
                   const isHovered = hoveredProperty === property._id;
                   return (
-                    <Marker 
+                    <AdvancedMarker 
                       key={property._id}
                       position={{ lat: property.location.coordinates[1], lng: property.location.coordinates[0] }}
-                      icon={{
-                        path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
-                        fillColor: isHovered ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
-                        fillOpacity: 1,
-                        strokeWeight: 2,
-                        strokeColor: "hsl(var(--background))",
-                        scale: isHovered ? 1.5 : 1.2,
-                      }}
                       zIndex={isHovered ? 100 : 1}
-                    />
+                    >
+                      <div style={{
+                        color: isHovered ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+                        transform: `scale(${isHovered ? 1.5 : 1.2})`,
+                        transition: 'transform 0.2s ease-in-out',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <svg 
+                          width="24" 
+                          height="24" 
+                          viewBox="0 0 24 24" 
+                          fill="currentColor" 
+                          stroke="hsl(var(--background))" 
+                          strokeWidth="2"
+                          style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
+                        >
+                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                      </div>
+                    </AdvancedMarker>
                   );
                 }
                 return null;
