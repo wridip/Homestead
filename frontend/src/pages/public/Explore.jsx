@@ -24,7 +24,16 @@ const Explore = () => {
     type: [],
     price: 10000,
   });
+  const [debouncedPrice, setDebouncedPrice] = useState(10000);
   const [sortBy, setSortBy] = useState('Recommended');
+
+  // Debounce the price slider to prevent excessive API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedPrice(filters.price);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [filters.price]);
 
   // Handle scroll for "Scroll to Top" button
   useEffect(() => {
@@ -54,7 +63,7 @@ const Explore = () => {
         const location = searchParams.get('location');
         const params = { 
           limit: -1,
-          maxPrice: filters.price,
+          maxPrice: debouncedPrice,
           type: filters.type.join(','),
           keyword: searchQuery
         };
@@ -90,7 +99,7 @@ const Explore = () => {
     };
 
     fetchProperties();
-  }, [searchParams, filters, searchQuery, sortBy]);
+  }, [searchParams, filters.type, debouncedPrice, searchQuery, sortBy]);
 
   const handleTypeFilter = (type) => {
     setFilters(prevFilters => {

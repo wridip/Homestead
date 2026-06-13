@@ -61,16 +61,14 @@ exports.getProperties = async (req, res, next) => {
 
     let filter = {};
     
-    // Direct filtering (e.g., status) - only add if value is truthy and not an empty string
-    Object.keys(reqQuery).forEach(key => {
-      if (reqQuery[key] && reqQuery[key] !== "") {
-        filter[key] = reqQuery[key];
-      }
-    });
+    // Default to only showing Active properties
+    filter.status = 'Active';
 
-    // Default to only showing Active properties if no status is specified
-    if (!filter.status) {
-      filter.status = 'Active';
+    // Override status if specified in query
+    if (req.query.status && req.query.status !== 'all') {
+      filter.status = req.query.status;
+    } else if (req.query.status === 'all') {
+      delete filter.status;
     }
 
     // Price Range Filter
