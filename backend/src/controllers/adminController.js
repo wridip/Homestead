@@ -92,3 +92,83 @@ exports.getAllProperties = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Get user audit (Admin)
+// @route   GET /api/admin/users/:id/audit
+// @access  Private (Admin)
+exports.getUserAudit = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const bookings = await Booking.find({ travelerId: user._id })
+      .populate('propertyId', 'name address images')
+      .sort('-createdAt');
+
+    const properties = await Property.find({ hostId: user._id });
+    
+    const hostBookings = await Booking.find({ hostId: user._id })
+      .populate('propertyId', 'name')
+      .populate('travelerId', 'name email')
+      .sort('-createdAt');
+
+    res.status(200).json({
+      success: true,
+      data: {
+        user,
+        bookings,
+        properties,
+        hostBookings
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Toggle property status (Admin)
+// @route   PUT /api/admin/properties/:id/toggle
+// @access  Private (Admin)
+exports.togglePropertyStatus = async (req, res, next) => {
+  try {
+    const property = await Property.findById(req.params.id);
+    if (!property) {
+      return res.status(404).json({ success: false, message: 'Property not found' });
+    }
+
+    property.status = property.status === 'Active' ? 'Inactive' : 'Active';
+    await property.save();
+
+    res.status(200).json({ success: true, data: property });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get revenue details for a specific month (Admin)
+// @route   GET /api/admin/revenue/:year/:month
+// @access  Private (Admin)
+exports.getMonthlyRevenueDetail = async (req, res, next) => {
+  try {
+    const { year, month } = req.params;
+    const startDate = moment([year, month - 1]).startOf('month').toDate();
+    const endDate = moment([year, month - 1]).endOf('month').toDate();
+
+    const bookings = await Booking.find({
+      status: 'Completed',
+      endDate: { $gte: startDate, $lte: endDate }
+    })
+    .populate('travelerId', 'name email')
+    .populate('propertyId', 'name address')
+    .sort('-endDate');
+
+    res.status(200).json({
+      success: true,
+      data: bookings
+    });
+  } catch (error) {
+    next(error);
+  }
+};

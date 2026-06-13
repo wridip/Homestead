@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { getAdminStats } from '../../services/adminService';
+import { getAdminStats, getMonthlyRevenueDetail } from '../../services/adminService';
 import StatCard from '../../components/dashboard/StatCard';
 import { motion } from 'framer-motion';
+import Modal from '../../components/common/Modal';
+import moment from 'moment';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [monthDetail, setMonthDetail] = useState([]);
+  const [loadingDetail, setLoadingDetail] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -21,6 +26,19 @@ const AdminDashboard = () => {
     };
     fetchStats();
   }, []);
+
+  const handleMonthClick = async (month, year) => {
+    setSelectedMonth({ month, year });
+    setLoadingDetail(true);
+    try {
+      const response = await getMonthlyRevenueDetail(year, month);
+      setMonthDetail(response.data);
+    } catch (err) {
+      console.error("Failed to fetch month details", err);
+    } finally {
+      setLoadingDetail(false);
+    }
+  };
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[400px]">
@@ -91,7 +109,8 @@ const AdminDashboard = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.1 }}
                     key={`${rev._id.year}-${rev._id.month}`} 
-                    className="bg-background/50 border border-border p-6 rounded-3xl group hover:border-primary/50 transition-all shadow-sm"
+                    onClick={() => handleMonthClick(rev._id.month, rev._id.year)}
+                    className="bg-background/50 border border-border p-6 rounded-3xl group hover:border-primary/50 transition-all shadow-sm cursor-pointer"
                   >
                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3">{monthNames[rev._id.month - 1]} {rev._id.year}</p>
                     <div className="flex items-end justify-between">
@@ -105,14 +124,57 @@ const AdminDashboard = () => {
                     </div>
                   </motion.div>
                 ))}
-                {(!stats.monthlyRevenue || stats.monthlyRevenue.length === 0) && (
-                  <div className="col-span-full py-10 text-center text-muted-foreground italic text-sm">
-                    No historical revenue data available for audit.
-                  </div>
-                )}
               </div>
             </div>
           </div>
+          
+          <Modal
+            isOpen={!!selectedMonth}
+            onClose={() => setSelectedMonth(null)}
+            title={`Audit: ${selectedMonth ? monthNames[selectedMonth.month - 1] : ''} ${selectedMonth?.year}`}
+            maxWidth="max-w-5xl"
+          >
+            <div className="space-y-6">
+              {loadingDetail ? (
+                <div className="py-20 text-center animate-pulse text-muted-foreground">Extracting ledger entries...</div>
+              ) : (
+                <div className="overflow-hidden rounded-2xl border border-border">
+                  <table className="w-full text-left">
+                    <thead className="bg-muted/50 text-[10px] font-black uppercase tracking-widest text-muted-foreground border-b border-border">
+                      <tr>
+                        <th className="px-6 py-4">Guest</th>
+                        <th className="px-6 py-4">Property</th>
+                        <th className="px-6 py-4">Checkout</th>
+                        <th className="px-6 py-4 text-right">Yield</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {monthDetail.map((booking) => (
+                        <tr key={booking._id} className="hover:bg-muted/20 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="font-bold text-foreground text-sm">{booking.travelerId?.name}</div>
+                            <div className="text-[10px] text-muted-foreground">{booking.travelerId?.email}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-medium text-foreground text-sm">{booking.propertyId?.name}</div>
+                          </td>
+                          <td className="px-6 py-4 text-xs text-muted-foreground font-medium">
+                            {moment(booking.endDate).format('MMM D, YYYY')}
+                          </td>
+                          <td className="px-6 py-4 text-right font-black text-primary text-sm">
+                            ₹{booking.totalPrice.toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {monthDetail.length === 0 && (
+                    <div className="p-10 text-center text-muted-foreground italic">No detailed records found.</div>
+                  )}
+                </div>
+              )}
+            </div>
+          </Modal>
 
           {/* Recent Global Activity */}
           <div className="bg-card rounded-[2.5rem] border border-border p-10 shadow-2xl">

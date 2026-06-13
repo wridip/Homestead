@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { getAllProperties } from '../../services/adminService';
+import { getAllProperties, togglePropertyStatus } from '../../services/adminService';
 import { getImageUrl } from '../../services/api';
 import moment from 'moment';
 import { motion } from 'framer-motion';
@@ -10,20 +10,37 @@ const ManageAllProperties = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
+  const [togglingId, setTogglingId] = useState(null);
+
+  const fetchProperties = async () => {
+    try {
+      const response = await getAllProperties();
+      setProperties(response.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProperties = async () => {
-      try {
-        const response = await getAllProperties();
-        setProperties(response.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProperties();
   }, []);
+
+  const handleToggle = async (id) => {
+    setTogglingId(id);
+    try {
+      await togglePropertyStatus(id);
+      // Update local state for immediate feedback
+      setProperties(properties.map(p => 
+        p._id === id ? { ...p, status: p.status === 'Active' ? 'Inactive' : 'Active' } : p
+      ));
+    } catch (err) {
+      console.error("Moderation failed", err);
+    } finally {
+      setTogglingId(null);
+    }
+  };
 
   const filteredProperties = useMemo(() => {
     return properties.filter(prop => {
@@ -174,11 +191,21 @@ const ManageAllProperties = () => {
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex justify-end gap-2">
-                      <button className="p-2.5 rounded-xl bg-background border border-border text-muted-foreground hover:text-primary hover:border-primary transition-all shadow-sm group/btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover/btn:scale-110 transition-transform"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                      </button>
-                      <button className="p-2.5 rounded-xl bg-background border border-border text-muted-foreground hover:text-red-400 hover:border-red-400 transition-all shadow-sm group/btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover/btn:rotate-12 transition-transform"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m14.5 9-5 5"></path><path d="m9.5 9 5 5"></path></svg>
+                      <button 
+                        onClick={() => handleToggle(prop._id)}
+                        disabled={togglingId === prop._id}
+                        className={`p-2.5 rounded-xl border transition-all shadow-sm group/btn ${
+                          prop.status === 'Active' 
+                            ? 'bg-background border-border text-muted-foreground hover:text-red-400 hover:border-red-400' 
+                            : 'bg-primary text-primary-foreground border-primary hover:bg-primary/90'
+                        }`}
+                        title={prop.status === 'Active' ? 'Deactivate Listing' : 'Activate Listing'}
+                      >
+                        {togglingId === prop._id ? (
+                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover/btn:scale-110 transition-transform"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path></svg>
+                        )}
                       </button>
                     </div>
                   </td>
