@@ -55,104 +55,78 @@ exports.getProperties = async (req, res, next) => {
     // Copy req.query
     const reqQuery = { ...req.query };
 
-    // Fields to exclude from direct filtering
-    const removeFields = ['select', 'sort', 'page', 'limit', 'location', 'keyword', 'minPrice', 'maxPrice', 'amenities'];
+    // Fields to exclude
+    const removeFields = ['select', 'sort', 'page', 'limit', 'location'];
+
+    // Loop over removeFields and delete them from reqQuery
     removeFields.forEach(param => delete reqQuery[param]);
 
-    let filter = {};
-    
-    // Default to only showing Active properties
-    filter.status = 'Active';
+    // Create query string
+    let queryStr = JSON.stringify(reqQuery);
 
-    // Override status if specified in query
-    if (req.query.status && req.query.status !== 'all') {
-      filter.status = req.query.status;
-    } else if (req.query.status === 'all') {
-      delete filter.status;
-    }
-
-    // Price Range Filter
-    if (req.query.minPrice || req.query.maxPrice) {
-      filter.baseRate = {};
-      if (req.query.minPrice) filter.baseRate.$gte = Number(req.query.minPrice);
-      if (req.query.maxPrice) filter.baseRate.$lte = Number(req.query.maxPrice);
-    }
-
-    // Amenities Filter
-    if (req.query.amenities && req.query.amenities.trim() !== "") {
-      const amenitiesArr = req.query.amenities.split(',');
-      filter.amenities = { $all: amenitiesArr };
-    }
-
-    // Keyword Search
-    if (req.query.keyword && req.query.keyword.trim() !== "") {
-      const regex = new RegExp(req.query.keyword.trim(), 'i');
-      filter.$or = [
-        { name: regex },
-        { description: regex },
-        { address: regex }
-      ];
-    }
+    // Create operators ($gt, $gte, etc)
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
     // Location search from homepage
     if (req.query.location) {
-      const searchTerms = req.query.location
-        .split(',')
-        .map(term => term.trim())
-        .filter(term => term.length > 0 && term.toLowerCase() !== 'india');
-
+      const searchTerms = req.query.location.split(',').map(term => term.trim()).filter(term => term.length > 0);
       if (searchTerms.length > 0) {
+        // Create an AND condition to match all of the terms (e.g., city AND state)
+        // This is more precise than OR which would match anything in the same country
         const locationQuery = {
-          $or: searchTerms.slice(0, 2).map(term => ({
+          $and: searchTerms.map(term => ({
             address: { $regex: new RegExp(term, 'i') }
           }))
         };
-        // Merge with keyword or existing OR
-        if (filter.$or) {
-          filter.$and = [{ $or: filter.$or }, locationQuery];
-          delete filter.$or;
-        } else {
-          filter = { ...filter, ...locationQuery };
-        }
+        // Merge with existing query
+        const currentQuery = JSON.parse(queryStr);
+        const mergedQuery = { ...currentQuery, ...locationQuery };
+        query = Property.find(mergedQuery).populate('hostId');
+        // Update total count for pagination with the new query
+        totalCountQuery = mergedQuery;
       }
-    }
-
-    // Initialize query
-    query = Property.find(filter).populate('hostId', 'name email avatar');
-
-    // Sorting
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      query = query.sort(sortBy);
     } else {
-      query = query.sort('-createdAt');
+      // Finding resource
+      query = Property.find(JSON.parse(queryStr)).populate('hostId');
+      totalCountQuery = JSON.parse(queryStr);
     }
 
     // Pagination
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 12;
+    const limit = parseInt(req.query.limit, 10) || 10;
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
-    const total = await Property.countDocuments(filter);
+    const total = await Property.countDocuments(totalCountQuery);
 
-    query = query.skip(startIndex).limit(limit);
+    query = query.skip(startIndex);
+
+    if (limit > 0) {
+      query = query.limit(limit);
+    }
 
     // Executing query
     const properties = await query;
 
     // Pagination result
     const pagination = {};
+
     if (endIndex < total) {
-      pagination.next = { page: page + 1, limit };
+      pagination.next = {
+        page: page + 1,
+        limit
+      };
     }
+
     if (startIndex > 0) {
-      pagination.prev = { page: page - 1, limit };
+      pagination.prev = {
+        page: page - 1,
+        limit
+      };
     }
 
     res.status(200).json({
       success: true,
       count: properties.length,
-      total,
       pagination,
       data: properties,
     });
@@ -194,7 +168,7 @@ exports.updateProperty = async (req, res, next) => {
 
     // Make sure user is property owner
     if (property.hostId.toString() !== req.user.id && req.user.role !== 'Admin') {
-      return res.status(401).json({ success: false, message: 'Not authorized to update this property' });
+      return res.status(401).json({ success: false, message: 'Not authorized to update this property' });       
     }
 
     const { name, description, type, address, contact, location, amenities, roomTypes, baseRate, seasonalPricing, images, status } = req.body;
@@ -236,7 +210,7 @@ exports.deleteProperty = async (req, res, next) => {
 
     // Make sure user is property owner
     if (property.hostId.toString() !== req.user.id && req.user.role !== 'Admin') {
-      return res.status(401).json({ success: false, message: 'Not authorized to delete this property' });
+      return res.status(401).json({ success: false, message: 'Not authorized to delete this property' });       
     }
 
     await property.deleteOne();
@@ -263,7 +237,7 @@ exports.updatePropertyImages = async (req, res, next) => {
 
     // Make sure user is property owner
     if (property.hostId.toString() !== req.user.id && req.user.role !== 'Admin') {
-      return res.status(401).json({ success: false, message: 'Not authorized to update this property' });
+      return res.status(401).json({ success: false, message: 'Not authorized to update this property' });       
     }
 
     if (req.files) {

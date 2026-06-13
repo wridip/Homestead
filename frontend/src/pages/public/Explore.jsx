@@ -24,16 +24,7 @@ const Explore = () => {
     type: [],
     price: 10000,
   });
-  const [debouncedPrice, setDebouncedPrice] = useState(10000);
   const [sortBy, setSortBy] = useState('Recommended');
-
-  // Debounce the price slider to prevent excessive API calls
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedPrice(filters.price);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [filters.price]);
 
   // Handle scroll for "Scroll to Top" button
   useEffect(() => {
@@ -55,42 +46,27 @@ const Explore = () => {
     }
   };
 
-  // Step 1: Fetch properties from the server with filters
+  // Step 1: Fetch the base list of properties from the server
   useEffect(() => {
     const fetchProperties = async () => {
       setLoading(true);
       try {
         const location = searchParams.get('location');
-        const params = { 
-          limit: -1,
-          maxPrice: debouncedPrice,
-          type: filters.type.join(','),
-          keyword: searchQuery
-        };
-        
+        const params = { limit: -1 };
         if (location) {
           params.location = location;
+          // Set the client-side search box to match the initial search
+          setSearchQuery(location);
         }
-        
+
         const response = await getProperties(params);
         const propertyData = Array.isArray(response) ? response : response?.data;
 
         if (Array.isArray(propertyData)) {
-          // Sort client-side for immediate feedback if needed, 
-          // but base filtering is now server-side
-          let result = [...propertyData];
-          if (sortBy === 'Price: Low to High') {
-            result.sort((a, b) => (a.baseRate || 0) - (b.baseRate || 0));
-          } else if (sortBy === 'Price: High to Low') {
-            result.sort((a, b) => (b.baseRate || 0) - (a.baseRate || 0));
-          } else if (sortBy === 'Top Rated') {
-            result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
-          }
           setProperties(propertyData);
-          setFilteredProperties(result);
         } else {
+          console.error("Fetched properties data is not an array:", propertyData);
           setProperties([]);
-          setFilteredProperties([]);
         }
       } catch (err) {
         setError(err.message);
@@ -99,12 +75,52 @@ const Explore = () => {
     };
 
     fetchProperties();
-  }, [searchParams, filters.type, debouncedPrice, searchQuery, sortBy]);
+  }, [searchParams]);
+
+  // Step 2: Apply all client-side filters whenever the master list or filters change
+  useEffect(() => {
+    let result = properties;
+
+    // Apply text search on name or address (client-side)
+    const initialLocation = searchParams.get('location');
+    if (searchQuery && searchQuery !== initialLocation) {
+      result = result.filter(p =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (p.address && p.address.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+
+    // Apply type filters
+    if (filters.type.length > 0) {
+      result = result.filter(p => filters.type.includes(p.type));
+    }
+
+    // Apply price filter - Improved logic: ensure rate exists
+    if (filters.price) {
+      result = result.filter(p => {
+        const rate = p.baseRate || 0;
+        return rate <= filters.price;
+      });
+    }
+
+    // Apply sorting
+    let sortedProperties = [...result];
+    if (sortBy === 'Price: Low to High') {
+      sortedProperties.sort((a, b) => (a.baseRate || 0) - (b.baseRate || 0));
+    } else if (sortBy === 'Price: High to Low') {
+      sortedProperties.sort((a, b) => (b.baseRate || 0) - (a.baseRate || 0));
+    } else if (sortBy === 'Top Rated') {
+      sortedProperties.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+    }
+
+    setFilteredProperties(sortedProperties);
+
+  }, [searchQuery, filters, sortBy, properties, searchParams]);
 
   const handleTypeFilter = (type) => {
     setFilters(prevFilters => {
-      const newTypeFilters = prevFilters.type.includes(type) 
-        ? prevFilters.type.filter(t => t !== type) 
+      const newTypeFilters = prevFilters.type.includes(type)
+        ? prevFilters.type.filter(t => t !== type)
         : [...prevFilters.type, type];
       return { ...prevFilters, type: newTypeFilters };
     });
@@ -147,19 +163,19 @@ const Explore = () => {
 
   return (
     <div className="bg-background text-foreground flex flex-col md:flex-row min-h-[calc(100vh-64px)] overflow-hidden">
-      
+
       {/* Left Pane: Scrolling List (approx 60%) */}
-      <div className="w-full md:w-[60%] flex flex-col h-[calc(100vh-64px)] border-r border-border relative">
-        
+      <div className="w-full md:w-[60%] flex flex-col h-[calc(100vh-64px)] border-r border-border relative">    
+
         {/* Horizontal Filters Bar (Sticky) */}
         <div className="py-6 px-6 lg:px-10 bg-background/95 backdrop-blur-xl border-b border-border sticky top-0 z-20 space-y-5">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <h1 className="text-3xl font-serif text-foreground tracking-tight">
-              <span className="italic text-primary font-medium">{filteredProperties.length}</span> results
+              <span className="italic text-primary font-medium">{filteredProperties.length}</span> results      
             </h1>
              <div className="relative w-full sm:w-auto">
-              <select 
-                value={sortBy} 
+              <select
+                value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="appearance-none w-full sm:w-auto bg-card border border-border text-foreground py-2.5 pl-5 pr-12 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm font-medium shadow-sm transition-all cursor-pointer hover:bg-muted/50"
               >
@@ -200,15 +216,15 @@ const Explore = () => {
                   step="100"
                   value={filters.price}
                   onChange={(e) => setFilters(prev => ({...prev, price: parseInt(e.target.value)}))}
-                  className="w-24 h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                  className="w-24 h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"      
                 />
              </div>
-             
+
              <div className="flex gap-2">
                {['Mountain', 'Riverside', 'Farm'].map(type => (
-                  <button 
-                    key={type} 
-                    onClick={() => handleTypeFilter(type)} 
+                  <button
+                    key={type}
+                    onClick={() => handleTypeFilter(type)}
                     className={`px-5 py-2.5 text-xs font-bold rounded-full border transition-all duration-300 shadow-sm ${filters.type.includes(type) ? 'bg-primary text-primary-foreground border-primary scale-105' : 'bg-card text-muted-foreground border-border hover:border-primary hover:text-primary hover:bg-primary/5'}`}
                   >
                     {type}
@@ -217,8 +233,8 @@ const Explore = () => {
              </div>
 
              {(filters.type.length > 0 || (searchQuery && searchQuery !== searchParams.get('location')) || filters.price < 10000) && (
-               <button 
-                 onClick={resetFilters} 
+               <button
+                 onClick={resetFilters}
                  className="text-xs text-primary font-bold hover:text-primary/80 transition-colors underline underline-offset-4 decoration-2 decoration-primary/30"
                 >
                   Reset all
@@ -232,7 +248,7 @@ const Explore = () => {
           {filteredProperties.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-10">
               {filteredProperties.map((property, idx) => (
-                <motion.div 
+                <motion.div
                   key={property._id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -253,8 +269,8 @@ const Explore = () => {
                </div>
               <h3 className="text-3xl font-serif text-foreground">No matches found</h3>
               <p className="mt-4 text-muted-foreground leading-relaxed">We couldn't find any stays matching your current filters. Try broadening your search or resetting all filters.</p>
-              <button 
-                onClick={resetFilters} 
+              <button
+                onClick={resetFilters}
                 className="mt-10 px-10 py-4 bg-primary text-primary-foreground rounded-full text-sm font-bold shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 hover:-translate-y-1"
               >
                 Reset Search
@@ -265,17 +281,17 @@ const Explore = () => {
 
         {/* Scroll to top button */}
         {showScrollTop && (
-          <button 
+          <button
             onClick={scrollToTop}
             className="absolute bottom-10 right-10 z-30 p-4 bg-background border border-border rounded-full shadow-2xl text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>  
           </button>
         )}
       </div>
 
       {/* Right Pane: Sticky Interactive Map (approx 40%) */}
-      <div className="hidden md:block w-[40%] bg-background p-6 lg:p-8 sticky top-16 h-[calc(100vh-64px)] z-0">
+      <div className="hidden md:block w-[40%] bg-background p-6 lg:p-8 sticky top-16 h-[calc(100vh-64px)] z-0"> 
         <div className="w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-border/50 bg-[#0f1410]">
           {isLoaded ? (
             <Map
@@ -284,14 +300,13 @@ const Explore = () => {
               defaultZoom={6}
               disableDefaultUI={true}
               zoomControl={true}
-              colorScheme="DARK"
               style={{ width: '100%', height: '100%' }}
             >
               {filteredProperties.map(property => {
                 if (property.location && property.location.coordinates) {
                   const isHovered = hoveredProperty === property._id;
                   return (
-                    <AdvancedMarker 
+                    <AdvancedMarker
                       key={property._id}
                       position={{ lat: property.location.coordinates[1], lng: property.location.coordinates[0] }}
                       zIndex={isHovered ? 100 : 1}
@@ -304,12 +319,12 @@ const Explore = () => {
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                        <svg 
-                          width="24" 
-                          height="24" 
-                          viewBox="0 0 24 24" 
-                          fill="currentColor" 
-                          stroke="#000" 
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          stroke="#000"
                           strokeWidth="1.5"
                           className="drop-shadow-lg"
                         >
@@ -330,7 +345,7 @@ const Explore = () => {
           )}
         </div>
       </div>
-      
+
     </div>
   );
 };
