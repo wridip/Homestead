@@ -20,13 +20,16 @@ export const getImageUrl = (url) => {
   }
   if (url.startsWith('http')) return url; // S3 URL
   
-  // Local/Legacy path: Ensure it points to uploads directory if not absolute
-  const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+  // Normalize slashes (especially for Windows backslashes)
+  const normalizedUrl = url.replace(/\\/g, '/');
   
-  // If the URL doesn't already contain 'uploads/', assume it needs it (matching backend public/uploads)
-  const finalPath = cleanUrl.includes('uploads/') ? cleanUrl : `uploads/${cleanUrl}`;
+  // Remove leading slash if present
+  const cleanUrl = normalizedUrl.startsWith('/') ? normalizedUrl.substring(1) : normalizedUrl;
   
-  return `${BASE_URL}/${finalPath.replace(/\\/g, '/')}`;
+  // If the URL doesn't already start with 'uploads/', prepend it
+  const finalPath = cleanUrl.startsWith('uploads/') ? cleanUrl : `uploads/${cleanUrl}`;
+  
+  return `${BASE_URL}/${finalPath}`;
 };
 
 const api = axios.create({
