@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { getAdminStats, getMonthlyRevenueDetail } from '../../services/adminService';
 import StatCard from '../../components/dashboard/StatCard';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Modal from '../../components/common/Modal';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
 import moment from 'moment';
 
 const AdminDashboard = () => {
@@ -12,11 +13,13 @@ const AdminDashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [monthDetail, setMonthDetail] = useState([]);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [dateRange, setDateRange] = useState('7');
 
   useEffect(() => {
     const fetchStats = async () => {
+      setLoading(true);
       try {
-        const response = await getAdminStats();
+        const response = await getAdminStats(dateRange);
         setStats(response.data);
       } catch (err) {
         setError(err.message);
@@ -25,7 +28,7 @@ const AdminDashboard = () => {
       }
     };
     fetchStats();
-  }, []);
+  }, [dateRange]);
 
   const handleMonthClick = async (month, year) => {
     setSelectedMonth({ month, year });
@@ -40,7 +43,7 @@ const AdminDashboard = () => {
     }
   };
 
-  if (loading) return (
+  if (loading && !stats) return (
     <div className="flex items-center justify-center min-h-[400px]">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>
@@ -49,6 +52,12 @@ const AdminDashboard = () => {
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+  const chartData = stats?.bookingData?.map(d => ({
+    name: moment(d.date).format('MMM D'),
+    Bookings: d.bookings,
+    Revenue: d.revenue,
+  })) || [];
+
   return (
     <div className="p-8 space-y-12 max-w-[1600px] mx-auto">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -56,9 +65,24 @@ const AdminDashboard = () => {
           <h1 className="text-5xl font-black text-foreground tracking-tighter font-serif italic">Global Console</h1>
           <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px]">Strategic Oversight & Revenue Audit</p>
         </div>
-        <div className="bg-card border border-border px-6 py-3 rounded-2xl shadow-xl flex items-center gap-4">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-          <span className="text-xs font-black uppercase tracking-widest text-foreground">System Status: Optimal</span>
+        
+        <div className="flex bg-muted p-1 rounded-xl border border-border self-start md:self-center shadow-inner">
+          {[
+            { label: '7D', value: '7' },
+            { label: '30D', value: '30' },
+            { label: '90D', value: '90' },
+            { label: 'All', value: 'all' }
+          ].map(range => (
+            <button
+              key={range.value}
+              onClick={() => setDateRange(range.value)}
+              className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                dateRange === range.value ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {range.label}
+            </button>
+          ))}
         </div>
       </header>
 
@@ -87,6 +111,32 @@ const AdminDashboard = () => {
           change={`${stats.bookings.completed} completed stays`} 
           icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>}
         />
+      </div>
+
+      {/* Global Performance Graph */}
+      <div className="bg-card rounded-[2.5rem] border border-border p-10 shadow-2xl space-y-8">
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-black text-foreground tracking-tight font-serif italic text-primary">System-Wide Performance</h2>
+          <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-primary"></div> Bookings</div>
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-emerald-500"></div> Revenue</div>
+          </div>
+        </div>
+        <div style={{ width: '100%', height: 350 }}>
+          <ResponsiveContainer>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+              <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
+              <RechartsTooltip 
+                contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '16px', border: '1px solid hsl(var(--border))', fontSize: '12px' }} 
+              />
+              <Line yAxisId="left" type="monotone" dataKey="Bookings" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4, strokeWidth: 0, fill: 'hsl(var(--primary))' }} activeDot={{ r: 6 }} />
+              <Line yAxisId="right" type="monotone" dataKey="Revenue" stroke="#10B981" strokeWidth={3} dot={{ r: 4, strokeWidth: 0, fill: '#10B981' }} activeDot={{ r: 6 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -132,18 +182,19 @@ const AdminDashboard = () => {
             isOpen={!!selectedMonth}
             onClose={() => setSelectedMonth(null)}
             title={`Audit: ${selectedMonth ? monthNames[selectedMonth.month - 1] : ''} ${selectedMonth?.year}`}
-            maxWidth="max-w-5xl"
+            maxWidth="max-w-6xl"
           >
             <div className="space-y-6">
               {loadingDetail ? (
                 <div className="py-20 text-center animate-pulse text-muted-foreground">Extracting ledger entries...</div>
               ) : (
-                <div className="overflow-hidden rounded-2xl border border-border">
-                  <table className="w-full text-left">
+                <div className="overflow-x-auto rounded-2xl border border-border">
+                  <table className="w-full text-left min-w-[800px]">
                     <thead className="bg-muted/50 text-[10px] font-black uppercase tracking-widest text-muted-foreground border-b border-border">
                       <tr>
-                        <th className="px-6 py-4">Guest</th>
-                        <th className="px-6 py-4">Property</th>
+                        <th className="px-6 py-4">Guest Identity</th>
+                        <th className="px-6 py-4">Asset Performance</th>
+                        <th className="px-6 py-4">Duration</th>
                         <th className="px-6 py-4">Checkout</th>
                         <th className="px-6 py-4 text-right">Yield</th>
                       </tr>
@@ -156,7 +207,11 @@ const AdminDashboard = () => {
                             <div className="text-[10px] text-muted-foreground">{booking.travelerId?.email}</div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="font-medium text-foreground text-sm">{booking.propertyId?.name}</div>
+                            <div className="font-bold text-foreground text-sm">{booking.propertyId?.name}</div>
+                            <div className="text-[10px] text-muted-foreground truncate max-w-[200px]">{booking.propertyId?.address}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-xs font-black text-foreground">{booking.nights} nights</div>
                           </td>
                           <td className="px-6 py-4 text-xs text-muted-foreground font-medium">
                             {moment(booking.endDate).format('MMM D, YYYY')}
