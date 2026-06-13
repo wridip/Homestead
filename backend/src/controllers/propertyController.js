@@ -55,82 +55,94 @@ exports.getProperties = async (req, res, next) => {
     // Copy req.query
     const reqQuery = { ...req.query };
 
-    // Fields to exclude
-    const removeFields = ['select', 'sort', 'page', 'limit', 'location'];
-
-    // Loop over removeFields and delete them from reqQuery
+    // Fields to exclude from direct filtering
+    const removeFields = ['select', 'sort', 'page', 'limit', 'location', 'keyword', 'minPrice', 'maxPrice', 'amenities'];
     removeFields.forEach(param => delete reqQuery[param]);
 
-    // Create query string
-    let queryStr = JSON.stringify(reqQuery);
+    let filter = { ...reqQuery };
 
-    // Create operators ($gt, $gte, etc)
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
+    // Price Range Filter
+    if (req.query.minPrice || req.query.maxPrice) {
+      filter.baseRate = {};
+      if (req.query.minPrice) filter.baseRate.$gte = Number(req.query.minPrice);
+      if (req.query.maxPrice) filter.baseRate.$lte = Number(req.query.maxPrice);
+    }
+
+    // Amenities Filter (Exact match for all specified)
+    if (req.query.amenities) {
+      const amenitiesArr = req.query.amenities.split(',');
+      filter.amenities = { $all: amenitiesArr };
+    }
+
+    // Keyword Search (Name, Description, Address)
+    if (req.query.keyword) {
+      const regex = new RegExp(req.query.keyword, 'i');
+      filter.$or = [
+        { name: regex },
+        { description: regex },
+        { address: regex }
+      ];
+    }
 
     // Location search from homepage
     if (req.query.location) {
       const searchTerms = req.query.location
         .split(',')
         .map(term => term.trim())
-        .filter(term => term.length > 0 && term.toLowerCase() !== 'india'); // Ignore generic country for better matching
+        .filter(term => term.length > 0 && term.toLowerCase() !== 'india');
 
       if (searchTerms.length > 0) {
-        // Use OR logic for the first 2 terms (usually City and State) to be more flexible
-        // Google Maps strings often have more detail than property addresses
         const locationQuery = {
           $or: searchTerms.slice(0, 2).map(term => ({
             address: { $regex: new RegExp(term, 'i') }
           }))
         };
-        // Merge with existing query
-        const currentQuery = JSON.parse(queryStr);
-        const mergedQuery = { ...currentQuery, ...locationQuery };
-        query = Property.find(mergedQuery).populate('hostId');
-        // Update total count for pagination with the new query
-        totalCountQuery = mergedQuery;
+        // Merge with keyword or existing OR
+        if (filter.$or) {
+          filter.$and = [{ $or: filter.$or }, locationQuery];
+          delete filter.$or;
+        } else {
+          filter = { ...filter, ...locationQuery };
+        }
       }
+    }
+
+    // Initialize query
+    query = Property.find(filter).populate('hostId', 'name email avatar');
+
+    // Sorting
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      query = query.sort(sortBy);
     } else {
-      // Finding resource
-      query = Property.find(JSON.parse(queryStr)).populate('hostId');
-      totalCountQuery = JSON.parse(queryStr);
+      query = query.sort('-createdAt');
     }
 
     // Pagination
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
+    const limit = parseInt(req.query.limit, 10) || 12;
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
-    const total = await Property.countDocuments(totalCountQuery);
+    const total = await Property.countDocuments(filter);
 
-    query = query.skip(startIndex);
-
-    if (limit > 0) {
-      query = query.limit(limit);
-    }
+    query = query.skip(startIndex).limit(limit);
 
     // Executing query
     const properties = await query;
 
     // Pagination result
     const pagination = {};
-
     if (endIndex < total) {
-      pagination.next = {
-        page: page + 1,
-        limit
-      };
+      pagination.next = { page: page + 1, limit };
     }
-
     if (startIndex > 0) {
-      pagination.prev = {
-        page: page - 1,
-        limit
-      };
+      pagination.prev = { page: page - 1, limit };
     }
 
     res.status(200).json({
       success: true,
       count: properties.length,
+      total,
       pagination,
       data: properties,
     });

@@ -64,30 +64,31 @@ const DashboardHome = () => {
             Welcome back! Here's a snapshot of your performance.
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <Link to="/dashboard/add-property" className="bg-primary text-primary-foreground px-6 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors">
-            Add New Property
-          </Link>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link to="/dashboard/bookings" className="bg-card p-4 rounded-lg flex items-center gap-4 hover:bg-accent transition-colors border border-border">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-primary"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path><path d="m9 16 2 2 4-4"></path></svg>
+        <Link to="/dashboard/bookings" className="bg-card p-4 rounded-lg flex items-center gap-4 hover:bg-accent transition-colors border border-border group">
+          <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path><path d="m9 16 2 2 4-4"></path></svg>
+          </div>
           <div>
             <h3 className="text-lg font-semibold text-foreground">Manage Bookings</h3>
             <p className="text-sm text-muted-foreground">View and manage all your bookings.</p>
           </div>
         </Link>
-        <Link to="/dashboard/messages" className="bg-card p-4 rounded-lg flex items-center gap-4 hover:bg-accent transition-colors border border-border">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-primary"><path d="M4 22v-7l-2-1v-5l2-1V2h16v5l2 1v5l-2 1v7Z"></path><path d="M16 7.5a4 4 0 0 0-8 0"></path></svg>
+        <Link to="/dashboard/messages" className="bg-card p-4 rounded-lg flex items-center gap-4 hover:bg-accent transition-colors border border-border group">
+          <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M4 22v-7l-2-1v-5l2-1V2h16v5l2 1v5l-2 1v7Z"></path><path d="M16 7.5a4 4 0 0 0-8 0"></path></svg>
+          </div>
           <div>
             <h3 className="text-lg font-semibold text-foreground">View Messages</h3>
             <p className="text-sm text-muted-foreground">Check your inbox for new messages.</p>
           </div>
         </Link>
-        <Link to="/dashboard/properties" className="bg-card p-4 rounded-lg flex items-center gap-4 hover:bg-accent transition-colors border border-border">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-primary"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        <Link to="/dashboard/properties" className="bg-card p-4 rounded-lg flex items-center gap-4 hover:bg-accent transition-colors border border-border group">
+          <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+          </div>
           <div>
             <h3 className="text-lg font-semibold text-foreground">Manage Properties</h3>
             <p className="text-sm text-muted-foreground">Edit and update your properties.</p>

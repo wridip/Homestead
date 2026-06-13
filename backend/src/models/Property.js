@@ -82,5 +82,8 @@ propertySchema.virtual('reviews', {
   justOne: false
 });
 
+// Index for geospatial queries
+propertySchema.index({ location: '2dsphere' });
+
 const Property = mongoose.model('Property', propertySchema);
 module.exports = Property;

@@ -1,6 +1,7 @@
 const Booking = require('../models/Booking');
 const Property = require('../models/Property');
 const moment = require('moment');
+const mongoose = require('mongoose');
 
 // @desc    Get host dashboard stats
 // @route   GET /api/hosts/stats
@@ -8,6 +9,7 @@ const moment = require('moment');
 exports.getDashboardStats = async (req, res, next) => {
   try {
     const hostId = req.user._id;
+    const range = parseInt(req.query.dateRange) || 7;
 
     // Get total properties
     const totalProperties = await Property.countDocuments({ hostId });
@@ -15,7 +17,7 @@ exports.getDashboardStats = async (req, res, next) => {
     // Get total bookings
     const totalBookings = await Booking.countDocuments({ hostId });
 
-    // Get upcoming bookings (from today onwards, including pending)
+    // Get upcoming bookings
     const upcomingBookings = await Booking.find({
       hostId,
       startDate: { $gte: moment().startOf('day').toDate() },
@@ -26,22 +28,50 @@ exports.getDashboardStats = async (req, res, next) => {
       .populate('propertyId', 'name images')
       .populate('travelerId', 'name');
 
-    // Get monthly earnings (for the current month from completed bookings)
-    const startOfMonth = moment().startOf('month').toDate();
-    const endOfMonth = moment().endOf('month').toDate();
+    // Stats for current month vs last month
+    const startOfCurrentMonth = moment().startOf('month').toDate();
+    const startOfLastMonth = moment().subtract(1, 'month').startOf('month').toDate();
+    const endOfLastMonth = moment().subtract(1, 'month').endOf('month').toDate();
 
+    // New properties this month
+    const newPropertiesThisMonth = await Property.countDocuments({
+      hostId,
+      createdAt: { $gte: startOfCurrentMonth }
+    });
+
+    // Monthly earnings (completed bookings this month)
     const completedBookingsThisMonth = await Booking.find({
       hostId,
       status: 'Completed',
-      endDate: { $gte: startOfMonth, $lte: endOfMonth },
+      endDate: { $gte: startOfCurrentMonth },
     });
+    const monthlyEarnings = completedBookingsThisMonth.reduce((acc, b) => acc + b.totalPrice, 0);
 
-    const monthlyEarnings = completedBookingsThisMonth.reduce(
-      (acc, booking) => acc + booking.totalPrice,
-      0
-    );
+    // Earnings growth
+    const completedBookingsLastMonth = await Booking.find({
+      hostId,
+      status: 'Completed',
+      endDate: { $gte: startOfLastMonth, $lte: endOfLastMonth },
+    });
+    const lastMonthEarnings = completedBookingsLastMonth.reduce((acc, b) => acc + b.totalPrice, 0);
+    const earningsGrowth = lastMonthEarnings > 0 
+      ? ((monthlyEarnings - lastMonthEarnings) / lastMonthEarnings) * 100 
+      : (monthlyEarnings > 0 ? 100 : 0);
 
-    // Calculate occupancy rate (for the next 30 days based on confirmed bookings)
+    // Booking growth
+    const bookingsThisMonth = await Booking.countDocuments({
+      hostId,
+      createdAt: { $gte: startOfCurrentMonth }
+    });
+    const bookingsLastMonth = await Booking.countDocuments({
+      hostId,
+      createdAt: { $gte: startOfLastMonth, $lte: endOfLastMonth }
+    });
+    const bookingGrowth = bookingsLastMonth > 0 
+      ? ((bookingsThisMonth - bookingsLastMonth) / bookingsLastMonth) * 100 
+      : (bookingsThisMonth > 0 ? 100 : 0);
+
+    // Occupancy Rate
     const upcoming30Days = moment().add(30, 'days').toDate();
     const hostProperties = await Property.find({ hostId }).select('_id');
     const propertyIds = hostProperties.map(p => p._id);
@@ -57,23 +87,43 @@ exports.getDashboardStats = async (req, res, next) => {
     bookingsInNext30Days.forEach(booking => {
       const start = moment.max(moment(booking.startDate), moment());
       const end = moment.min(moment(booking.endDate), moment().add(30, 'days'));
-      totalBookedDays += end.diff(start, 'days');
+      const diff = end.diff(start, 'days');
+      if (diff > 0) totalBookedDays += diff;
     });
 
     const totalPossibleDays = totalProperties * 30;
     const occupancyRate = totalPossibleDays > 0 ? (totalBookedDays / totalPossibleDays) * 100 : 0;
     
-    // --- Mock Graph Data ---
-    // This part is not implemented in the original code, but is required for the graph.
-    // I will add a placeholder for booking and revenue data for the graph.
-    // A real implementation would require a more complex aggregation query.
+    // Real Graph Data using Aggregation
+    const startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
+    
+    const aggregatedStats = await Booking.aggregate([
+      {
+        $match: {
+          hostId: new mongoose.Types.ObjectId(hostId),
+          createdAt: { $gte: startDateRange }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          bookings: { $sum: 1 },
+          revenue: { $sum: "$totalPrice" }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    // Fill in missing dates with zero values
+    const bookingDataMap = new Map(aggregatedStats.map(item => [item._id, item]));
     const bookingData = [];
-    for (let i = 6; i >= 0; i--) {
-      const date = moment().subtract(i, 'days').format('YYYY-MM-DD');
+    for (let i = range - 1; i >= 0; i--) {
+      const dateStr = moment().subtract(i, 'days').format('YYYY-MM-DD');
+      const data = bookingDataMap.get(dateStr) || { bookings: 0, revenue: 0 };
       bookingData.push({
-        date,
-        bookings: Math.floor(Math.random() * 5),
-        revenue: Math.floor(Math.random() * 5000),
+        date: dateStr,
+        bookings: data.bookings,
+        revenue: data.revenue
       });
     }
 
@@ -84,13 +134,12 @@ exports.getDashboardStats = async (req, res, next) => {
         totalBookings,
         upcomingBookings,
         monthlyEarnings,
-        occupancyRate: occupancyRate.toFixed(2),
-        bookingData, // Placeholder data for the graph
-        // Mock values for other stats until they are implemented
-        newPropertiesThisMonth: 1,
-        bookingGrowth: 5.5,
-        earningsGrowth: 12.0,
-        occupancyRateGrowth: 2.3,
+        occupancyRate: occupancyRate.toFixed(1),
+        bookingData,
+        newPropertiesThisMonth,
+        bookingGrowth: bookingGrowth.toFixed(1),
+        earningsGrowth: earningsGrowth.toFixed(1),
+        occupancyRateGrowth: (occupancyRate > 0 ? 2.5 : 0), // Placeholder for occupancy growth
       },
     });
   } catch (error) {

@@ -46,27 +46,42 @@ const Explore = () => {
     }
   };
 
-  // Step 1: Fetch the base list of properties from the server
+  // Step 1: Fetch properties from the server with filters
   useEffect(() => {
     const fetchProperties = async () => {
       setLoading(true);
       try {
         const location = searchParams.get('location');
-        const params = { limit: -1 };
+        const params = { 
+          limit: -1,
+          maxPrice: filters.price,
+          type: filters.type.join(','),
+          keyword: searchQuery
+        };
+        
         if (location) {
           params.location = location;
-          // Set the client-side search box to match the initial search
-          setSearchQuery(location);
         }
         
         const response = await getProperties(params);
         const propertyData = Array.isArray(response) ? response : response?.data;
 
         if (Array.isArray(propertyData)) {
+          // Sort client-side for immediate feedback if needed, 
+          // but base filtering is now server-side
+          let result = [...propertyData];
+          if (sortBy === 'Price: Low to High') {
+            result.sort((a, b) => (a.baseRate || 0) - (b.baseRate || 0));
+          } else if (sortBy === 'Price: High to Low') {
+            result.sort((a, b) => (b.baseRate || 0) - (a.baseRate || 0));
+          } else if (sortBy === 'Top Rated') {
+            result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+          }
           setProperties(propertyData);
+          setFilteredProperties(result);
         } else {
-          console.error("Fetched properties data is not an array:", propertyData);
           setProperties([]);
+          setFilteredProperties([]);
         }
       } catch (err) {
         setError(err.message);
@@ -75,47 +90,7 @@ const Explore = () => {
     };
 
     fetchProperties();
-  }, [searchParams]);
-
-  // Step 2: Apply all client-side filters whenever the master list or filters change
-  useEffect(() => {
-    let result = properties;
-
-    // Apply text search on name or address (client-side)
-    const initialLocation = searchParams.get('location');
-    if (searchQuery && searchQuery !== initialLocation) {
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (p.address && p.address.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-    }
-
-    // Apply type filters
-    if (filters.type.length > 0) {
-      result = result.filter(p => filters.type.includes(p.type));
-    }
-    
-    // Apply price filter - Improved logic: ensure rate exists
-    if (filters.price) {
-      result = result.filter(p => {
-        const rate = p.baseRate || 0;
-        return rate <= filters.price;
-      });
-    }
-
-    // Apply sorting
-    let sortedProperties = [...result];
-    if (sortBy === 'Price: Low to High') {
-      sortedProperties.sort((a, b) => (a.baseRate || 0) - (b.baseRate || 0));
-    } else if (sortBy === 'Price: High to Low') {
-      sortedProperties.sort((a, b) => (b.baseRate || 0) - (a.baseRate || 0));
-    } else if (sortBy === 'Top Rated') {
-      sortedProperties.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
-    }
-
-    setFilteredProperties(sortedProperties);
-
-  }, [searchQuery, filters, sortBy, properties, searchParams]);
+  }, [searchParams, filters, searchQuery, sortBy]);
 
   const handleTypeFilter = (type) => {
     setFilters(prevFilters => {
