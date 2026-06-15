@@ -2,74 +2,100 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addProperty } from '../../services/hostService';
 import api from '../../services/api';
+import { motion, AnimatePresence } from 'framer-motion';
+import LocationPicker from '../../components/property/LocationPicker';
 
 const getAmenityIcon = (amenity) => {
+  const iconProps = { className: "h-5 w-5 text-primary" };
   switch (amenity) {
     case 'Comfortable beds':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm3-12h.01M3 17h18a2 2 0 002-2V9a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm3-12h.01M3 17h18a2 2 0 002-2V9a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>;
     case 'Wardrobes/closets':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2zM8 7v.01M8 11v.01"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2zM8 7v.01M8 11v.01"></path></svg>;
     case 'Woollen blankets':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 11V7a2 2 0 012-2h.5c.532 0 1.052.126 1.5.368m.5-3.368h-.5C6.948 3 6.428 3.126 6 3.368M4 11v6a2 2 0 002 2h2m-2-8h4m-4 0c-.532 0-1.052.126-1.5.368m.5-3.368h-.5C6.948 3 6.428 3.126 6 3.368M20 11V7a2 2 0 00-2-2h-.5c-.532 0-1.052.126-1.5.368m-.5-3.368h.5c.532 0 1.052.126 1.5.368M20 11v6a2 2 0 01-2 2h-2m2-8h-4m4 0c.532 0 1.052.126 1.5.368m-.5-3.368h.5c-.532 0-1.052-.126-1.5-.368M10 11h4"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M4 11V7a2 2 0 012-2h.5c.532 0 1.052.126 1.5.368m.5-3.368h-.5C6.948 3 6.428 3.126 6 3.368M4 11v6a2 2 0 002 2h2m-2-8h4m-4 0c-.532 0-1.052.126-1.5.368m.5-3.368h-.5C6.948 3 6.428 3.126 6 3.368M20 11V7a2 2 0 00-2-2h-.5c-.532 0-1.052.126-1.5.368m-.5-3.368h.5c.532 0 1.052.126 1.5.368M20 11v6a2 2 0 01-2 2h-2m2-8h-4m4 0c.532 0 1.052.126 1.5.368m-.5-3.368h.5c-.532 0-1.052-.126-1.5-.368M10 11h4"></path></svg>;
     case 'Attached bathrooms':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 13h10m-3-3V7m-4 6v4m-3-3v4m8-4v4m-3-3h.01M3 21v-4a2 2 0 012-2h14a2 2 0 012 2v4M5 7h14a2 2 0 012 2v4a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 13h10m-3-3V7m-4 6v4m-3-3v4m8-4v4m-3-3h.01M3 21v-4a2 2 0 012-2h14a2 2 0 012 2v4M5 7h14a2 2 0 012 2v4a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"></path></svg>;
     case 'Hot/cold running water':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>;
     case 'Western-style toilets':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M14 10l-2 1m0 0l-2-1m2 1V3m2 7h-4M5 13h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2zm14 0v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4h18z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M14 10l-2 1m0 0l-2-1m2 1V3m2 7h-4M5 13h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2zm14 0v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4h18z"></path></svg>;
     case 'Toiletries':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-4.414-4.414A1 1 0 0013.586 4H7a2 2 0 00-2 2v13a2 2 0 002 2z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-4.414-4.414A1 1 0 0013.586 4H7a2 2 0 00-2 2v13a2 2 0 002 2z"></path></svg>;
     case 'Free Wi-Fi':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728M9.879 16.121a3 3 0 010-4.242m4.242 0a3 3 0 010 4.242M12 12h.01"></path></svg>;
+    case 'High-Speed Internet':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728M9.879 16.121a3 3 0 010-4.242m4.242 0a3 3 0 010 4.242M12 12h.01"></path></svg>;
+    case 'Air Conditioning':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>;
+    case 'Heating':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343a7.99 7.99 0 012.344 5.657z" /><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 16.121A3 3 0 1012.015 11L11 14l.879 2.121z" /></svg>;
+    case 'Dedicated Workspace':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>;
     case 'Televisions with cable/satellite channels':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M12 12h.01"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M12 12h.01"></path></svg>;
     case 'Home-cooked meals':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>;
     case 'Shared kitchen or kitchenette':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>;
+    case 'Kitchen Essentials (Oil, Salt, Pepper)':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>;
+    case 'Microwave':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 7v10M18 10h.01M18 14h.01" /></svg>;
+    case 'Dishwasher':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>;
+    case 'Coffee Maker':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V4m0 16v-4m-6-10L4 12m16 0l-2 2m-6-6h.01M12 6.01V6"></path></svg>;
     case 'Housekeeping':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M11 4a2 2 0 114 0v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zM11 4a2 2 0 10-4 0v12a1 1 0 001 1h2a1 1 0 001-1V4zm1-13h6a2 2 0 012 2v6a2 2 0 01-2 2h-6a2 2 0 01-2-2V5a2 2 0 012-2z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M11 4a2 2 0 114 0v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zM11 4a2 2 0 10-4 0v12a1 1 0 001 1h2a1 1 0 001-1V4zm1-13h6a2 2 0 012 2v6a2 2 0 01-2 2h-6a2 2 0 01-2-2V5a2 2 0 012-2z"></path></svg>;
     case 'Laundry services':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10M4 20h16"></path></svg>;
     case 'Iron/ironing boards':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10M4 20h16"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10M4 20h16"></path></svg>;
     case 'Personalized guided tours':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>;
     case 'CCTV surveillance':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.872-3.248A1 1 0 0121 7.279v9.442a1 1 0 01-1.128.927L15 14m0 0l-4 4H9.68l-3.328-3.328C5.972 14.28 5 13.568 5 12.656V11a.5.5 0 01.5-.5h4.872l-1.936-3.226A1 1 0 018.872 7v-.058a1 1 0 011.128-.927L15 10z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.872-3.248A1 1 0 0121 7.279v9.442a1 1 0 01-1.128.927L15 14m0 0l-4 4H9.68l-3.328-3.328C5.972 14.28 5 13.568 5 12.656V11a.5.5 0 01.5-.5h4.872l-1.936-3.226A1 1 0 018.872 7v-.058a1 1 0 011.128-.927L15 10z"></path></svg>;
     case 'Secure parking':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4zm-3-4a1 1 0 011-1h10a1 1 0 011 1v12a1 1 0 01-1 1H7a1 1 0 01-1-1V6zM7 21h10"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4zm-3-4a1 1 0 011-1h10a1 1 0 011 1v12a1 1 0 01-1 1H7a1 1 0 01-1-1V6zM7 21h10"></path></svg>;
     case 'First-aid kits':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.816A2.003 2.003 0 0015 3.033V3a2 2 0 00-2-2H9a2 2 0 00-2 2v.033A2.003 2.003 0 004.382 8.184l-.304 1.52A4 4 0 007.432 19h9.136a4 4 0 003.354-9.293l-.304-1.52z"></path></svg>;
+    case 'Fire Extinguisher':
+    case 'Smoke Alarm':
+    case 'Carbon Monoxide Alarm':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.816A2.003 2.003 0 0015 3.033V3a2 2 0 00-2-2H9a2 2 0 00-2 2v.033A2.003 2.003 0 004.382 8.184l-.304 1.52A4 4 0 007.432 19h9.136a4 4 0 003.354-9.293l-.304-1.52z"></path></svg>;
     case 'Fireplaces':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h2a2 2 0 002-2V9a2 2 0 00-2-2h-3V5a2 2 0 00-2-2H9a2 2 0 00-2 2v2H4a2 2 0 00-2 2v9a2 2 0 002 2h2m0 0V4m0 0H4m16 0v4m0 0h-4M7 7h10"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h2a2 2 0 002-2V9a2 2 0 00-2-2h-3V5a2 2 0 00-2-2H9a2 2 0 00-2 2v2H4a2 2 0 00-2 2v9a2 2 0 002 2h2m0 0V4m0 0H4m16 0v4m0 0h-4M7 7h10"></path></svg>;
     case 'Gardens':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V4m0 16v-4m-6-10L4 12m16 0l-2 2m-6-6h.01M12 6.01V6"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V4m0 16v-4m-6-10L4 12m16 0l-2 2m-6-6h.01M12 6.01V6"></path></svg>;
     case 'Terraces':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10M4 20h16"></path></svg>;
+    case 'Outdoor Dining Area':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>;
     case 'Spa treatments':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3V1h4v6m-4 5h.01M16 16v-4h-4v4h4z"></path></svg>;
+    case 'Hot Tub':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3V1h4v6m-4 5h.01M16 16v-4h-4v4h4z"></path></svg>;
     case 'Yoga sessions':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
+    case 'Private Pool':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" /></svg>;
+    case 'BBQ Grill':
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 11V7a2 2 0 00-2-2H7a2 2 0 00-2 2v4m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>;
     case 'Flexible check-in/check-out':
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm3-12h.01M3 17h18a2 2 0 002-2V9a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>;
     default:
-      return <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
+      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
   }
 };
 
 const amenityCategories = {
-  "Accommodation Comforts": ["Comfortable beds", "Wardrobes/closets", "Woollen blankets"],
-  "Essential Facilities": ["Attached bathrooms", "Hot/cold running water", "Western-style toilets", "Toiletries"],
-  "Connectivity & Entertainment": ["Free Wi-Fi", "Televisions with cable/satellite channels"],
-  "Dining & Kitchen": ["Home-cooked meals", "Shared kitchen or kitchenette"],
+  "Accommodation Comforts": ["Comfortable beds", "Wardrobes/closets", "Woollen blankets", "Air Conditioning", "Heating"],
+  "Essential Facilities": ["Attached bathrooms", "Hot/cold running water", "Western-style toilets", "Toiletries", "Dedicated Workspace"],
+  "Connectivity & Entertainment": ["Free Wi-Fi", "High-Speed Internet", "Televisions with cable/satellite channels"],
+  "Dining & Kitchen": ["Home-cooked meals", "Shared kitchen or kitchenette", "Microwave", "Dishwasher", "Coffee Maker", "Kitchen Essentials (Oil, Salt, Pepper)"],
   "Guest Services": ["Housekeeping", "Laundry services", "Iron/ironing boards", "Personalized guided tours"],
-  "Safety & Security": ["CCTV surveillance", "Secure parking", "First-aid kits"],
-  "Unique Touches": ["Fireplaces", "Gardens", "Terraces", "Spa treatments", "Yoga sessions"],
+  "Safety & Security": ["CCTV surveillance", "Secure parking", "First-aid kits", "Smoke Alarm", "Carbon Monoxide Alarm", "Fire Extinguisher"],
+  "Unique Touches": ["Fireplaces", "Gardens", "Terraces", "Spa treatments", "Yoga sessions", "Private Pool", "Hot Tub", "Outdoor Dining Area", "BBQ Grill"],
   "Flexibility": ["Flexible check-in/check-out"],
 };
 
 const AddProperty = () => {
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -87,23 +113,25 @@ const AddProperty = () => {
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [formErrors, setFormErrors] = useState({}); // New state for form errors
+  const [formErrors, setFormErrors] = useState({});
   const navigate = useNavigate();
+
+  const totalSteps = 4;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setFormErrors({ ...formErrors, [name]: '' }); // Clear error when user types
+    setFormErrors({ ...formErrors, [name]: '' });
   };
 
-  const handleAmenityChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setFormData({ ...formData, amenities: [...formData.amenities, value] });
+  const handleAmenityChange = (amenity) => {
+    const isSelected = formData.amenities.includes(amenity);
+    if (!isSelected) {
+      setFormData({ ...formData, amenities: [...formData.amenities, amenity] });
     } else {
       setFormData({
         ...formData,
-        amenities: formData.amenities.filter((amenity) => amenity !== value),
+        amenities: formData.amenities.filter((a) => a !== amenity),
       });
     }
   };
@@ -118,43 +146,65 @@ const AddProperty = () => {
   const addRoomType = () => {
     setFormData({
       ...formData,
-      roomTypes: [...formData.roomTypes, { name: '', beds: '', occupancy: '' }],
+      roomTypes: [...formData.roomTypes, { name: '', beds: '', occupancy: '', bedType: 'Queen' }],
     });
+  };
+
+  const removeRoomType = (index) => {
+    const newRoomTypes = formData.roomTypes.filter((_, i) => i !== index);
+    setFormData({ ...formData, roomTypes: newRoomTypes });
   };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    setSelectedFiles(files);
+    setSelectedFiles(prev => [...prev, ...files]);
     const previews = files.map(file => URL.createObjectURL(file));
-    setImagePreviews(previews);
+    setImagePreviews(prev => [...prev, ...previews]);
+  };
+
+  const handleLocationChange = (pos) => {
+    setFormData(prev => ({
+      ...prev,
+      latitude: pos.lat.toString(),
+      longitude: pos.lng.toString()
+    }));
+  };
+
+  const validateStep = (step) => {
+    const errors = {};
+    if (step === 1) {
+      if (!formData.name) errors.name = 'Property name is required';
+      if (!formData.type) errors.type = 'Property type is required';
+      if (!formData.address) errors.address = 'Address is required';
+      if (!formData.description) errors.description = 'Description is required';
+      if (!formData.contact) errors.contact = 'Contact is required';
+    } else if (step === 2) {
+      if (formData.roomTypes.length === 0) errors.roomTypes = 'At least one room type is required';
+      formData.roomTypes.forEach((room, index) => {
+        if (!room.name) errors[`roomType-${index}-name`] = 'Required';
+        if (!room.beds) errors[`roomType-${index}-beds`] = 'Required';
+        if (!room.occupancy) errors[`roomType-${index}-occupancy`] = 'Required';
+      });
+    } else if (step === 3) {
+      if (!formData.latitude || !formData.longitude) errors.location = 'Please select a location on the map';
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const nextStep = () => {
+    if (validateStep(currentStep)) setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const errors = {};
-    if (!formData.name) errors.name = 'Property name is required';
-    if (!formData.description) errors.description = 'Description is required';
-    if (!formData.type) errors.type = 'Property type is required';
-    if (!formData.address) errors.address = 'Address is required';
-    if (!formData.contact) errors.contact = 'Contact is required';
-    if (!formData.baseRate) errors.baseRate = 'Base rate is required';
-    else if (isNaN(formData.baseRate) || parseFloat(formData.baseRate) <= 0) errors.baseRate = 'Base rate must be a positive number';
-
-    if (formData.latitude && isNaN(formData.latitude)) errors.latitude = 'Latitude must be a number';
-    if (formData.longitude && isNaN(formData.longitude)) errors.longitude = 'Longitude must be a number';
-
-    if (formData.roomTypes.length > 0) {
-      formData.roomTypes.forEach((room, index) => {
-        if (!room.name) errors[`roomType-${index}-name`] = `Room name for Room ${index + 1} is required`;
-        if (isNaN(room.beds) || parseInt(room.beds) <= 0) errors[`roomType-${index}-beds`] = `Number of beds for Room ${index + 1} must be a positive integer`;
-        if (isNaN(room.occupancy) || parseInt(room.occupancy) <= 0) errors[`roomType-${index}-occupancy`] = `Max occupancy for Room ${index + 1} must be a positive integer`;
-      });
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return; // Prevent form submission
+    if (!formData.baseRate) {
+      setFormErrors({ baseRate: 'Base rate is required' });
+      return;
     }
 
     try {
@@ -169,275 +219,390 @@ const AddProperty = () => {
       }
 
       const propertyData = { ...formData, images: imageUrls };
-      if (propertyData.latitude && propertyData.longitude) {
-        propertyData.location = {
-          type: 'Point',
-          coordinates: [parseFloat(propertyData.longitude), parseFloat(propertyData.latitude)]
-        };
-        delete propertyData.latitude;
-        delete propertyData.longitude;
-      }
+      propertyData.location = {
+        type: 'Point',
+        coordinates: [parseFloat(formData.longitude), parseFloat(formData.latitude)]
+      };
+      delete propertyData.latitude;
+      delete propertyData.longitude;
 
       await addProperty(propertyData);
       navigate('/dashboard/properties');
     } catch (error) {
       console.error('Failed to add property', error);
-      // Display a general error message to the user if form submission fails due to backend error
       setFormErrors({ general: error.response?.data?.message || 'An unexpected error occurred' });
     }
   };
 
+  const renderStepIndicator = () => (
+    <div className="mb-12">
+      <div className="flex justify-between items-center relative">
+        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10" />
+        <div 
+          className="absolute top-1/2 left-0 h-0.5 bg-primary transition-all duration-500 -z-10" 
+          style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
+        />
+        {[1, 2, 3, 4].map(step => (
+          <div 
+            key={step}
+            className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+              currentStep >= step ? 'bg-primary text-primary-foreground' : 'bg-card border border-border text-muted-foreground'
+            } ${currentStep === step ? 'ring-4 ring-primary/20' : ''}`}
+          >
+            {step}
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-between mt-3 text-[10px] font-bold uppercase tracking-tighter text-muted-foreground px-1">
+        <span>Basics</span>
+        <span>Details</span>
+        <span>Location</span>
+        <span>Finalize</span>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="container mx-auto p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border">
-      <h1 className="text-3xl font-bold text-foreground mb-8">Add New Property</h1>
-      {formErrors.general && <p className="text-red-500 text-sm mb-4">{formErrors.general}</p>}
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Basic Information */}
-        <div className="p-6 border border-border rounded-lg bg-card">
-          <h2 className="text-2xl font-semibold mb-6 text-foreground">Basic Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col">
-              <input
-                type="text"
-                name="name"
-                placeholder="Property Name"
-                onChange={handleChange}
-                className="p-3 bg-transparent border border-border rounded-md text-foreground focus:ring-2 focus:ring-primary"
-              />
-              {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
-            </div>
-            <div className="flex flex-col">
-              <label htmlFor="type" className="text-sm font-bold text-muted-foreground block mb-1">Property Type</label>
-              <select
-                id="type"
-                name="type"
-                onChange={handleChange}
-                className="p-3 bg-transparent border border-border rounded-md text-foreground focus:ring-2 focus:ring-primary bg-card"
-                required
-              >
-                <option value="" className="bg-card text-foreground">Select Property Type</option>
-                <option value="Mountain" className="bg-card text-foreground">Mountain</option>
-                <option value="Riverside" className="bg-card text-foreground">Riverside</option>
-                <option value="Farm" className="bg-card text-foreground">Farm</option>
-                <option value="Minimal" className="bg-card text-foreground">Minimal</option>
-              </select>
-              {formErrors.type && <p className="text-red-500 text-sm mt-1">{formErrors.type}</p>}
-            </div>
-            <div className="flex flex-col">
-              <input
-                type="text"
-                name="address"
-                placeholder="Address"
-                onChange={handleChange}
-                className="p-3 bg-transparent border border-border rounded-md text-foreground focus:ring-2 focus:ring-primary"
-              />
-              {formErrors.address && <p className="text-red-500 text-sm mt-1">{formErrors.address}</p>}
-            </div>
-            <div className="flex flex-col col-span-2">
-              <textarea
-                name="description"
-                placeholder="Description"
-                onChange={handleChange}
-                className="p-3 bg-transparent border border-border rounded-md col-span-2 text-foreground h-32 resize-none focus:ring-2 focus:ring-primary"
-              />
-              {formErrors.description && <p className="text-red-500 text-sm mt-1">{formErrors.description}</p>}
-            </div>
-            <div className="flex flex-col">
-              <input
-                type="text"
-                name="contact"
-                placeholder="Contact"
-                onChange={handleChange}
-                className="p-3 bg-transparent border border-border rounded-md text-foreground focus:ring-2 focus:ring-primary"
-              />
-              {formErrors.contact && <p className="text-red-500 text-sm mt-1">{formErrors.contact}</p>}
-            </div>
-          </div>
-        </div>
+    <div className="container mx-auto max-w-4xl p-8 bg-background rounded-3xl shadow-xl border border-border">
+      <h1 className="text-3xl font-serif font-bold text-foreground mb-10 flex items-center gap-3">
+        <span className="p-2 bg-primary/10 rounded-xl">🏡</span>
+        List your Homestay
+      </h1>
+      
+      {renderStepIndicator()}
 
-        {/* Location & Maps */}
-        <div className="p-6 border border-border rounded-lg bg-card">
-          <h2 className="text-2xl font-semibold mb-6 text-foreground">Location & Maps</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col">
-              <input
-                type="text"
-                name="latitude"
-                placeholder="Latitude"
-                onChange={handleChange}
-                className="p-3 bg-transparent border border-border rounded-md text-foreground focus:ring-2 focus:ring-primary"
-              />
-              {formErrors.latitude && <p className="text-red-500 text-sm mt-1">{formErrors.latitude}</p>}
-            </div>
-            <div className="flex flex-col">
-              <input
-                type="text"
-                name="longitude"
-                placeholder="Longitude"
-                onChange={handleChange}
-                className="p-3 bg-transparent border border-border rounded-md text-foreground focus:ring-2 focus:ring-primary"
-              />
-              {formErrors.longitude && <p className="text-red-500 text-sm mt-1">{formErrors.longitude}</p>}
-            </div>
-          </div>
-        </div>
+      <form onSubmit={handleSubmit} className="min-h-[500px] flex flex-col">
+        <AnimatePresence mode="wait">
+          {currentStep === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-8"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase text-muted-foreground tracking-widest ml-1">Property Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="e.g. Whispering Pines Villa"
+                    className="w-full p-4 bg-card border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
+                  />
+                  {formErrors.name && <p className="text-red-500 text-[10px] font-bold uppercase mt-1 ml-1">{formErrors.name}</p>}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase text-muted-foreground tracking-widest ml-1">Type</label>
+                  <select
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    className="w-full p-4 bg-card border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none appearance-none"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Mountain">Mountain</option>
+                    <option value="Riverside">Riverside</option>
+                    <option value="Farm">Farm</option>
+                    <option value="Minimal">Minimal</option>
+                  </select>
+                  {formErrors.type && <p className="text-red-500 text-[10px] font-bold uppercase mt-1 ml-1">{formErrors.type}</p>}
+                </div>
+              </div>
 
-        {/* Amenities */}
-        <div className="p-6 border border-border rounded-lg bg-card">
-          <h2 className="text-2xl font-semibold mb-6 text-foreground">Amenities</h2>
-          <div className="space-y-6">
-            {Object.entries(amenityCategories).map(([category, amenities]) => (
-              <div key={category}>
-                <h3 className="text-xl font-medium text-muted-foreground mb-3">{category}</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {amenities.map((amenity) => (
-                    <div
-                      key={amenity}
-                      className={`flex items-center space-x-2 p-3 border rounded-lg cursor-pointer transition-all duration-200
-                        ${formData.amenities.includes(amenity)
-                          ? 'bg-primary border-primary text-primary-foreground shadow-lg'
-                          : 'bg-card border-border text-muted-foreground hover:bg-accent hover:border-primary'
-                        }`}
-                      onClick={() => handleAmenityChange({ target: { value: amenity, checked: !formData.amenities.includes(amenity) } })}
-                    >
-                      {getAmenityIcon(amenity)}
-                      <span>{amenity}</span>
-                      <input
-                        type="checkbox"
-                        value={amenity}
-                        checked={formData.amenities.includes(amenity)}
-                        onChange={handleAmenityChange}
-                        className="hidden" // Hide the original checkbox
-                      />
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase text-muted-foreground tracking-widest ml-1">Full Address</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="Street, City, State, ZIP"
+                  className="w-full p-4 bg-card border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
+                />
+                {formErrors.address && <p className="text-red-500 text-[10px] font-bold uppercase mt-1 ml-1">{formErrors.address}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase text-muted-foreground tracking-widest ml-1">Description</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="Tell guests about your place..."
+                  className="w-full p-4 bg-card border border-border rounded-2xl h-40 resize-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
+                />
+                {formErrors.description && <p className="text-red-500 text-[10px] font-bold uppercase mt-1 ml-1">{formErrors.description}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase text-muted-foreground tracking-widest ml-1">Contact Number</label>
+                <input
+                  type="text"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  placeholder="+91 XXXXX XXXXX"
+                  className="w-full p-4 bg-card border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
+                />
+                {formErrors.contact && <p className="text-red-500 text-[10px] font-bold uppercase mt-1 ml-1">{formErrors.contact}</p>}
+              </div>
+            </motion.div>
+          )}
+
+          {currentStep === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-12"
+            >
+              <section>
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                  <span className="text-primary">✨</span> Amenities
+                </h3>
+                <div className="space-y-8 max-h-[400px] overflow-y-auto pr-4 scrollbar-hide">
+                  {Object.entries(amenityCategories).map(([category, amenities]) => (
+                    <div key={category}>
+                      <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-4">{category}</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {amenities.map((amenity) => (
+                          <div
+                            key={amenity}
+                            onClick={() => handleAmenityChange(amenity)}
+                            className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${
+                              formData.amenities.includes(amenity)
+                                ? 'bg-primary border-primary text-primary-foreground shadow-lg scale-[1.02]'
+                                : 'bg-card border-border text-muted-foreground hover:border-primary/50'
+                            }`}
+                          >
+                            {getAmenityIcon(amenity)}
+                            <span className="text-xs font-semibold">{amenity}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
+              </section>
 
-        {/* Room Types */}
-        <div className="p-6 border border-border rounded-lg bg-card">
-          <h2 className="text-2xl font-semibold mb-6 text-foreground">Room Types</h2>
-          {formData.roomTypes.map((room, index) => (
-            <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="flex flex-col">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Room Name"
-                  value={room.name}
-                  onChange={(e) => handleRoomTypeChange(index, e)}
-                  className="p-3 bg-transparent border border-border rounded-md text-foreground focus:ring-2 focus:ring-primary"
-                />
-                {formErrors[`roomType-${index}-name`] && <p className="text-red-500 text-sm mt-1">{formErrors[`roomType-${index}-name`]}</p>}
+              <section>
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold">🛌 Room Configurations</h3>
+                  <button
+                    type="button"
+                    onClick={addRoomType}
+                    className="p-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  </button>
+                </div>
+                {formErrors.roomTypes && <p className="text-red-500 text-xs mb-4 italic">{formErrors.roomTypes}</p>}
+                <div className="space-y-4">
+                  {formData.roomTypes.map((room, index) => (
+                    <div key={index} className="grid grid-cols-1 sm:grid-cols-5 gap-4 p-5 rounded-2xl bg-card border border-border group relative">
+                      <div className="sm:col-span-2 space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-primary">Room Name</label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={room.name}
+                          onChange={(e) => handleRoomTypeChange(index, e)}
+                          placeholder="Master Suite"
+                          className="w-full bg-transparent border-b border-border focus:border-primary outline-none py-1 text-sm font-semibold"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-primary">Bed Type</label>
+                        <select
+                          name="bedType"
+                          value={room.bedType}
+                          onChange={(e) => handleRoomTypeChange(index, e)}
+                          className="w-full bg-transparent border-b border-border focus:border-primary outline-none py-1 text-sm font-semibold appearance-none"
+                        >
+                          {['King', 'Queen', 'Double', 'Twin', 'Sofa Bed', 'Bunk Bed'].map(t => (
+                            <option key={t} value={t} className="bg-card text-foreground">{t}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-primary">Beds</label>
+                        <input
+                          type="number"
+                          name="beds"
+                          value={room.beds}
+                          onChange={(e) => handleRoomTypeChange(index, e)}
+                          className="w-full bg-transparent border-b border-border focus:border-primary outline-none py-1 text-sm font-semibold"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-primary">Max Guests</label>
+                        <input
+                          type="number"
+                          name="occupancy"
+                          value={room.occupancy}
+                          onChange={(e) => handleRoomTypeChange(index, e)}
+                          className="w-full bg-transparent border-b border-border focus:border-primary outline-none py-1 text-sm font-semibold"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeRoomType(index)}
+                        className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </motion.div>
+          )}
+
+          {currentStep === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <div className="flex flex-col gap-2">
+                <h3 className="text-xl font-bold">📍 Pin your location</h3>
+                <p className="text-muted-foreground text-sm">Help guests find you accurately. Drag the pin or click on the map to set your homestay's coordinates.</p>
               </div>
-              <div className="flex flex-col">
-                <input
-                  type="number"
-                  name="beds"
-                  placeholder="Number of Beds"
-                  value={room.beds}
-                  onChange={(e) => handleRoomTypeChange(index, e)}
-                  className="p-3 bg-transparent border border-border rounded-md text-foreground focus:ring-2 focus:ring-primary"
-                />
-                {formErrors[`roomType-${index}-beds`] && <p className="text-red-500 text-sm mt-1">{formErrors[`roomType-${index}-beds`]}</p>}
-              </div>
-              <div className="flex flex-col">
-                <input
-                  type="number"
-                  name="occupancy"
-                  placeholder="Max Occupancy"
-                  value={room.occupancy}
-                  onChange={(e) => handleRoomTypeChange(index, e)}
-                  className="p-3 bg-transparent border border-border rounded-md text-foreground focus:ring-2 focus:ring-primary"
-                />
-                {formErrors[`roomType-${index}-occupancy`] && <p className="text-red-500 text-sm mt-1">{formErrors[`roomType-${index}-occupancy`]}</p>}
-              </div>
-            </div>
-          ))}
+              
+              <LocationPicker 
+                lat={formData.latitude} 
+                lng={formData.longitude} 
+                onChange={handleLocationChange} 
+              />
+              
+              {formErrors.location && <p className="text-red-500 text-sm font-bold italic">{formErrors.location}</p>}
+            </motion.div>
+          )}
+
+          {currentStep === 4 && (
+            <motion.div
+              key="step4"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-10"
+            >
+              <section className="space-y-6">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <span className="text-primary">📸</span> Gallery
+                </h3>
+                <div 
+                  className="w-full h-48 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center gap-4 bg-muted/20 hover:bg-muted/30 transition-all cursor-pointer relative group"
+                  onClick={() => document.getElementById('image-upload').click()}
+                >
+                  <input
+                    id="image-upload"
+                    type="file"
+                    multiple
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  <div className="p-4 bg-primary/10 rounded-full text-primary group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-sm">Upload Photos</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1">High quality JPEG/PNG preferred</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {imagePreviews.map((image, index) => (
+                    <div key={index} className="aspect-square relative rounded-2xl overflow-hidden group shadow-md">
+                      <img src={image} alt="preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+                          setImagePreviews(prev => prev.filter((_, i) => i !== index));
+                        }}
+                        className="absolute top-2 right-2 bg-destructive/80 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        ×
+                      </button>
+                      {index === 0 && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-primary/80 text-[8px] font-bold text-center py-1 uppercase text-white tracking-widest">Cover Photo</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <section className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+                <div className="space-y-3">
+                  <label className="text-xs font-bold uppercase text-muted-foreground tracking-widest ml-1">Base Rate per Night</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-lg text-primary">₹</span>
+                    <input
+                      type="number"
+                      name="baseRate"
+                      value={formData.baseRate}
+                      onChange={handleChange}
+                      placeholder="0.00"
+                      className="w-full p-4 pl-10 bg-card border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none font-bold text-lg"
+                    />
+                  </div>
+                  {formErrors.baseRate && <p className="text-red-500 text-[10px] font-bold mt-1 ml-1">{formErrors.baseRate}</p>}
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-xs font-bold uppercase text-muted-foreground tracking-widest ml-1">Initial Status</label>
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="w-full p-4 bg-card border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none font-bold"
+                  >
+                    <option value="Active">Live</option>
+                    <option value="Inactive">Draft / Hidden</option>
+                    <option value="Under Construction">Coming Soon</option>
+                  </select>
+                </div>
+              </section>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="mt-auto pt-12 flex justify-between gap-4">
           <button
             type="button"
-            onClick={addRoomType}
-            className="bg-muted text-muted-foreground px-5 py-2 rounded-md hover:bg-accent transition-colors"
+            onClick={prevStep}
+            disabled={currentStep === 1}
+            className="px-8 py-3 rounded-2xl font-bold transition-all disabled:opacity-30 border border-border hover:bg-muted"
           >
-            Add Room Type
+            Back
           </button>
-        </div>
-
-        {/* Pricing & Availability */}
-        <div className="p-6 border border-border rounded-lg bg-card">
-          <h2 className="text-2xl font-semibold mb-6 text-foreground">Pricing & Availability</h2>
-          <div className="flex flex-col">
-            <input
-              type="number"
-              name="baseRate"
-              placeholder="Base Rate per Night"
-              onChange={handleChange}
-              className="p-3 bg-transparent border border-border rounded-md text-foreground w-full md:w-1/2 focus:ring-2 focus:ring-primary"
-            />
-            {formErrors.baseRate && <p className="text-red-500 text-sm mt-1">{formErrors.baseRate}</p>}
-          </div>
-        </div>
-
-        {/* Images & Media */}
-        <div className="p-6 border border-border rounded-lg bg-card">
-          <h2 className="text-2xl font-semibold mb-6 text-foreground">Images & Media</h2>
-          <input
-            type="file"
-            multiple
-            onChange={handleImageChange}
-            className="p-3 bg-transparent border border-border rounded-md text-foreground w-full"
-          />
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {imagePreviews.map((image, index) => (
-              <div key={index} className="relative group">
-                <img src={image} alt="preview" className="w-full h-32 object-cover rounded-lg" />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newSelectedFiles = [...selectedFiles];
-                    newSelectedFiles.splice(index, 1);
-                    setSelectedFiles(newSelectedFiles);
-                    const newImagePreviews = [...imagePreviews];
-                    newImagePreviews.splice(index, 1);
-                    setImagePreviews(newImagePreviews);
-                  }}
-                  className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1.5 text-xs leading-none opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  X
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Status */}
-        <div className="p-6 border border-border rounded-lg bg-card">
-          <h2 className="text-2xl font-semibold mb-6 text-foreground">Status</h2>
-          <div className="flex flex-col">
-            <label htmlFor="status" className="text-sm font-bold text-muted-foreground block mb-1">Status</label>
-            <select
-              id="status"
-              name="status"
-              onChange={handleChange}
-              className="p-3 bg-transparent border border-border rounded-md text-foreground w-full md:w-1/2 focus:ring-2 focus:ring-primary bg-card"
+          {currentStep < totalSteps ? (
+            <button
+              type="button"
+              onClick={nextStep}
+              className="px-10 py-3 bg-primary text-primary-foreground rounded-2xl font-bold shadow-xl shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all"
             >
-              <option value="Active" className="bg-card text-foreground">Active</option>
-              <option value="Inactive" className="bg-card text-foreground">Inactive</option>
-              <option value="Under Construction" className="bg-card text-foreground">Under Construction</option>
-            </select>
-          </div>
+              Continue
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="px-12 py-3 bg-primary text-primary-foreground rounded-2xl font-bold shadow-xl shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all"
+            >
+              Submit Property
+            </button>
+          )}
         </div>
-
-        <button type="submit" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors">
-          Submit Property
-        </button>
       </form>
     </div>
   );
 };
 
 export default AddProperty;
-
