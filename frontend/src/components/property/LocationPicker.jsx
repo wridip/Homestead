@@ -39,6 +39,7 @@ const LocationPicker = ({ lat, lng, onChange }) => {
         onClick={onMapClick}
         disableDefaultUI={true}
         zoomControl={true}
+        colorScheme="DARK"
         gestureHandling={'greedy'}
       >
         <AdvancedMarker
