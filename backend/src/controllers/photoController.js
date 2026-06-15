@@ -56,13 +56,15 @@ exports.deletePhoto = asyncHandler(async (req, res, next) => {
     throw new Error('Not authorized to delete this photo');
   }
 
-  // Delete file from filesystem
-  const imagePath = path.join(__dirname, '..', '..', 'public', photo.imageUrl);
-  fs.unlink(imagePath, (err) => {
-    if (err) {
-      console.error('Failed to delete image file:', err);
-    }
-  });
+  // Delete file from filesystem if it's not an S3 URL
+  if (photo.imageUrl && !photo.imageUrl.startsWith('http')) {
+    const imagePath = path.join(__dirname, '..', '..', 'public', photo.imageUrl);
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error('Failed to delete image file:', err);
+      }
+    });
+  }
 
   await photo.deleteOne();
 

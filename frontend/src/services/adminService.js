@@ -1,7 +1,7 @@
 import api from './api';
 
-export const getAdminStats = async () => {
-  const response = await api.get('/admin/stats');
+export const getAdminStats = async (dateRange = '7') => {
+  const response = await api.get(`/admin/stats?dateRange=${dateRange}`);
   return response.data;
 };
 

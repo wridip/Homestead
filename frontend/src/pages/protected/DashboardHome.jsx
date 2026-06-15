@@ -27,24 +27,33 @@ const DashboardHome = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
+      setLoading(true);
       try {
         const response = await getDashboardStats(dateRange);
         setStats(response.data);
       } catch (err) {
-        setError(err.message);
+        setError(err.response?.data?.message || 'Failed to load dashboard statistics');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchStats();
   }, [dateRange]);
 
-  if (loading) {
-    return <div className="text-center p-8">Loading...</div>;
+  if (loading && !stats) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary animate-pulse"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path><circle cx="12" cy="12" r="10"></circle></svg>
+          <span className="text-muted-foreground font-serif italic tracking-widest text-sm">Aggregating records...</span>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-center p-8 text-red-500">Error: {error}</div>;
+    return <div className="p-8 text-red-500 bg-red-500/10 rounded-2xl border border-red-500/20">{error}</div>;
   }
 
   const chartData = stats?.bookingData?.map(d => ({
@@ -55,13 +64,13 @@ const DashboardHome = () => {
 
   return (
     <div className="p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+          <h1 className="text-4xl font-black tracking-tight text-foreground font-serif italic">
             Host Dashboard
           </h1>
-          <p className="text-md text-muted-foreground mt-2">
-            Welcome back! Here's a snapshot of your performance.
+          <p className="text-md text-muted-foreground mt-1">
+            Real-time performance metrics and guest activity.
           </p>
         </div>
       </div>
@@ -113,6 +122,7 @@ const DashboardHome = () => {
               <button onClick={() => setDateRange('7')} className={`px-3 py-1 rounded-md text-sm ${dateRange === '7' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>7D</button>
               <button onClick={() => setDateRange('30')} className={`px-3 py-1 rounded-md text-sm ${dateRange === '30' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>30D</button>
               <button onClick={() => setDateRange('90')} className={`px-3 py-1 rounded-md text-sm ${dateRange === '90' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>90D</button>
+              <button onClick={() => setDateRange('all')} className={`px-3 py-1 rounded-md text-sm ${dateRange === 'all' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>All</button>
             </div>
           </div>
           <div style={{ width: '100%', height: 300 }}>

@@ -8,6 +8,18 @@ const moment = require('moment');
 // @access  Private (Admin)
 exports.getAdminStats = async (req, res, next) => {
   try {
+    let startDateRange;
+    let range;
+
+    if (req.query.dateRange === 'all') {
+      const oldestBooking = await Booking.findOne().sort({ createdAt: 1 });
+      startDateRange = oldestBooking ? moment(oldestBooking.createdAt).startOf('day').toDate() : moment().subtract(1, 'year').startOf('day').toDate();
+      range = moment().diff(moment(startDateRange), 'days') + 1;
+    } else {
+      range = parseInt(req.query.dateRange) || 7;
+      startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
+    }
+    
     const totalUsers = await User.countDocuments();
     const totalHosts = await User.countDocuments({ role: 'Host' });
     const totalTravelers = await User.countDocuments({ role: 'Traveler' });
@@ -16,8 +28,13 @@ exports.getAdminStats = async (req, res, next) => {
     const activeProperties = await Property.countDocuments({ status: 'Active' });
     
     const totalBookings = await Booking.countDocuments();
-    const completedBookings = await Booking.find({ status: 'Completed' });
-    const totalRevenue = completedBookings.reduce((acc, b) => acc + b.totalPrice, 0);
+    
+    // Revenue and Completed Bookings for the selected period
+    const periodBookings = await Booking.find({ 
+      status: 'Completed',
+      createdAt: { $gte: startDateRange }
+    });
+    const periodRevenue = periodBookings.reduce((acc, b) => acc + b.totalPrice, 0);
 
     // Recent 10 bookings
     const recentBookings = await Booking.find()
@@ -53,15 +70,47 @@ exports.getAdminStats = async (req, res, next) => {
       { $sort: { "_id.year": -1, "_id.month": -1 } }
     ]);
 
+    // Graph Data based on range
+    const aggregatedStats = await Booking.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startDateRange }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          bookings: { $sum: 1 },
+          revenue: { $sum: "$totalPrice" }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    const bookingDataMap = new Map(aggregatedStats.map(item => [item._id, item]));
+    const bookingData = [];
+    // Only generate full range for smaller timeframes to avoid massive payloads
+    const iterRange = range > 365 ? 365 : range; 
+    for (let i = iterRange - 1; i >= 0; i--) {
+      const dateStr = moment().subtract(i, 'days').format('YYYY-MM-DD');
+      const data = bookingDataMap.get(dateStr) || { bookings: 0, revenue: 0 };
+      bookingData.push({
+        date: dateStr,
+        bookings: data.bookings,
+        revenue: data.revenue
+      });
+    }
+
     res.status(200).json({
       success: true,
       data: {
         users: { total: totalUsers, hosts: totalHosts, travelers: totalTravelers, new: newUsers },
         properties: { total: totalProperties, active: activeProperties },
-        bookings: { total: totalBookings, completed: completedBookings.length, new: newBookings },
-        revenue: totalRevenue,
+        bookings: { total: totalBookings, completed: periodBookings.length, new: newBookings },
+        revenue: periodRevenue,
         recentBookings,
-        monthlyRevenue
+        monthlyRevenue,
+        bookingData
       }
     });
   } catch (error) {
@@ -74,7 +123,7 @@ exports.getAdminStats = async (req, res, next) => {
 // @access  Private (Admin)
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find().select('-password');
+    const users = await User.find().select('-password').sort('-createdAt');
     res.status(200).json({ success: true, data: users });
   } catch (error) {
     next(error);
@@ -86,7 +135,7 @@ exports.getAllUsers = async (req, res, next) => {
 // @access  Private (Admin)
 exports.getAllProperties = async (req, res, next) => {
   try {
-    const properties = await Property.find().populate('hostId', 'name email');
+    const properties = await Property.find().populate('hostId', 'name email').sort('-createdAt');
     res.status(200).json({ success: true, data: properties });
   } catch (error) {
     next(error);
@@ -103,23 +152,41 @@ exports.getUserAudit = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    const bookings = await Booking.find({ travelerId: user._id })
-      .populate('propertyId', 'name address images')
+    // Traveler Stats
+    const travelerBookings = await Booking.find({ travelerId: user._id })
+      .populate('propertyId', 'name address baseRate')
       .sort('-createdAt');
-
-    const properties = await Property.find({ hostId: user._id });
     
+    const travelerStats = {
+      totalBookings: travelerBookings.length,
+      totalSpend: travelerBookings.reduce((acc, b) => acc + b.totalPrice, 0),
+      avgBookingValue: travelerBookings.length > 0 ? (travelerBookings.reduce((acc, b) => acc + b.totalPrice, 0) / travelerBookings.length).toFixed(0) : 0,
+      completedBookings: travelerBookings.filter(b => b.status === 'Completed').length,
+      cancelledBookings: travelerBookings.filter(b => b.status === 'Cancelled').length
+    };
+
+    // Host Stats
+    const hostProperties = await Property.find({ hostId: user._id });
     const hostBookings = await Booking.find({ hostId: user._id })
       .populate('propertyId', 'name')
       .populate('travelerId', 'name email')
       .sort('-createdAt');
 
+    const hostStats = {
+      totalProperties: hostProperties.length,
+      totalHostEarnings: hostBookings.reduce((acc, b) => b.status === 'Completed' ? acc + b.totalPrice : acc, 0),
+      avgYieldPerProperty: hostProperties.length > 0 ? (hostBookings.reduce((acc, b) => b.status === 'Completed' ? acc + b.totalPrice : acc, 0) / hostProperties.length).toFixed(0) : 0,
+      totalActiveListings: hostProperties.filter(p => p.status === 'Active').length
+    };
+
     res.status(200).json({
       success: true,
       data: {
         user,
-        bookings,
-        properties,
+        travelerStats,
+        hostStats,
+        bookings: travelerBookings,
+        properties: hostProperties,
         hostBookings
       }
     });
@@ -162,11 +229,17 @@ exports.getMonthlyRevenueDetail = async (req, res, next) => {
     })
     .populate('travelerId', 'name email')
     .populate('propertyId', 'name address')
-    .sort('-endDate');
+    .sort('-endDate')
+    .lean();
+
+    const bookingsWithNights = bookings.map(b => ({
+      ...b,
+      nights: moment(b.endDate).diff(moment(b.startDate), 'days')
+    }));
 
     res.status(200).json({
       success: true,
-      data: bookings
+      data: bookingsWithNights
     });
   } catch (error) {
     next(error);

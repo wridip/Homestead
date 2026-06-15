@@ -13,6 +13,16 @@ const rateLimit = require('express-rate-limit');
 // Load environment variables
 dotenv.config();
 
+// Startup Environment Check
+if (process.env.NODE_ENV !== 'test') {
+  const requiredEnvVars = ['DB_URI', 'JWT_ACCESS_SECRET'];
+  const missingVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+  if (missingVars.length > 0) {
+    console.error(`[CRITICAL] Missing required environment variables: ${missingVars.join(', ')}`);
+    console.error('The server may fail to handle requests correctly.');
+  }
+}
+
 const connectDB = require('./src/config/db');
 
 const app = express();
@@ -31,12 +41,27 @@ app.use(async (req, res, next) => {
 });
 
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://homestead-ui.vercel.app',
-    'https://homestead-9r7jidoyg-wridip-sarkars-projects.vercel.app', // Your current frontend URL
-    process.env.CORS_ORIGIN
-  ],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://homestead-ui.vercel.app',
+      'https://homestead-9r7jidoyg-wridip-sarkars-projects.vercel.app',
+    ];
+    
+    if (process.env.CORS_ORIGIN) {
+      allowedOrigins.push(process.env.CORS_ORIGIN);
+    }
+    
+    // Dynamically allow any vercel.app domain from the user
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
@@ -44,7 +69,9 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security-related HTTP headers
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP to avoid issues with maps/external scripts for now
+}));
 
 // Log HTTP requests in development mode
 if (process.env.NODE_ENV === 'development') {
@@ -57,11 +84,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // CSRF Protection
+const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL;
 const csrfProtection = csurf({
   cookie: {
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax', // 'none' needed if frontend and backend are on different domains but both Vercel
   },
 });
 app.use(csrfProtection);

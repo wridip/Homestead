@@ -9,7 +9,17 @@ const mongoose = require('mongoose');
 exports.getDashboardStats = async (req, res, next) => {
   try {
     const hostId = req.user._id;
-    const range = parseInt(req.query.dateRange) || 7;
+    let startDateRange;
+    let range;
+
+    if (req.query.dateRange === 'all') {
+      const oldestBooking = await Booking.findOne({ hostId }).sort({ createdAt: 1 });
+      startDateRange = oldestBooking ? moment(oldestBooking.createdAt).startOf('day').toDate() : moment().subtract(1, 'year').startOf('day').toDate();
+      range = moment().diff(moment(startDateRange), 'days') + 1;
+    } else {
+      range = parseInt(req.query.dateRange) || 7;
+      startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
+    }
 
     // Get total properties
     const totalProperties = await Property.countDocuments({ hostId });
@@ -26,7 +36,13 @@ exports.getDashboardStats = async (req, res, next) => {
       .sort({ startDate: 'asc' })
       .limit(5)
       .populate('propertyId', 'name images')
-      .populate('travelerId', 'name');
+      .populate('travelerId', 'name')
+      .lean();
+
+    const upcomingWithNights = upcomingBookings.map(b => ({
+      ...b,
+      nights: moment(b.endDate).diff(moment(b.startDate), 'days')
+    }));
 
     // Stats for current month vs last month
     const startOfCurrentMonth = moment().startOf('month').toDate();
@@ -95,7 +111,7 @@ exports.getDashboardStats = async (req, res, next) => {
     const occupancyRate = totalPossibleDays > 0 ? (totalBookedDays / totalPossibleDays) * 100 : 0;
     
     // Real Graph Data using Aggregation
-    const startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
+    startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
     
     const aggregatedStats = await Booking.aggregate([
       {
@@ -117,7 +133,8 @@ exports.getDashboardStats = async (req, res, next) => {
     // Fill in missing dates with zero values
     const bookingDataMap = new Map(aggregatedStats.map(item => [item._id, item]));
     const bookingData = [];
-    for (let i = range - 1; i >= 0; i--) {
+    const iterRange = range > 365 ? 365 : range; 
+    for (let i = iterRange - 1; i >= 0; i--) {
       const dateStr = moment().subtract(i, 'days').format('YYYY-MM-DD');
       const data = bookingDataMap.get(dateStr) || { bookings: 0, revenue: 0 };
       bookingData.push({
@@ -132,7 +149,7 @@ exports.getDashboardStats = async (req, res, next) => {
       data: {
         totalProperties,
         totalBookings,
-        upcomingBookings,
+        upcomingBookings: upcomingWithNights,
         monthlyEarnings,
         occupancyRate: occupancyRate.toFixed(1),
         bookingData,
@@ -182,13 +199,18 @@ exports.getEarningsAudit = async (req, res, next) => {
     // Group bookings by month
     const monthlyAudit = completedBookings.reduce((acc, booking) => {
       const monthYear = moment(booking.endDate).format('MMMM YYYY');
+      const nights = moment(booking.endDate).diff(moment(booking.startDate), 'days');
+      
       if (!acc[monthYear]) {
         acc[monthYear] = {
           bookings: [],
           totalEarnings: 0,
         };
       }
-      acc[monthYear].bookings.push(booking);
+      acc[monthYear].bookings.push({
+        ...booking.toObject(),
+        nights
+      });
       acc[monthYear].totalEarnings += booking.totalPrice;
       return acc;
     }, {});

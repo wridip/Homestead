@@ -41,6 +41,9 @@ const errorHandler = (err, req, res, next) => {
   res.status(error.statusCode || 500).json({
     success: false,
     message: error.message || 'Server Error',
+    // In Vercel environment, we want to know if it's a DB connection error even in production
+    // to help the user identify missing env variables or IP whitelist issues.
+    type: (error.message && error.message.includes('DB_URI')) ? 'EnvironmentError' : (err.name === 'MongooseServerSelectionError' ? 'DatabaseConnectionError' : 'ServerError'),
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
   });
 };
