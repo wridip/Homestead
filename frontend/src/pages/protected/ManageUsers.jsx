@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Modal from '../../components/common/Modal';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
@@ -101,7 +101,7 @@ const ManageUsers = () => {
     doc.setFontSize(14);
     doc.setTextColor(0);
     doc.text("Identity Dossier", 14, 45);
-    doc.autoTable({
+    autoTable(doc, {
       startY: 50,
       body: [
         ["Full Identity", user.name],
@@ -116,7 +116,7 @@ const ManageUsers = () => {
 
     // Economics Section
     doc.text("Economic Indicators", 14, doc.lastAutoTable.finalY + 15);
-    doc.autoTable({
+    autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 20,
       body: [
         ["Guest Loyalty (Total Stays)", travelerStats.totalBookings],
@@ -137,7 +137,7 @@ const ManageUsers = () => {
       `INR ${b.totalPrice.toLocaleString()}`,
       b.status
     ]);
-    doc.autoTable({
+    autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 20,
       head: [["Asset", "Date", "Stay", "Yield", "State"]],
       body: tableData,
@@ -337,37 +337,37 @@ const ManageUsers = () => {
 
             {/* In-depth Analytics */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-card border border-border p-8 rounded-[2rem] space-y-4">
+              <div className="bg-card border border-border p-6 lg:p-8 rounded-[2rem] space-y-4 overflow-hidden">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Booking Intensity</p>
                 <div className="space-y-1">
-                  <p className="text-4xl font-black text-foreground tracking-tighter">{userAudit.travelerStats.totalBookings}</p>
+                  <p className="text-3xl xl:text-4xl font-black text-foreground tracking-tighter truncate" title={userAudit.travelerStats.totalBookings}>{userAudit.travelerStats.totalBookings}</p>
                   <p className="text-[10px] font-bold text-primary uppercase">Lifetime Reservations</p>
                 </div>
-                <div className="pt-4 border-t border-border flex justify-between items-end">
+                <div className="pt-4 border-t border-border flex flex-wrap justify-between items-end gap-2">
                   <span className="text-[10px] font-black uppercase text-muted-foreground">Completion Rate</span>
                   <span className="font-bold text-foreground">{((userAudit.travelerStats.completedBookings / userAudit.travelerStats.totalBookings || 0) * 100).toFixed(0)}%</span>
                 </div>
               </div>
               
-              <div className="bg-card border border-border p-8 rounded-[2rem] space-y-4">
+              <div className="bg-card border border-border p-6 lg:p-8 rounded-[2rem] space-y-4 overflow-hidden">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Financial Flow</p>
                 <div className="space-y-1">
-                  <p className="text-4xl font-black text-foreground tracking-tighter">₹{userAudit.travelerStats.totalSpend.toLocaleString()}</p>
+                  <p className="text-3xl xl:text-4xl font-black text-foreground tracking-tighter truncate" title={`₹${userAudit.travelerStats.totalSpend.toLocaleString()}`}>₹{userAudit.travelerStats.totalSpend.toLocaleString()}</p>
                   <p className="text-[10px] font-bold text-emerald-500 uppercase">Gross Platform Contribution</p>
                 </div>
-                <div className="pt-4 border-t border-border flex justify-between items-end">
+                <div className="pt-4 border-t border-border flex flex-wrap justify-between items-end gap-2">
                   <span className="text-[10px] font-black uppercase text-muted-foreground">Avg Ticket</span>
                   <span className="font-bold text-foreground">₹{userAudit.travelerStats.avgBookingValue}</span>
                 </div>
               </div>
 
-              <div className="bg-card border border-border p-8 rounded-[2rem] space-y-4">
+              <div className="bg-card border border-border p-6 lg:p-8 rounded-[2rem] space-y-4 overflow-hidden">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Asset Portfolio</p>
                 <div className="space-y-1">
-                  <p className="text-4xl font-black text-foreground tracking-tighter">₹{userAudit.hostStats.totalHostEarnings.toLocaleString()}</p>
+                  <p className="text-3xl xl:text-4xl font-black text-foreground tracking-tighter truncate" title={`₹${userAudit.hostStats.totalHostEarnings.toLocaleString()}`}>₹{userAudit.hostStats.totalHostEarnings.toLocaleString()}</p>
                   <p className="text-[10px] font-bold text-blue-500 uppercase">Realized Host Yield</p>
                 </div>
-                <div className="pt-4 border-t border-border flex justify-between items-end">
+                <div className="pt-4 border-t border-border flex flex-wrap justify-between items-end gap-2">
                   <span className="text-[10px] font-black uppercase text-muted-foreground">Active Units</span>
                   <span className="font-bold text-foreground">{userAudit.hostStats.totalActiveListings} / {userAudit.hostStats.totalProperties}</span>
                 </div>
