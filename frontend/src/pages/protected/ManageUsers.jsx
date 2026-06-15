@@ -301,35 +301,36 @@ const ManageUsers = () => {
         ) : userAudit && (
           <div className="space-y-10">
             {/* Header with Export */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-8 bg-muted/30 rounded-[2.5rem] border border-border">
-              <div className="flex items-center gap-6">
-                <div className="w-24 h-24 rounded-[2rem] bg-primary text-primary-foreground flex items-center justify-center text-4xl font-black shadow-2xl shadow-primary/20">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 p-6 lg:p-8 bg-card rounded-[2.5rem] border border-border shadow-sm">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 w-full lg:w-auto text-center sm:text-left">
+                <div className="w-20 h-20 shrink-0 rounded-[1.5rem] bg-primary/10 text-primary flex items-center justify-center text-3xl font-black shadow-inner border border-primary/20">
                   {userAudit.user.name.charAt(0).toUpperCase()}
                 </div>
-                <div>
-                  <h3 className="text-3xl font-black text-foreground font-serif italic">{userAudit.user.name}</h3>
-                  <p className="text-muted-foreground font-medium">{userAudit.user.email}</p>
-                  <div className="flex gap-3 mt-3">
-                    <span className="text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary px-4 py-1.5 rounded-full border border-primary/20">
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-black text-foreground font-serif italic tracking-tight">{userAudit.user.name}</h3>
+                  <p className="text-sm text-muted-foreground font-medium">{userAudit.user.email}</p>
+                  <div className="flex justify-center sm:justify-start gap-3 pt-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest bg-muted text-muted-foreground px-3 py-1 rounded-lg border border-border">
                       {userAudit.user.role}
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="flex gap-3 shrink-0">
+              
+              <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 shrink-0">
                 <button 
                   onClick={exportToExcel}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-card border border-border text-xs font-black uppercase tracking-widest text-foreground hover:bg-accent transition-all shadow-sm"
+                  className="flex-1 flex justify-center items-center gap-2 px-5 py-3 rounded-xl bg-background border border-border text-xs font-black uppercase tracking-widest text-foreground hover:bg-muted transition-all shadow-sm"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" x2="8" y1="13" y2="13"></line><line x1="16" x2="8" y1="17" y2="17"></line><line x1="10" x2="8" y1="9" y2="9"></line></svg>
                   Export XLSX
                 </button>
                 <button 
                   onClick={exportToPDF}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition-all shadow-xl shadow-primary/20"
+                  className="flex-1 flex justify-center items-center gap-2 px-5 py-3 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition-all shadow-md shadow-primary/20"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
-                  Generate PDF Statement
+                  Export PDF
                 </button>
               </div>
             </div>
