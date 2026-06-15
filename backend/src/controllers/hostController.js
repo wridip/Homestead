@@ -9,7 +9,17 @@ const mongoose = require('mongoose');
 exports.getDashboardStats = async (req, res, next) => {
   try {
     const hostId = req.user._id;
-    const range = req.query.dateRange === 'all' ? 3650 : parseInt(req.query.dateRange) || 7;
+    let startDateRange;
+    let range;
+
+    if (req.query.dateRange === 'all') {
+      const oldestBooking = await Booking.findOne({ hostId }).sort({ createdAt: 1 });
+      startDateRange = oldestBooking ? moment(oldestBooking.createdAt).startOf('day').toDate() : moment().subtract(1, 'year').startOf('day').toDate();
+      range = moment().diff(moment(startDateRange), 'days') + 1;
+    } else {
+      range = parseInt(req.query.dateRange) || 7;
+      startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
+    }
 
     // Get total properties
     const totalProperties = await Property.countDocuments({ hostId });
@@ -123,7 +133,7 @@ exports.getDashboardStats = async (req, res, next) => {
     // Fill in missing dates with zero values
     const bookingDataMap = new Map(aggregatedStats.map(item => [item._id, item]));
     const bookingData = [];
-    const iterRange = range > 90 ? 90 : range; 
+    const iterRange = range > 365 ? 365 : range; 
     for (let i = iterRange - 1; i >= 0; i--) {
       const dateStr = moment().subtract(i, 'days').format('YYYY-MM-DD');
       const data = bookingDataMap.get(dateStr) || { bookings: 0, revenue: 0 };

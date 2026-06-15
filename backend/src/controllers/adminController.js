@@ -8,8 +8,17 @@ const moment = require('moment');
 // @access  Private (Admin)
 exports.getAdminStats = async (req, res, next) => {
   try {
-    const range = req.query.dateRange === 'all' ? 3650 : parseInt(req.query.dateRange) || 7;
-    const startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
+    let startDateRange;
+    let range;
+
+    if (req.query.dateRange === 'all') {
+      const oldestBooking = await Booking.findOne().sort({ createdAt: 1 });
+      startDateRange = oldestBooking ? moment(oldestBooking.createdAt).startOf('day').toDate() : moment().subtract(1, 'year').startOf('day').toDate();
+      range = moment().diff(moment(startDateRange), 'days') + 1;
+    } else {
+      range = parseInt(req.query.dateRange) || 7;
+      startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
+    }
     
     const totalUsers = await User.countDocuments();
     const totalHosts = await User.countDocuments({ role: 'Host' });
@@ -81,7 +90,7 @@ exports.getAdminStats = async (req, res, next) => {
     const bookingDataMap = new Map(aggregatedStats.map(item => [item._id, item]));
     const bookingData = [];
     // Only generate full range for smaller timeframes to avoid massive payloads
-    const iterRange = range > 90 ? 90 : range; 
+    const iterRange = range > 365 ? 365 : range; 
     for (let i = iterRange - 1; i >= 0; i--) {
       const dateStr = moment().subtract(i, 'days').format('YYYY-MM-DD');
       const data = bookingDataMap.get(dateStr) || { bookings: 0, revenue: 0 };
