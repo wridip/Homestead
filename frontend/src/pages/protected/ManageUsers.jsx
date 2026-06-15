@@ -47,104 +47,182 @@ const ManageUsers = () => {
 
   const exportToExcel = () => {
     if (!userAudit) return;
-    const { user, travelerStats, hostStats, bookings, properties } = userAudit;
+    const { user, travelerStats, hostStats, bookings, hostBookings } = userAudit;
 
     const workbook = XLSX.utils.book_new();
     
-    // User Profile Sheet
+    // 1. Executive Summary Sheet
     const profileData = [
-      ["Institution Profile Audit"],
+      ["HOMESTEAD - OFFICIAL ACCOUNTING AUDIT"],
+      ["Generated On", moment().format('MMMM Do YYYY, h:mm:ss a')],
+      [],
+      ["ENTITY DETAILS"],
       ["Name", user.name],
       ["Email", user.email],
-      ["Role", user.role],
-      ["Onboarded", moment(user.createdAt).format('LL')],
       ["System ID", user._id],
+      ["Role", user.role],
+      ["Onboarded", moment(user.createdAt).format('YYYY-MM-DD')],
       [],
-      ["Economic Performance Metrics"],
-      ["Total Stays", travelerStats.totalBookings],
-      ["Gross Spend", `₹${travelerStats.totalSpend}`],
-      ["Avg Booking Value", `₹${travelerStats.avgBookingValue}`],
-      ["Managed Properties", hostStats.totalProperties],
-      ["Host Lifetime Yield", `₹${hostStats.totalHostEarnings}`]
+      ["FINANCIAL SUMMARY"],
+      ["Metric", "Value"],
+      ["Total Lifetime Spend (Traveler)", travelerStats.totalSpend],
+      ["Total Bookings Made", travelerStats.totalBookings],
+      ["Total Lifetime Earnings (Host)", hostStats.totalHostEarnings],
+      ["Total Hosted Bookings", hostBookings ? hostBookings.length : 0],
+      ["Active Managed Properties", hostStats.totalActiveListings]
     ];
     const profileSheet = XLSX.utils.aoa_to_sheet(profileData);
-    XLSX.utils.book_append_sheet(workbook, profileSheet, "Profile Summary");
+    XLSX.utils.book_append_sheet(workbook, profileSheet, "Executive Summary");
 
-    // Bookings Sheet
-    const bookingsData = bookings.map(b => ({
-      "Property": b.propertyId?.name,
-      "Address": b.propertyId?.address,
-      "Checkout Date": moment(b.endDate).format('YYYY-MM-DD'),
-      "Nights": b.nights,
-      "Total Price": b.totalPrice,
-      "Status": b.status
-    }));
-    const bookingsSheet = XLSX.utils.json_to_sheet(bookingsData);
-    XLSX.utils.book_append_sheet(workbook, bookingsSheet, "Booking Stream");
+    // 2. Host Earnings Ledger (Accounts Receivable)
+    if (hostBookings && hostBookings.length > 0) {
+      const hostData = hostBookings.map(b => ({
+        "Transaction Ref ID": b._id,
+        "Transaction Date": moment(b.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+        "Check-in Date": moment(b.startDate).format('YYYY-MM-DD'),
+        "Check-out Date": moment(b.endDate).format('YYYY-MM-DD'),
+        "Nights": b.nights,
+        "Property Name": b.propertyId?.name || 'Deleted Asset',
+        "Guest Name": b.travelerId?.name || 'Deleted User',
+        "Guest Email": b.travelerId?.email || 'N/A',
+        "Gross Amount (INR)": b.totalPrice,
+        "Status": b.status
+      }));
+      const hostSheet = XLSX.utils.json_to_sheet(hostData);
+      XLSX.utils.book_append_sheet(workbook, hostSheet, "Host Earnings (Receivables)");
+    }
 
-    XLSX.writeFile(workbook, `Homestead_Audit_${user.name.replace(' ', '_')}.xlsx`);
+    // 3. Traveler Expenses Ledger (Accounts Payable)
+    if (bookings && bookings.length > 0) {
+      const travelerData = bookings.map(b => ({
+        "Transaction Ref ID": b._id,
+        "Transaction Date": moment(b.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+        "Check-in Date": moment(b.startDate).format('YYYY-MM-DD'),
+        "Check-out Date": moment(b.endDate).format('YYYY-MM-DD'),
+        "Nights": b.nights,
+        "Property Name": b.propertyId?.name || 'Deleted Asset',
+        "Gross Amount (INR)": b.totalPrice,
+        "Status": b.status
+      }));
+      const travelerSheet = XLSX.utils.json_to_sheet(travelerData);
+      XLSX.utils.book_append_sheet(workbook, travelerSheet, "Traveler Expenses (Payables)");
+    }
+
+    XLSX.writeFile(workbook, `Homestead_Accounting_Audit_${user.name.replace(/\s+/g, '_')}_${moment().format('YYYYMMDD')}.xlsx`);
   };
 
   const exportToPDF = () => {
     if (!userAudit) return;
-    const { user, travelerStats, hostStats, bookings } = userAudit;
-    const doc = new jsPDF();
+    const { user, travelerStats, hostStats, bookings, hostBookings } = userAudit;
+    
+    // Landscape orientation for wide accounting ledgers
+    const doc = new jsPDF({ orientation: 'landscape' });
 
-    // Header
-    doc.setFontSize(22);
-    doc.text("Homestead Institutional Audit", 14, 20);
+    // Document Header
+    doc.setFontSize(20);
+    doc.setTextColor(33, 37, 41);
+    doc.text("OFFICIAL ACCOUNTING AUDIT STATEMENT", 14, 20);
+
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text(`Generated on: ${moment().format('LLLL')}`, 14, 28);
+    doc.text(`Generated on: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`, 14, 28);
+    doc.text(`Entity: ${user.name} (${user.email}) | Role: ${user.role} | ID: ${user._id}`, 14, 34);
 
-    // Profile Section
+    let currentY = 45;
+
+    // 1. Financial Summary
     doc.setFontSize(14);
     doc.setTextColor(0);
-    doc.text("Identity Dossier", 14, 45);
+    doc.text("1. Financial Summary", 14, currentY);
+    
     autoTable(doc, {
-      startY: 50,
+      startY: currentY + 5,
       body: [
-        ["Full Identity", user.name],
-        ["Communication", user.email],
-        ["Platform Role", user.role],
-        ["Onboarding Date", moment(user.createdAt).format('LL')],
-        ["System Reference", user._id]
-      ],
-      theme: 'plain',
-      styles: { fontSize: 10 }
-    });
-
-    // Economics Section
-    doc.text("Economic Indicators", 14, doc.lastAutoTable.finalY + 15);
-    autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 20,
-      body: [
-        ["Guest Loyalty (Total Stays)", travelerStats.totalBookings],
-        ["Financial Contribution", `INR ${travelerStats.totalSpend.toLocaleString()}`],
-        ["Asset Yield", `INR ${hostStats.totalHostEarnings.toLocaleString()}`],
-        ["Active Listings", hostStats.totalActiveListings]
+        ["Total Lifetime Spend (Traveler)", `INR ${travelerStats.totalSpend.toLocaleString()}`, "Total Lifetime Earnings (Host)", `INR ${hostStats.totalHostEarnings.toLocaleString()}`],
+        ["Total Bookings Made", travelerStats.totalBookings, "Total Hosted Bookings", hostBookings ? hostBookings.length : 0],
+        ["Completion Rate", `${((travelerStats.completedBookings / (travelerStats.totalBookings || 1)) * 100).toFixed(1)}%`, "Active Managed Properties", `${hostStats.totalActiveListings} / ${hostStats.totalProperties}`]
       ],
       theme: 'grid',
-      headStyles: { fillColor: [79, 70, 229] }
+      headStyles: { fillColor: [243, 244, 246], textColor: [0, 0, 0], fontStyle: 'bold' },
+      styles: { fontSize: 9 }
     });
 
-    // Booking Ledger
-    doc.text("Historical Booking Ledger", 14, doc.lastAutoTable.finalY + 15);
-    const tableData = bookings.map(b => [
-      b.propertyId?.name,
-      moment(b.endDate).format('MMM D, YYYY'),
-      b.nights,
-      `INR ${b.totalPrice.toLocaleString()}`,
-      b.status
-    ]);
-    autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 20,
-      head: [["Asset", "Date", "Stay", "Yield", "State"]],
-      body: tableData,
-      styles: { fontSize: 8 }
-    });
+    currentY = doc.lastAutoTable.finalY + 15;
 
-    doc.save(`Audit_Statement_${user.name.replace(' ', '_')}.pdf`);
+    // 2. Host Earnings Ledger (Receivables)
+    if (hostBookings && hostBookings.length > 0) {
+      doc.setFontSize(14);
+      doc.text("2. Accounts Receivable (Host Earnings Ledger)", 14, currentY);
+      
+      const hostTableData = hostBookings.map(b => [
+        b._id.slice(-8).toUpperCase(),
+        moment(b.createdAt).format('YYYY-MM-DD'),
+        `${moment(b.startDate).format('MMM D')} to ${moment(b.endDate).format('MMM D, YYYY')}`,
+        b.propertyId?.name || 'Deleted Asset',
+        b.travelerId?.name || 'Deleted User',
+        b.nights,
+        `INR ${b.totalPrice.toLocaleString()}`,
+        b.status
+      ]);
+
+      autoTable(doc, {
+        startY: currentY + 5,
+        head: [["Ref ID", "Trans. Date", "Service Period", "Asset / Property", "Client / Guest", "Nights", "Gross Amount", "Status"]],
+        body: hostTableData,
+        theme: 'striped',
+        headStyles: { fillColor: [16, 185, 129] }, // Emerald green
+        styles: { fontSize: 8 }
+      });
+      
+      currentY = doc.lastAutoTable.finalY + 15;
+    }
+
+    // 3. Traveler Expenses Ledger (Payables)
+    if (bookings && bookings.length > 0) {
+      // Add a new page if we are running out of space
+      if (currentY > doc.internal.pageSize.getHeight() - 40) {
+        doc.addPage();
+        currentY = 20;
+      }
+
+      doc.setFontSize(14);
+      doc.text("3. Accounts Payable (Traveler Expense Ledger)", 14, currentY);
+      
+      const travelerTableData = bookings.map(b => [
+        b._id.slice(-8).toUpperCase(),
+        moment(b.createdAt).format('YYYY-MM-DD'),
+        `${moment(b.startDate).format('MMM D')} to ${moment(b.endDate).format('MMM D, YYYY')}`,
+        b.propertyId?.name || 'Deleted Asset',
+        b.nights,
+        `INR ${b.totalPrice.toLocaleString()}`,
+        b.status
+      ]);
+
+      autoTable(doc, {
+        startY: currentY + 5,
+        head: [["Ref ID", "Trans. Date", "Service Period", "Asset / Property", "Nights", "Gross Amount", "Status"]],
+        body: travelerTableData,
+        theme: 'striped',
+        headStyles: { fillColor: [59, 130, 246] }, // Blue
+        styles: { fontSize: 8 }
+      });
+    }
+
+    // Footer Pagination
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text(
+        `Page ${i} of ${pageCount} | Homestead Management System - Official Audit Record`,
+        doc.internal.pageSize.getWidth() / 2,
+        doc.internal.pageSize.getHeight() - 10,
+        { align: 'center' }
+      );
+    }
+
+    doc.save(`Homestead_Accounting_Audit_${user.name.replace(/\s+/g, '_')}_${moment().format('YYYYMMDD')}.pdf`);
   };
 
   const filteredUsers = useMemo(() => {
