@@ -3,7 +3,6 @@ import { getAdminStats, getMonthlyRevenueDetail } from '../../services/adminServ
 import StatCard from '../../components/dashboard/StatCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import Modal from '../../components/common/Modal';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
 import moment from 'moment';
 
 const AdminDashboard = () => {
@@ -52,12 +51,6 @@ const AdminDashboard = () => {
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  const chartData = stats?.bookingData?.map(d => ({
-    name: moment(d.date).format('MMM D'),
-    Bookings: d.bookings,
-    Revenue: d.revenue,
-  })) || [];
-
   return (
     <div className="p-8 space-y-12 max-w-[1600px] mx-auto">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -103,7 +96,7 @@ const AdminDashboard = () => {
           title="Platform Yield" 
           value={`₹${stats.revenue.toLocaleString()}`} 
           change="Lifetime earnings" 
-          icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>}
+          icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h12M6 8h12M6 13l8.5 8M6 13h3c4.667 0 4.667-7 0-7"/></svg>}
         />
         <StatCard 
           title="Success Rate" 
@@ -113,38 +106,12 @@ const AdminDashboard = () => {
         />
       </div>
 
-      {/* Global Performance Graph */}
-      <div className="bg-card rounded-[2.5rem] border border-border p-10 shadow-2xl space-y-8">
-        <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-black text-foreground tracking-tight font-serif italic text-primary">System-Wide Performance</h2>
-          <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-primary"></div> Bookings</div>
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-emerald-500"></div> Revenue</div>
-          </div>
-        </div>
-        <div style={{ width: '100%', height: 350 }}>
-          <ResponsiveContainer>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-              <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
-              <RechartsTooltip 
-                contentStyle={{ backgroundColor: 'hsl(var(--card))', borderRadius: '16px', border: '1px solid hsl(var(--border))', fontSize: '12px' }} 
-              />
-              <Line yAxisId="left" type="monotone" dataKey="Bookings" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4, strokeWidth: 0, fill: 'hsl(var(--primary))' }} activeDot={{ r: 6 }} />
-              <Line yAxisId="right" type="monotone" dataKey="Revenue" stroke="#10B981" strokeWidth={3} dot={{ r: 4, strokeWidth: 0, fill: '#10B981' }} activeDot={{ r: 6 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Revenue Audit Section */}
         <div className="xl:col-span-2 space-y-8">
           <div className="bg-card rounded-[2.5rem] border border-border p-10 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 p-12 opacity-[0.03]">
-              <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h12M6 8h12M6 13l8.5 8M6 13h3c4.667 0 4.667-7 0-7"/></svg>
             </div>
             <div className="relative z-10 space-y-8">
               <div className="flex justify-between items-center">
@@ -188,7 +155,7 @@ const AdminDashboard = () => {
               {loadingDetail ? (
                 <div className="py-20 text-center animate-pulse text-muted-foreground">Extracting ledger entries...</div>
               ) : (
-                <div className="overflow-x-auto rounded-2xl border border-border">
+                <div className="overflow-x-auto rounded-2xl border border-border scrollbar-hide">
                   <table className="w-full text-left min-w-[800px]">
                     <thead className="bg-muted/50 text-[10px] font-black uppercase tracking-widest text-muted-foreground border-b border-border">
                       <tr>
@@ -211,7 +178,7 @@ const AdminDashboard = () => {
                             <div className="text-[10px] text-muted-foreground truncate max-w-[200px]">{booking.propertyId?.address}</div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="text-xs font-black text-foreground">{booking.nights} nights</div>
+                            <div className="text-xs font-black text-foreground">{booking.nights + 1} days & {booking.nights} nights</div>
                           </td>
                           <td className="px-6 py-4 text-xs text-muted-foreground font-medium">
                             {moment(booking.endDate).format('MMM D, YYYY')}
@@ -234,7 +201,7 @@ const AdminDashboard = () => {
           {/* Recent Global Activity */}
           <div className="bg-card rounded-[2.5rem] border border-border p-10 shadow-2xl">
             <h2 className="text-3xl font-black text-foreground tracking-tight font-serif italic mb-8">Stream Audit</h2>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scrollbar-hide">
               <table className="w-full text-left">
                 <thead>
                   <tr className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] border-b border-border">
@@ -278,32 +245,55 @@ const AdminDashboard = () => {
 
         {/* User Distribution Sidebar */}
         <div className="space-y-8">
-          <div className="bg-primary/5 rounded-[2.5rem] border border-primary/20 p-10 shadow-xl relative overflow-hidden group hover:border-primary/50 transition-all">
-            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:rotate-12 transition-transform duration-700">
+          <div className="bg-card rounded-[2.5rem] border border-border p-10 shadow-xl relative overflow-hidden group hover:border-primary/50 transition-all">
+            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:rotate-12 transition-transform duration-700 text-primary">
               <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
             </div>
-            <h3 className="text-2xl font-black text-primary tracking-tight font-serif italic mb-8">Demographics</h3>
-            <div className="space-y-8">
-              {[
-                { label: 'Hosts', count: stats.users.hosts, total: stats.users.total, color: 'bg-primary' },
-                { label: 'Travelers', count: stats.users.travelers, total: stats.users.total, color: 'bg-emerald-500' }
-              ].map((item, i) => (
-                <div key={i} className="space-y-3">
-                  <div className="flex justify-between items-end">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{item.label}</span>
-                    <span className="font-black text-foreground text-lg tracking-tighter">{stats.users.total > 0 ? ((item.count / item.total) * 100).toFixed(1) : 0}%</span>
+            <div className="relative z-10">
+              <h3 className="text-2xl font-black text-foreground tracking-tight font-serif italic mb-2">Demographics</h3>
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-8">User Base Distribution</p>
+              
+              <div className="space-y-10">
+                {[
+                  { label: 'Host Community', count: stats.users.hosts, total: stats.users.total, color: 'bg-primary', description: 'Property owners & managers' },
+                  { label: 'Traveler Network', count: stats.users.travelers, total: stats.users.total, color: 'bg-emerald-500', description: 'Active guests & explorers' }
+                ].map((item, i) => (
+                  <div key={i} className="space-y-4">
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">{item.label}</span>
+                        <p className="text-[10px] text-muted-foreground font-medium">{item.description}</p>
+                      </div>
+                      <span className="font-black text-foreground text-2xl tracking-tighter">{stats.users.total > 0 ? ((item.count / item.total) * 100).toFixed(1) : 0}%</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden shadow-inner">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${stats.users.total > 0 ? (item.count / item.total) * 100 : 0}%` }}
+                        transition={{ duration: 1, delay: 0.5 + (i * 0.2) }}
+                        className={`${item.color} h-full rounded-full shadow-lg shadow-primary/20`}
+                      ></motion.div>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground">
+                      <span>{item.count.toLocaleString()} Registered</span>
+                      <span className="text-foreground">Goal: {((item.count / item.total) * 100) > 50 ? 'Dominant' : 'Growing'}</span>
+                    </div>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${stats.users.total > 0 ? (item.count / item.total) * 100 : 0}%` }}
-                      transition={{ duration: 1, delay: 0.5 }}
-                      className={`${item.color} h-full rounded-full`}
-                    ></motion.div>
+                ))}
+
+                <div className="pt-6 border-t border-border">
+                  <div className="flex justify-between items-center bg-muted/30 p-4 rounded-2xl">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Platform Total</p>
+                      <p className="text-xl font-black text-foreground">{stats.users.total.toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">New Growth</p>
+                      <p className="text-xl font-black text-emerald-500">+{stats.users.new}</p>
+                    </div>
                   </div>
-                  <p className="text-[10px] font-bold text-muted-foreground text-right">{item.count} total accounts</p>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
           

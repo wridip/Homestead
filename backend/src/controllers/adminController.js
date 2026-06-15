@@ -9,6 +9,7 @@ const moment = require('moment');
 exports.getAdminStats = async (req, res, next) => {
   try {
     const range = req.query.dateRange === 'all' ? 3650 : parseInt(req.query.dateRange) || 7;
+    const startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
     
     const totalUsers = await User.countDocuments();
     const totalHosts = await User.countDocuments({ role: 'Host' });
@@ -18,8 +19,13 @@ exports.getAdminStats = async (req, res, next) => {
     const activeProperties = await Property.countDocuments({ status: 'Active' });
     
     const totalBookings = await Booking.countDocuments();
-    const completedBookings = await Booking.find({ status: 'Completed' });
-    const totalRevenue = completedBookings.reduce((acc, b) => acc + b.totalPrice, 0);
+    
+    // Revenue and Completed Bookings for the selected period
+    const periodBookings = await Booking.find({ 
+      status: 'Completed',
+      createdAt: { $gte: startDateRange }
+    });
+    const periodRevenue = periodBookings.reduce((acc, b) => acc + b.totalPrice, 0);
 
     // Recent 10 bookings
     const recentBookings = await Booking.find()
@@ -56,7 +62,6 @@ exports.getAdminStats = async (req, res, next) => {
     ]);
 
     // Graph Data based on range
-    const startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
     const aggregatedStats = await Booking.aggregate([
       {
         $match: {
@@ -92,8 +97,8 @@ exports.getAdminStats = async (req, res, next) => {
       data: {
         users: { total: totalUsers, hosts: totalHosts, travelers: totalTravelers, new: newUsers },
         properties: { total: totalProperties, active: activeProperties },
-        bookings: { total: totalBookings, completed: completedBookings.length, new: newBookings },
-        revenue: totalRevenue,
+        bookings: { total: totalBookings, completed: periodBookings.length, new: newBookings },
+        revenue: periodRevenue,
         recentBookings,
         monthlyRevenue,
         bookingData
