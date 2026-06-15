@@ -7,6 +7,7 @@ import { sendMessage } from '../../services/messageService';
 import { getUserProfile } from '../../services/userService';
 import AuthContext from '../../context/AuthContext';
 import { useGoogleMapsLoader } from '../../context/GoogleMapsLoaderContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import PropertyHeader from '../../components/property/PropertyHeader';
 import PhotoGallery from '../../components/property/PhotoGallery';
 import PropertyInfo from '../../components/property/PropertyInfo';
@@ -14,6 +15,7 @@ import BookingCard from '../../components/property/BookingCard';
 import Reviews from '../../components/property/Reviews';
 import ReviewForm from '../../components/property/ReviewForm';
 import LocationMap from '../../components/property/LocationMap';
+import PropertyDetailsSkeleton from '../../components/property/PropertyDetailsSkeleton';
 import { getImageUrl } from '../../services/api';
 
 const PropertyDetails = () => {
@@ -194,7 +196,7 @@ const PropertyDetails = () => {
   };
 
   if (loading) {
-    return <div className="text-center p-8">Loading...</div>;
+    return <PropertyDetailsSkeleton />;
   }
 
   if (error) {
@@ -215,23 +217,52 @@ const PropertyDetails = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <PropertyHeader 
-        name={property.name} 
-        address={property.address} 
-        rating={property.averageRating}
-        reviewsCount={property.numReviews}
-      />
-      <PhotoGallery images={property.images} propertyName={property.name} />
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <PropertyHeader 
+          name={property.name} 
+          address={property.address} 
+          rating={property.averageRating}
+          reviewsCount={property.numReviews}
+        />
+      </motion.div>
+      
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <PhotoGallery images={property.images} propertyName={property.name} />
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <PropertyInfo description={property.description} amenities={property.amenities} />
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <PropertyInfo description={property.description} amenities={property.amenities} />
+          </motion.div>
           
           {/* Professional Host Section */}
           {host && (
-            <div className="mt-12 mb-8 p-8 bg-card rounded-3xl border border-border shadow-xl transition-all hover:border-primary/30">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="mt-12 mb-8 p-8 bg-card rounded-3xl border border-border shadow-xl transition-all hover:border-primary/30 relative overflow-hidden group"
+            >
+              {/* Subtle background accent */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-700" />
+              
               <h2 className="text-2xl font-bold text-foreground mb-6 italic">Meet your Host</h2>
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-6 relative z-10">
                 <Link to={`/host/${host._id}`} className="group relative">
                   <img
                     src={host.avatar ? getImageUrl(host.avatar) : getImageUrl('default-avatar.png')}
@@ -260,55 +291,82 @@ const PropertyDetails = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-6 text-muted-foreground line-clamp-3 italic">
+              <div className="mt-6 text-muted-foreground line-clamp-3 italic relative z-10">
                 {host.bio || "Hi, I'm " + host.name.split(' ')[0] + "! I love hosting travelers and sharing the beauty of our homestay. Looking forward to meeting you!"}
               </div>
-              <div className="mt-6 flex flex-wrap gap-4">
+              <div className="mt-6 flex flex-wrap gap-4 relative z-10">
                 <Link
                   to={`/host/${host._id}#message-section`}
-                  className="px-6 py-2.5 bg-accent/20 hover:bg-accent/40 text-foreground text-sm font-bold rounded-xl border border-border transition-all shadow-lg"
+                  className="px-6 py-2.5 bg-accent/20 hover:bg-accent/40 text-foreground text-sm font-bold rounded-xl border border-border transition-all shadow-lg active:scale-95"
                 >
                   Contact Host
                 </Link>
                 <Link
                   to={`/host/${host._id}`}
-                  className="px-6 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary text-sm font-bold rounded-xl border border-primary/20 transition-all"
+                  className="px-6 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary text-sm font-bold rounded-xl border border-primary/20 transition-all active:scale-95"
                 >
                   View Profile
                 </Link>
               </div>
-            </div>
+            </motion.div>
           )}
 
-          <Reviews reviews={reviews} />
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <Reviews reviews={reviews} />
+          </motion.div>
         </div>
 
         <div className="space-y-6">
-          <BookingCard
-            startDate={startDate}
-            endDate={endDate}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
-            nights={nights}
-            property={property}
-            totalPrice={totalPrice}
-            handleBooking={handleBooking}
-            bookingError={bookingError}
-            bookingSuccess={bookingSuccess}
-          />
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <BookingCard
+              startDate={startDate}
+              endDate={endDate}
+              setStartDate={setStartDate}
+              setEndDate={setEndDate}
+              nights={nights}
+              property={property}
+              totalPrice={totalPrice}
+              handleBooking={handleBooking}
+              bookingError={bookingError}
+              bookingSuccess={bookingSuccess}
+            />
+          </motion.div>
         </div>
       </div>
 
-      <ReviewForm
-        isAuthenticated={isAuthenticated}
-        user={user}
-        handleReviewSubmit={handleReviewSubmit}
-        newReview={newReview}
-        setNewReview={setNewReview}
-        reviewError={reviewError}
-      />
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+      >
+        <ReviewForm
+          isAuthenticated={isAuthenticated}
+          user={user}
+          handleReviewSubmit={handleReviewSubmit}
+          newReview={newReview}
+          setNewReview={setNewReview}
+          reviewError={reviewError}
+        />
+      </motion.div>
 
-      <LocationMap center={center} isLoaded={isLoaded} loadError={loadError} />
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+      >
+        <LocationMap center={center} isLoaded={isLoaded} loadError={loadError} />
+      </motion.div>
     </div>
   );
 };

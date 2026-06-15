@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getProperties } from '../../services/propertyService';
 import PropertyCard from '../../components/properties/PropertyCard';
+import PropertyCardSkeleton from '../../components/properties/PropertyCardSkeleton';
+import Modal from '../../components/common/Modal';
 import { Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 import { useGoogleMapsLoader } from '../../context/GoogleMapsLoaderContext.jsx';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { mapId } from '../../config/googleMaps';
 
 const Explore = () => {
@@ -14,6 +16,7 @@ const Explore = () => {
   const [error, setError] = useState(null);
   const [hoveredProperty, setHoveredProperty] = useState(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -142,21 +145,20 @@ const Explore = () => {
     navigate('/explore', { replace: true });
   };
 
+  const handleMarkerInteraction = (propertyId) => {
+    setHoveredProperty(propertyId);
+    const element = document.getElementById(`property-${propertyId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  const activeFiltersCount = (filters.type.length > 0 ? 1 : 0) + (filters.price < 10000 ? 1 : 0);
+
   // Calculate dynamic map center based on filtered properties
   const mapCenter = filteredProperties.length > 0 && filteredProperties[0].location?.coordinates
     ? { lat: filteredProperties[0].location.coordinates[1], lng: filteredProperties[0].location.coordinates[0] }
     : { lat: 20.5937, lng: 78.9629 }; // Default India center
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary animate-pulse"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path><circle cx="12" cy="12" r="10"></circle></svg>
-          <span className="text-muted-foreground font-serif italic tracking-widest text-sm">Finding escapes...</span>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return <div className="min-h-screen flex items-center justify-center text-destructive">Error: {error}</div>;
@@ -169,113 +171,174 @@ const Explore = () => {
       <div className="w-full md:w-[60%] flex flex-col h-[calc(100vh-64px)] border-r border-border relative">    
 
         {/* Horizontal Filters Bar (Sticky) */}
-        <div className="py-6 px-6 lg:px-10 bg-background/95 backdrop-blur-xl border-b border-border sticky top-0 z-20 space-y-5">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <h1 className="text-3xl font-serif text-foreground tracking-tight">
-              <span className="italic text-primary font-medium">{filteredProperties.length}</span> results      
-            </h1>
-             <div className="relative w-full sm:w-auto">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none w-full sm:w-auto bg-card border border-border text-foreground py-2.5 pl-5 pr-12 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm font-medium shadow-sm transition-all cursor-pointer hover:bg-muted/50"
-              >
-                <option>Recommended</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-                <option>Top Rated</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-primary">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+        <div className="py-4 px-6 lg:px-10 bg-background/95 backdrop-blur-xl border-b border-border sticky top-0 z-20">
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-serif text-foreground tracking-tight">
+                {loading ? (
+                  <div className="h-8 w-32 bg-muted animate-pulse rounded-md" />
+                ) : (
+                  <><span className="italic text-primary font-medium">{filteredProperties.length}</span> results</>
+                )}
+              </h1>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setIsFilterModalOpen(true)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all shadow-sm hover:shadow-md ${activeFiltersCount > 0 ? 'bg-primary/10 border-primary text-primary' : 'bg-card border-border text-foreground hover:bg-muted/50'}`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="2" y1="14" x2="6" y2="14"></line><line x1="10" y1="8" x2="14" y2="8"></line><line x1="18" y1="16" x2="22" y2="16"></line></svg>
+                  Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+                </button>
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="appearance-none bg-card border border-border text-foreground py-2 pl-4 pr-10 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm font-medium shadow-sm transition-all cursor-pointer hover:bg-muted/50"
+                  >
+                    <option>Recommended</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Top Rated</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-primary">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-4">
-             <div className="relative flex-1 min-w-[220px]">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleSearchInputChange}
-                  placeholder="Where to next?"
-                  className="w-full bg-card border border-border rounded-full py-2.5 pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm hover:border-primary/30"
-                />
-             </div>
-
-             <div className="flex items-center gap-4 bg-card border border-border rounded-full px-5 py-2 shadow-sm group hover:border-primary/30 transition-colors">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none mb-1">Max Budget</span>
-                  <span className="text-xs font-serif italic text-primary font-bold">₹{filters.price.toLocaleString()}</span>
-                </div>
-                <input
-                  type="range"
-                  min="500"
-                  max="10000"
-                  step="100"
-                  value={filters.price}
-                  onChange={(e) => setFilters(prev => ({...prev, price: parseInt(e.target.value)}))}
-                  className="w-24 h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"      
-                />
-             </div>
-
-             <div className="flex gap-2">
-               {['Mountain', 'Riverside', 'Farm'].map(type => (
-                  <button
-                    key={type}
-                    onClick={() => handleTypeFilter(type)}
-                    className={`px-5 py-2.5 text-xs font-bold rounded-full border transition-all duration-300 shadow-sm ${filters.type.includes(type) ? 'bg-primary text-primary-foreground border-primary scale-105' : 'bg-card text-muted-foreground border-border hover:border-primary hover:text-primary hover:bg-primary/5'}`}
-                  >
-                    {type}
-                  </button>
-               ))}
-             </div>
-
-             {(filters.type.length > 0 || (searchQuery && searchQuery !== searchParams.get('location')) || filters.price < 10000) && (
-               <button
-                 onClick={resetFilters}
-                 className="text-xs text-primary font-bold hover:text-primary/80 transition-colors underline underline-offset-4 decoration-2 decoration-primary/30"
-                >
-                  Reset all
-                </button>
-             )}
+            <div className="relative w-full">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                placeholder="Search by name or address..."
+                className="w-full bg-card border border-border rounded-full py-2.5 pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm hover:border-primary/30"
+              />
+            </div>
           </div>
         </div>
 
+        {/* Filter Modal */}
+        <Modal
+          isOpen={isFilterModalOpen}
+          onClose={() => setIsFilterModalOpen(false)}
+          title="Refine your search"
+        >
+          <div className="space-y-8 py-4">
+            <section>
+              <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4">Property Type</h4>
+              <div className="flex flex-wrap gap-2">
+                {['Mountain', 'Riverside', 'Farm', 'Forest', 'Village'].map(type => (
+                  <button
+                    key={type}
+                    onClick={() => handleTypeFilter(type)}
+                    className={`px-5 py-2.5 text-xs font-bold rounded-full border transition-all duration-300 ${filters.type.includes(type) ? 'bg-primary text-primary-foreground border-primary' : 'bg-card text-muted-foreground border-border hover:border-primary hover:text-primary'}`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Price Range</h4>
+                <span className="text-sm font-serif italic text-primary font-bold">Up to ₹{filters.price.toLocaleString()}</span>
+              </div>
+              <input
+                type="range"
+                min="500"
+                max="10000"
+                step="100"
+                value={filters.price}
+                onChange={(e) => setFilters(prev => ({...prev, price: parseInt(e.target.value)}))}
+                className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"      
+              />
+              <div className="flex justify-between mt-2 text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">
+                <span>₹500</span>
+                <span>₹10,000+</span>
+              </div>
+            </section>
+
+            <div className="pt-6 border-t border-border flex justify-between items-center">
+              <button
+                onClick={resetFilters}
+                className="text-xs text-muted-foreground font-bold hover:text-foreground transition-colors underline underline-offset-4"
+              >
+                Clear all
+              </button>
+              <button
+                onClick={() => setIsFilterModalOpen(false)}
+                className="px-8 py-3 bg-primary text-primary-foreground rounded-full text-xs font-bold shadow-lg hover:bg-primary/90 transition-all active:scale-95"
+              >
+                Show {filteredProperties.length} results
+              </button>
+            </div>
+          </div>
+        </Modal>
+
         {/* Scrollable Properties List */}
         <div id="property-list" className="flex-1 overflow-y-auto scrollbar-hide p-6 lg:p-10 pb-32 scroll-smooth">
-          {filteredProperties.length > 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-10">
+              {[...Array(6)].map((_, i) => (
+                <PropertyCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : filteredProperties.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-10">
               {filteredProperties.map((property, idx) => (
                 <motion.div
                   key={property._id}
+                  id={`property-${property._id}`}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx % 4 * 0.1, duration: 0.5 }}
                   onMouseEnter={() => setHoveredProperty(property._id)}
                   onMouseLeave={() => setHoveredProperty(null)}
-                  className="h-full group"
+                  className={`h-full group rounded-2xl transition-all duration-500 ${hoveredProperty === property._id ? 'ring-2 ring-primary ring-offset-4 ring-offset-background' : ''}`}
                 >
                   <PropertyCard property={property} />
                 </motion.div>
               ))}
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center p-12 max-w-md mx-auto">
-               <div className="w-20 h-20 rounded-full bg-muted/30 border border-border flex items-center justify-center mb-6 shadow-inner animate-bounce">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/60"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
+            <div className="h-full flex flex-col items-center justify-center p-6 lg:p-10 max-w-4xl mx-auto">
+               <div className="w-16 h-16 rounded-full bg-muted/30 border border-border flex items-center justify-center mb-6 shadow-inner">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground/60"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg>
                </div>
-              <h3 className="text-3xl font-serif text-foreground">No matches found</h3>
-              <p className="mt-4 text-muted-foreground leading-relaxed">We couldn't find any stays matching your current filters. Try broadening your search or resetting all filters.</p>
+              <h3 className="text-2xl font-serif text-foreground">No matches found</h3>
+              <p className="mt-2 text-muted-foreground text-sm text-center">We couldn't find any stays matching your current filters. Try broadening your search or resetting all filters.</p>
               <button
                 onClick={resetFilters}
-                className="mt-10 px-10 py-4 bg-primary text-primary-foreground rounded-full text-sm font-bold shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 hover:-translate-y-1"
+                className="mt-6 px-8 py-3 bg-primary text-primary-foreground rounded-full text-xs font-bold shadow-lg hover:bg-primary/90 transition-all active:scale-95"
               >
                 Reset Search
               </button>
+
+              {/* Suggestions Section */}
+              {properties.length > 0 && (
+                <div className="mt-16 w-full border-t border-border pt-12">
+                  <h4 className="text-lg font-serif mb-6 flex items-center gap-2">
+                    <span className="text-primary font-bold">✨</span> Suggested for you
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 opacity-80">
+                    {properties
+                      .sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
+                      .slice(0, 2)
+                      .map(p => (
+                        <div key={p._id} className="scale-95 hover:scale-100 transition-transform">
+                          <PropertyCard property={p} />
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -294,7 +357,7 @@ const Explore = () => {
       {/* Right Pane: Sticky Interactive Map (approx 40%) */}
       <div className="hidden md:block w-[40%] bg-background p-6 lg:p-8 sticky top-16 h-[calc(100vh-64px)] z-0"> 
         <div className="w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-border/50 bg-[#0f1410]">
-          {isLoaded ? (
+          {isLoaded && !loading ? (
             <Map
               mapId={mapId}
               defaultCenter={mapCenter}
@@ -311,26 +374,18 @@ const Explore = () => {
                       key={property._id}
                       position={{ lat: property.location.coordinates[1], lng: property.location.coordinates[0] }}
                       zIndex={isHovered ? 100 : 1}
+                      onClick={() => handleMarkerInteraction(property._id)}
                     >
-                      <div className="transition-all duration-300" style={{
-                        color: isHovered ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
-                        transform: `scale(${isHovered ? 1.6 : 1.2})`,
-                        filter: isHovered ? 'drop-shadow(0 0 8px hsl(var(--primary)/0.5))' : 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          stroke="#000"
-                          strokeWidth="1.5"
-                          className="drop-shadow-lg"
-                        >
-                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                        </svg>
+                      <div 
+                        onMouseEnter={() => setHoveredProperty(property._id)}
+                        onMouseLeave={() => setHoveredProperty(null)}
+                        className={`px-2.5 py-1.5 rounded-full border shadow-lg transition-all duration-300 font-bold text-xs flex items-center justify-center whitespace-nowrap cursor-pointer ${
+                          isHovered 
+                          ? 'bg-primary text-primary-foreground border-primary scale-110 -translate-y-1 z-50' 
+                          : 'bg-card text-foreground border-border hover:border-primary/50'
+                        }`}
+                      >
+                        ₹{(property.baseRate || 0).toLocaleString()}
                       </div>
                     </AdvancedMarker>
                   );
