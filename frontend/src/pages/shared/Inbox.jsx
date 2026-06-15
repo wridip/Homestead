@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { getInbox, getOutbox, getMessageById, deleteMessage, sendMessage } from '../../services/messageService';
 import moment from 'moment';
 import { motion, AnimatePresence } from 'framer-motion';
+import AuthContext from '../../context/AuthContext';
 
 const Inbox = () => {
+  const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState([]);
   const [view, setView] = useState('inbox'); // 'inbox' or 'sent'
   const [loading, setLoading] = useState(true);
@@ -87,7 +89,7 @@ const Inbox = () => {
 
   const filteredMessages = useMemo(() => {
     return messages.filter(msg => {
-      const name = view === 'inbox' ? msg.sender.name : msg.receiver.name;
+      const name = view === 'inbox' ? msg.sender?.name || 'Deleted User' : msg.receiver?.name || 'Deleted User';
       const subject = msg.subject || '';
       const content = msg.content || '';
       const search = searchTerm.toLowerCase();
@@ -105,8 +107,16 @@ const Inbox = () => {
     <div className="flex flex-col h-[calc(100vh-120px)] overflow-hidden">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">Messages</h1>
-          <p className="text-muted-foreground text-sm">Communicate with your guests and manage inquiries.</p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">
+            {user?.role === 'Admin' ? 'System Communications' : user?.role === 'Host' ? 'Host Inbox' : 'My Messages'}
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            {user?.role === 'Admin' 
+              ? 'Monitor system alerts, host support requests, and platform inquiries.' 
+              : user?.role === 'Host' 
+              ? 'Communicate with your guests and manage reservation inquiries.' 
+              : 'Stay in touch with your hosts and track your trip inquiries.'}
+          </p>
         </div>
         
         <div className="flex items-center gap-3 w-full md:w-auto">
@@ -179,7 +189,7 @@ const Inbox = () => {
                   )}
                   <div className="flex gap-3">
                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs flex-shrink-0 border border-primary/20">
-                      {getInitials(view === 'inbox' ? msg.sender.name : msg.receiver.name)}
+                      {getInitials(view === 'inbox' ? msg.sender?.name : msg.receiver?.name)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-0.5">

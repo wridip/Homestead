@@ -50,8 +50,8 @@ exports.deletePhoto = asyncHandler(async (req, res, next) => {
     throw new Error('Photo not found');
   }
 
-  // Check if user is photo owner and a Host
-  if (req.user.role !== 'Host') {
+  // Check if user is photo owner or an Admin
+  if (photo.user.toString() !== req.user.id && req.user.role !== 'Admin') {
     res.status(401);
     throw new Error('Not authorized to delete this photo');
   }
