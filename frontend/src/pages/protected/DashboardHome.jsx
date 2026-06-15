@@ -73,25 +73,6 @@ const DashboardHome = () => {
             Real-time performance metrics and guest activity.
           </p>
         </div>
-        
-        <div className="flex bg-muted p-1 rounded-xl border border-border self-start sm:self-center shadow-inner">
-          {[
-            { label: '7D', value: '7' },
-            { label: '30D', value: '30' },
-            { label: '90D', value: '90' },
-            { label: 'All', value: 'all' }
-          ].map(range => (
-            <button
-              key={range.value}
-              onClick={() => setDateRange(range.value)}
-              className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                dateRange === range.value ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {range.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -141,6 +122,7 @@ const DashboardHome = () => {
               <button onClick={() => setDateRange('7')} className={`px-3 py-1 rounded-md text-sm ${dateRange === '7' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>7D</button>
               <button onClick={() => setDateRange('30')} className={`px-3 py-1 rounded-md text-sm ${dateRange === '30' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>30D</button>
               <button onClick={() => setDateRange('90')} className={`px-3 py-1 rounded-md text-sm ${dateRange === '90' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>90D</button>
+              <button onClick={() => setDateRange('all')} className={`px-3 py-1 rounded-md text-sm ${dateRange === 'all' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent'}`}>All</button>
             </div>
           </div>
           <div style={{ width: '100%', height: 300 }}>

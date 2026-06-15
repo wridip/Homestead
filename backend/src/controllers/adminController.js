@@ -220,11 +220,17 @@ exports.getMonthlyRevenueDetail = async (req, res, next) => {
     })
     .populate('travelerId', 'name email')
     .populate('propertyId', 'name address')
-    .sort('-endDate');
+    .sort('-endDate')
+    .lean();
+
+    const bookingsWithNights = bookings.map(b => ({
+      ...b,
+      nights: moment(b.endDate).diff(moment(b.startDate), 'days')
+    }));
 
     res.status(200).json({
       success: true,
-      data: bookings
+      data: bookingsWithNights
     });
   } catch (error) {
     next(error);

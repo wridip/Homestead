@@ -66,13 +66,14 @@ const EarningsAudit = () => {
               </button>
               {openMonth === monthYear && (
                 <div className="p-4 border-t border-border bg-card">
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto scrollbar-hide">
                     <table className="min-w-full divide-y divide-border">
                       <thead className="bg-muted/50">
                         <tr>
                           <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Property</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Traveler</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Dates</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Duration</th>
                           <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Earning</th>
                         </tr>
                       </thead>
@@ -83,6 +84,9 @@ const EarningsAudit = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{booking.travelerId?.name || 'Deleted User'}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                               {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground font-bold">
+                              {booking.nights + 1} days & {booking.nights} nights
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-green-500">₹{booking.totalPrice.toFixed(2)}</td>
                           </tr>

@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 exports.getDashboardStats = async (req, res, next) => {
   try {
     const hostId = req.user._id;
-    const range = parseInt(req.query.dateRange) || 7;
+    const range = req.query.dateRange === 'all' ? 3650 : parseInt(req.query.dateRange) || 7;
 
     // Get total properties
     const totalProperties = await Property.countDocuments({ hostId });
@@ -26,7 +26,13 @@ exports.getDashboardStats = async (req, res, next) => {
       .sort({ startDate: 'asc' })
       .limit(5)
       .populate('propertyId', 'name images')
-      .populate('travelerId', 'name');
+      .populate('travelerId', 'name')
+      .lean();
+
+    const upcomingWithNights = upcomingBookings.map(b => ({
+      ...b,
+      nights: moment(b.endDate).diff(moment(b.startDate), 'days')
+    }));
 
     // Stats for current month vs last month
     const startOfCurrentMonth = moment().startOf('month').toDate();
@@ -117,7 +123,8 @@ exports.getDashboardStats = async (req, res, next) => {
     // Fill in missing dates with zero values
     const bookingDataMap = new Map(aggregatedStats.map(item => [item._id, item]));
     const bookingData = [];
-    for (let i = range - 1; i >= 0; i--) {
+    const iterRange = range > 90 ? 90 : range; 
+    for (let i = iterRange - 1; i >= 0; i--) {
       const dateStr = moment().subtract(i, 'days').format('YYYY-MM-DD');
       const data = bookingDataMap.get(dateStr) || { bookings: 0, revenue: 0 };
       bookingData.push({
@@ -132,7 +139,7 @@ exports.getDashboardStats = async (req, res, next) => {
       data: {
         totalProperties,
         totalBookings,
-        upcomingBookings,
+        upcomingBookings: upcomingWithNights,
         monthlyEarnings,
         occupancyRate: occupancyRate.toFixed(1),
         bookingData,
@@ -182,13 +189,18 @@ exports.getEarningsAudit = async (req, res, next) => {
     // Group bookings by month
     const monthlyAudit = completedBookings.reduce((acc, booking) => {
       const monthYear = moment(booking.endDate).format('MMMM YYYY');
+      const nights = moment(booking.endDate).diff(moment(booking.startDate), 'days');
+      
       if (!acc[monthYear]) {
         acc[monthYear] = {
           bookings: [],
           totalEarnings: 0,
         };
       }
-      acc[monthYear].bookings.push(booking);
+      acc[monthYear].bookings.push({
+        ...booking.toObject(),
+        nights
+      });
       acc[monthYear].totalEarnings += booking.totalPrice;
       return acc;
     }, {});
