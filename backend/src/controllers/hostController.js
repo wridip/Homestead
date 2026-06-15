@@ -111,7 +111,7 @@ exports.getDashboardStats = async (req, res, next) => {
     const occupancyRate = totalPossibleDays > 0 ? (totalBookedDays / totalPossibleDays) * 100 : 0;
     
     // Real Graph Data using Aggregation
-    const startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
+    startDateRange = moment().subtract(range - 1, 'days').startOf('day').toDate();
     
     const aggregatedStats = await Booking.aggregate([
       {

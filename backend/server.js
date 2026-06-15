@@ -13,6 +13,16 @@ const rateLimit = require('express-rate-limit');
 // Load environment variables
 dotenv.config();
 
+// Startup Environment Check
+if (process.env.NODE_ENV !== 'test') {
+  const requiredEnvVars = ['DB_URI', 'JWT_ACCESS_SECRET'];
+  const missingVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+  if (missingVars.length > 0) {
+    console.error(`[CRITICAL] Missing required environment variables: ${missingVars.join(', ')}`);
+    console.error('The server may fail to handle requests correctly.');
+  }
+}
+
 const connectDB = require('./src/config/db');
 
 const app = express();
