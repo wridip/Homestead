@@ -228,22 +228,32 @@ const Home = () => {
       </section>
 
       {/* Community Photo Wall */}
-      <section className="pt-14 pb-14 bg-transparent" data-bg="dark">
+      <section className="pt-20 pb-24 bg-transparent border-t border-border/50" data-bg="dark">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center" data-animate>
-            <h2 className="text-3xl tracking-tight font-medium text-foreground">Community Photo Wall</h2>
-            <p className="mt-3 text-sm text-muted-foreground">Post your favorite moments from your trip or homestay. Tag #Homestead and share them here.</p>
-            <div className="mt-4 flex justify-center">
-              <Link to="/share-photo" className="btn-adaptive rounded-md px-4 py-2 text-sm font-semibold border inline-flex items-center gap-2 text-foreground border-border hover:bg-accent">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4"><path d="M16 5h6"></path><path d="M19 2v6"></path><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"></path><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path><circle cx="9" cy="9" r="2"></circle></svg>
-                Share your photo
+          <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-12" data-animate>
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-widest ring-1 ring-inset bg-emerald-500/10 text-emerald-500 ring-emerald-500/30 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+                Community Stories
+              </span>
+              <h2 className="text-4xl md:text-5xl tracking-tight font-black text-foreground font-serif italic">The Homestead Diary</h2>
+              <p className="mt-4 text-lg text-muted-foreground font-medium">Post your favorite moments from your trip or homestay. Tag #Homestead on social media and share them here to inspire others.</p>
+            </div>
+            <div className="shrink-0">
+              <Link to="/share-photo" className="group rounded-2xl px-6 py-4 text-sm font-black uppercase tracking-widest border border-border bg-card hover:border-primary transition-all flex items-center gap-3 text-foreground shadow-sm hover:shadow-xl hover:-translate-y-1">
+                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                </span>
+                Publish a Memory
               </Link>
             </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
             {photos.map((photo, index) => (
-              <PhotoCard key={photo._id || index} photo={photo} onDelete={handleDeletePhoto} />
+              <div key={photo._id || index} className="break-inside-avoid">
+                <PhotoCard photo={photo} onDelete={handleDeletePhoto} />
+              </div>
             ))}
           </div>
         </div>
