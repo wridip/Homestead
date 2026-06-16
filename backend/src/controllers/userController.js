@@ -28,7 +28,7 @@ exports.updateMe = async (req, res) => {
     };
 
     if (req.file) {
-      fieldsToUpdate.avatar = req.file.location;
+      fieldsToUpdate.avatar = req.file.location || `/uploads/${req.file.filename}`;
     }
 
     const user = await User.findByIdAndUpdate(req.user._id, fieldsToUpdate, {

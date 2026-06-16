@@ -47,7 +47,14 @@ const storage = s3 ? multerS3({
     const fileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
     cb(null, `properties/${fileName}`); // Saves it in a 'properties' folder in the bucket
   },
-}) : multer.memoryStorage(); // Fallback to memory storage if S3 is not configured
+}) : multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '../../public/uploads'));
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+}); // Fallback to disk storage if S3 is not configured
 
 // Init upload (array for multiple images)
 const upload = multer({
