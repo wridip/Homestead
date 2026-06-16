@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getEarningsAudit } from '../../services/hostService';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const EarningsAudit = () => {
   const [auditData, setAuditData] = useState(null);
@@ -26,80 +27,117 @@ const EarningsAudit = () => {
   };
 
   if (loading) {
-    return <div className="text-center p-8">Loading audit data...</div>;
+    return (
+      <div className="flex min-h-[400px] items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-center p-8 text-red-500">Error: {error}</div>;
+    return <div className="p-8 text-red-500 bg-red-500/10 rounded-2xl border border-red-500/20">{error}</div>;
   }
 
   const sortedMonths = auditData ? Object.keys(auditData).sort((a, b) => new Date(b) - new Date(a)) : [];
 
   return (
-    <div className="p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border">
-      <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-6">
-        Earnings Audit
-      </h1>
-      <div className="space-y-4">
+    <div className="p-8 space-y-12 max-w-[1600px] mx-auto">
+      <header className="space-y-1">
+        <h1 className="text-5xl font-black text-foreground tracking-tighter font-serif italic">Earnings Ledger</h1>
+        <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px]">Financial History & Performance Audit</p>
+      </header>
+
+      <div className="space-y-6">
         {sortedMonths.length > 0 ? (
-          sortedMonths.map((monthYear) => (
-            <div key={monthYear} className="bg-card border border-border rounded-lg overflow-hidden shadow-sm">
+          sortedMonths.map((monthYear, idx) => (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              key={monthYear} 
+              className="bg-card border border-border rounded-[2rem] overflow-hidden shadow-xl"
+            >
               <button
                 onClick={() => toggleMonth(monthYear)}
-                className="w-full flex justify-between items-center p-4 bg-muted/20 hover:bg-accent transition-colors"
+                className="w-full flex justify-between items-center p-8 hover:bg-muted/10 transition-colors group"
               >
-                <span className="text-lg font-semibold text-foreground">{monthYear}</span>
-                <div className="flex items-center gap-4">
-                   <span className="text-lg font-bold text-green-500">
-                    ₹{auditData[monthYear].totalEarnings.toFixed(2)}
-                  </span>
-                  <svg
-                    className={`w-6 h-6 text-muted-foreground transition-transform ${openMonth === monthYear ? 'transform rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
+                <div className="text-left">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Fiscal Period</p>
+                  <span className="text-2xl font-black text-foreground tracking-tight font-serif italic">{monthYear}</span>
                 </div>
-              </button>
-              {openMonth === monthYear && (
-                <div className="p-4 border-t border-border bg-card">
-                  <div className="overflow-x-auto scrollbar-hide">
-                    <table className="min-w-full divide-y divide-border">
-                      <thead className="bg-muted/50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Property</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Traveler</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Dates</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Duration</th>
-                          <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Earning</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-card divide-y divide-border">
-                        {auditData[monthYear].bookings.map((booking) => (
-                          <tr key={booking._id} className="hover:bg-accent/30 transition-colors">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{booking.propertyId?.name || 'Deleted Property'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{booking.travelerId?.name || 'Deleted User'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                              {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground font-bold">
-                              {booking.nights + 1} days & {booking.nights} nights
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-green-500">₹{booking.totalPrice.toFixed(2)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                <div className="flex items-center gap-8">
+                  <div className="text-right">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-1">Net Yield</p>
+                    <span className="text-2xl font-black text-foreground tracking-tighter">
+                      ₹{auditData[monthYear].totalEarnings.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className={`w-12 h-12 rounded-2xl bg-muted flex items-center justify-center transition-all group-hover:bg-primary group-hover:text-primary-foreground ${openMonth === monthYear ? 'rotate-180 bg-primary text-primary-foreground' : ''}`}>
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path>
+                    </svg>
                   </div>
                 </div>
-              )}
-            </div>
+              </button>
+              
+              <AnimatePresence>
+                {openMonth === monthYear && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="border-t border-border bg-background/50 overflow-hidden"
+                  >
+                    <div className="p-8">
+                      <div className="overflow-x-auto scrollbar-hide">
+                        <table className="w-full text-left">
+                          <thead>
+                            <tr className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] border-b border-border">
+                              <th className="pb-6 px-4">Property</th>
+                              <th className="pb-6 px-4">Traveler</th>
+                              <th className="pb-6 px-4 text-center">Duration</th>
+                              <th className="pb-6 px-4 text-right">Earning</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border">
+                            {auditData[monthYear].bookings.map((booking) => (
+                              <tr key={booking._id} className="group hover:bg-muted/10 transition-colors">
+                                <td className="py-6 px-4">
+                                  <div className="font-bold text-foreground text-sm tracking-tight">{booking.propertyId?.name || 'Deleted Property'}</div>
+                                </td>
+                                <td className="py-6 px-4 text-sm text-muted-foreground font-medium">{booking.travelerId?.name || 'Deleted User'}</td>
+                                <td className="py-6 px-4 text-center">
+                                  <div className="text-xs font-black text-foreground">
+                                    {booking.nights + 1} days / {booking.nights} nights
+                                  </div>
+                                  <div className="text-[10px] text-muted-foreground font-medium">
+                                    {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
+                                  </div>
+                                </td>
+                                <td className="py-6 px-4 text-right">
+                                  <span className="font-black text-primary text-sm tracking-tighter">₹{booking.totalPrice.toLocaleString()}</span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           ))
         ) : (
-          <p className="text-muted-foreground text-center py-8">No completed bookings found to generate an audit.</p>
+          <div className="bg-card border border-border rounded-[2.5rem] p-20 text-center space-y-4">
+            <p className="text-muted-foreground font-serif italic text-xl">No completed stays found for financial audit.</p>
+          </div>
         )}
       </div>
     </div>

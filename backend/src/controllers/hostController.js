@@ -144,6 +144,29 @@ exports.getDashboardStats = async (req, res, next) => {
       });
     }
 
+    // Monthly Revenue Audit (Last 6 months) for the host
+    const sixMonthsAgo = moment().subtract(6, 'months').startOf('month').toDate();
+    const monthlyRevenue = await Booking.aggregate([
+      {
+        $match: {
+          hostId: new mongoose.Types.ObjectId(hostId),
+          status: 'Completed',
+          endDate: { $gte: sixMonthsAgo }
+        }
+      },
+      {
+        $group: {
+          _id: { 
+            month: { $month: "$endDate" },
+            year: { $year: "$endDate" }
+          },
+          totalRevenue: { $sum: "$totalPrice" },
+          bookingCount: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.year": -1, "_id.month": -1 } }
+    ]);
+
     res.status(200).json({
       success: true,
       data: {
@@ -157,7 +180,42 @@ exports.getDashboardStats = async (req, res, next) => {
         bookingGrowth: bookingGrowth.toFixed(1),
         earningsGrowth: earningsGrowth.toFixed(1),
         occupancyRateGrowth: (occupancyRate > 0 ? 2.5 : 0), // Placeholder for occupancy growth
+        monthlyRevenue
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get earnings details for a specific month for a host
+// @route   GET /api/hosts/revenue/:year/:month
+// @access  Private (Host)
+exports.getMonthlyEarningsDetail = async (req, res, next) => {
+  try {
+    const hostId = req.user._id;
+    const { year, month } = req.params;
+    const startDate = moment([year, month - 1]).startOf('month').toDate();
+    const endDate = moment([year, month - 1]).endOf('month').toDate();
+
+    const bookings = await Booking.find({
+      hostId,
+      status: 'Completed',
+      endDate: { $gte: startDate, $lte: endDate }
+    })
+    .populate('travelerId', 'name email')
+    .populate('propertyId', 'name address')
+    .sort('-endDate')
+    .lean();
+
+    const bookingsWithNights = bookings.map(b => ({
+      ...b,
+      nights: moment(b.endDate).diff(moment(b.startDate), 'days')
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: bookingsWithNights
     });
   } catch (error) {
     next(error);
