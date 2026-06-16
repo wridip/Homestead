@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <Link to="/" className="inline-flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tight text-primary">🌲 homestead.</span>
+              <span className="text-2xl font-black tracking-tighter text-white">🌲 homestead.</span>
             </Link>
             <p className="mt-2 text-sm text-muted-foreground">Authentic homestays in offbeat places, powered by local communities.</p>
             <div className="mt-4 flex items-center gap-3">
