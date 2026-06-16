@@ -29,3 +29,9 @@ export const getEarningsAudit = async () => {
   const response = await api.get('/hosts/earnings-audit');
   return response.data;
 };
+
+// Get earnings details for a specific month for a host
+export const getMonthlyEarningsDetail = async (year, month) => {
+  const response = await api.get(`/hosts/revenue/${year}/${month}`);
+  return response.data;
+};

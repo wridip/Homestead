@@ -51,9 +51,13 @@ const ManageProperties = () => {
       <div className="p-8 bg-background rounded-2xl shadow-lg backdrop-blur-sm border border-border">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Manage Properties</h1>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight font-serif italic">Manage Properties</h1>
             <p className="text-muted-foreground mt-1">View and manage all your listed properties.</p>
           </div>
+          <Link to="/dashboard/add-property" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus h-5 w-5"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+            Add Property
+          </Link>
         </div>
 
         {deleteError && <p className="text-red-500 text-sm mb-6 p-4 bg-red-500/10 rounded-lg border border-red-500/20">{deleteError}</p>}

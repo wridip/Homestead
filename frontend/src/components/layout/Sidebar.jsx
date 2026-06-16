@@ -9,12 +9,7 @@ const Sidebar = ({ isSidebarOpen, sidebarRef }) => {
     <aside ref={sidebarRef} className={`fixed ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 bg-background/80 w-72 z-40 border-border border-r top-0 bottom-0 left-0 backdrop-blur`} id="sidebar">
       <div className="flex items-center gap-3 px-5 h-16 border-b border-border">
         <Link to="/" className="inline-flex items-center gap-2">
-          <div>
-            <p className="text-xl font-semibold tracking-tight text-primary">
-              🌲 homestead.
-            </p>
-            <p className="text-[12px] text-muted-foreground uppercase tracking-widest font-bold">Host Console</p>
-          </div>
+          <span className="text-2xl font-black tracking-tighter text-white">🌲 homestead.</span>
         </Link>
       </div>
 
@@ -47,9 +42,9 @@ const Sidebar = ({ isSidebarOpen, sidebarRef }) => {
         ) : (
           <>
             <div className="px-3 mb-4">
-              <Link to="/dashboard/add-property" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus h-5 w-5"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-                <span>Add Property</span>
+              <Link to="/dashboard" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layout-dashboard h-5 w-5"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+                <span>Host Panel</span>
               </Link>
             </div>
             <NavLink to="/dashboard" end className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-accent'}`}>

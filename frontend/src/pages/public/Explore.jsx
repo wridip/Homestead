@@ -364,6 +364,7 @@ const Explore = () => {
               defaultZoom={6}
               disableDefaultUI={true}
               zoomControl={true}
+              colorScheme="DARK"
               style={{ width: '100%', height: '100%' }}
             >
               {filteredProperties.map(property => {

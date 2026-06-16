@@ -27,8 +27,8 @@ const Navbar = () => {
     <header className={`fixed transition-all z-50 top-0 right-0 left-0 ${scrolled ? 'backdrop-blur bg-background/70 border-b border-border' : ''}`}>
       <div id="progressBar" className="absolute left-0 top-0 h-[2px] bg-primary" style={{ width: `${progress}%` }}></div>
       <div className="flex sm:px-6 lg:px-8 h-16 max-w-7xl mr-auto ml-auto pr-4 pl-4 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 font-serif text-foreground">
-          <span className="text-xl font-bold tracking-tight">🌲 homestead.</span>
+        <Link to="/" className="flex items-center gap-2">
+          <span className="text-2xl font-black tracking-tighter text-white">🌲 homestead.</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm">
           <Link to="/" className="transition-colors hover:text-primary text-foreground">Home</Link>
