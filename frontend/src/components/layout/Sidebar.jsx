@@ -9,7 +9,11 @@ const Sidebar = ({ isSidebarOpen, sidebarRef }) => {
     <aside ref={sidebarRef} className={`fixed ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 bg-background/80 w-72 z-40 border-border border-r top-0 bottom-0 left-0 backdrop-blur`} id="sidebar">
       <div className="flex items-center gap-3 px-5 h-16 border-b border-border">
         <Link to="/" className="inline-flex items-center gap-2">
-          <span className="text-2xl font-black tracking-tighter text-white">🌲 homestead.</span>
+          <div>
+            <p className="text-xl font-semibold tracking-tight text-primary">
+              🌲 homestead.
+            </p>
+          </div>
         </Link>
       </div>
 
