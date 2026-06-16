@@ -28,10 +28,6 @@ const Topbar = ({ onMenuClick }) => {
           </svg>
         </button>
         <div className="ml-auto flex items-center gap-2">
-          <Link to="/dashboard/add-property" className="inline-flex items-center gap-2 h-10 px-4 rounded-xl text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-bold shadow-lg shadow-primary/20">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus h-4 w-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-            <span className="text-[14px] font-medium">Add Property</span>
-          </Link>
         </div>
       </div>
     </header>
