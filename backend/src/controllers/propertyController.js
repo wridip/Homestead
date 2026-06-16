@@ -246,7 +246,7 @@ exports.updatePropertyImages = async (req, res, next) => {
     }
 
     if (req.files) {
-      const images = req.files.map(file => `/uploads/${file.filename}`);
+      const images = req.files.map(file => file.location || `/uploads/${file.filename}`);
       property.images = images;
     }
 
