@@ -57,7 +57,7 @@ exports.createReview = async (req, res, next) => {
 // @access  Public
 exports.getReviewsForProperty = async (req, res, next) => {
   try {
-    const reviews = await Review.find({ propertyId: req.params.propertyId }).populate('userId', 'name');
+    const reviews = await Review.find({ propertyId: req.params.propertyId }).populate('userId', 'name avatar');
     res.status(200).json({ success: true, count: reviews.length, data: reviews });
   } catch (error) {
     next(error);
