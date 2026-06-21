@@ -58,47 +58,90 @@ The frontend is built with React and follows a component-based architecture:
 
 ## Getting Started
 
+Follow these steps to run and test the Homestead Management System on your local machine.
+
 ### Prerequisites
 
--   [Node.js](https://nodejs.org/en/download/) (v20+ recommended)
--   [npm](https://www.npmjs.com/get-npm)
--   [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) account for the database.
+You need the following installed on your PC:
+- **Node.js** (v20+ recommended) - [Download here](https://nodejs.org/en/download/)
+- **npm** (usually bundled with Node.js)
+- **MongoDB** (Community Edition installed locally, or a MongoDB Atlas cloud URI) - [Download local MongoDB here](https://www.mongodb.com/try/download/community)
 
-### Installation & Setup
+---
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-username/homestead-management-system.git
-    cd homestead-management-system
-    ```
+### Setup Guide
 
-2.  **Setup the Backend:**
-    ```bash
-    cd backend
-    npm install
-    # Create a .env file based on .env.example and configure variables (PORT, DB_URI, JWT_SECRET, etc.)
-    ```
+If you downloaded the repository as a ZIP from GitHub (or cloned it), files containing sensitive credentials (like `.env`) are ignored by Git. You must configure them manually to run the app locally.
 
-3.  **Setup the Frontend:**
-    ```bash
-    cd frontend
-    npm install
-    # Create a .env file and configure VITE_GOOGLE_MAPS_API_KEY (e.g., http://localhost:5000)
-    ```
+1. **Extract** the downloaded ZIP file to a folder on your PC.
+2. **Setup the Backend Environment (`backend/.env`):**
+   * Go into the `backend` directory.
+   * Copy the `/.env.example` file and rename it to `.env` (or create a new `.env` file).
+   * Configure the parameters. For local testing, you should have **MongoDB** running locally on your PC (default port: `27017`):
+     ```env
+     PORT=5000
+     NODE_ENV=development
+     DB_URI=mongodb://localhost:27017/homestead-management
+     
+     # Use a custom secret string of your choice for JWT token security
+     JWT_SECRET=your_jwt_secret_key_here
+     JWT_EXPIRES_IN=1d
+     
+     CORS_ORIGIN=http://localhost:5173
+     ```
+3. **Setup the Frontend Environment (`frontend/.env`):**
+   * Go into the `frontend` directory.
+   * Create a new file named `.env`.
+   * Configure your Google Maps API key (necessary for displaying map features and autocomplete search fields):
+     ```env
+     VITE_GOOGLE_MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY
+     ```
+4. Proceed to the **Install & Run** section below.
 
-### Running the Application (Development)
+---
 
--   **Backend:** `cd backend && npm run dev` (Runs on `http://localhost:5000` by default)
--   **Frontend:** `cd frontend && npm run dev` (Runs on `http://localhost:5173` by default)
+### Install & Run
 
-### Building the Application
+Run the backend and frontend servers in separate terminal windows.
 
--   **Frontend:** `cd frontend && npm run build` (Generates the production-ready files in the `dist` folder)
+#### 1. Start the Backend Server
+```bash
+cd backend
+npm install
+npm run dev
+```
+*The backend server will run on [http://localhost:5000](http://localhost:5000).*
 
-### Testing the Application
+#### 2. Start the Frontend Server
+```bash
+cd frontend
+npm install
+npm run dev
+```
+*The frontend React application will open automatically on [http://localhost:5173](http://localhost:5173).*
 
--   **Frontend Tests:** `cd frontend && npm run test` (Runs Vitest for component and logic testing)
--   **Frontend Linting:** `cd frontend && npm run lint` (Checks for code quality issues using ESLint)
+---
+
+### How to Test the Features
+
+Once both servers are running and you open the frontend in your browser:
+1. **User Sign Up:** 
+   * Click **Sign Up** in the navbar.
+   * You can choose to register as a **Traveler** (to search, view, and book properties) or a **Host** (to list properties and manage incoming booking requests on your dashboard).
+2. **Explore & Book (Traveler Role):**
+   * Log in with a traveler account.
+   * Go to the *Explore* page, browse listings, check detail pages, and send booking requests.
+3. **Manage Listings (Host Role):**
+   * Log in with a host account.
+   * Go to the *Dashboard* to add/edit property details, upload photos, and approve/decline traveler booking requests.
+
+---
+
+### Additional Scripts
+
+* **Frontend Unit Tests:** Run `cd frontend && npm run test` to run Vite-based unit and component tests.
+* **Frontend Linting:** Run `cd frontend && npm run lint` to check for syntax and style formatting guidelines.
+* **Production Build:** Run `cd frontend && npm run build` to compile the optimized production-ready bundle.
 
 ---
 
