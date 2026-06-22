@@ -40,22 +40,34 @@ app.use(async (req, res, next) => {
 });
 
 // --- CORS ---
-// Explicitly whitelist known origins only — no catch-all wildcard
-const allowedOrigins = [
+// Two-tier origin strategy:
+//   Tier 1 — exact match for known production + dev origins.
+//   Tier 2 — scoped regex for Vercel preview deployments that belong ONLY to
+//             this project's team (wridip-sarkars-projects). This avoids the
+//             original catch-all *.vercel.app wildcard (which let ANY Vercel
+//             user bypass CORS) while still allowing every preview branch URL.
+const ALLOWED_ORIGINS_EXACT = [
   'http://localhost:5173',
   'https://homestead-ui.vercel.app',
   'https://homestead-management-system.vercel.app',
-  'https://homestead-9r7jidoyg-wridip-sarkars-projects.vercel.app',
 ];
+
+// Matches: homestead-<hash>-wridip-sarkars-projects.vercel.app
+// Also matches the extra CORS_ORIGIN env var set per-deployment in Vercel.
+const TEAM_PREVIEW_PATTERN = /^https:\/\/homestead(-[a-z0-9]+)*-wridip-sarkars-projects\.vercel\.app$/;
+
 if (process.env.CORS_ORIGIN) {
-  allowedOrigins.push(process.env.CORS_ORIGIN);
+  ALLOWED_ORIGINS_EXACT.push(process.env.CORS_ORIGIN);
 }
 
 app.use(cors({
   origin: (origin, callback) => {
     // Allow server-to-server / curl (no origin header)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
+    if (
+      ALLOWED_ORIGINS_EXACT.includes(origin) ||
+      TEAM_PREVIEW_PATTERN.test(origin)
+    ) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
