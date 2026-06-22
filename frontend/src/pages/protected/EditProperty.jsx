@@ -88,6 +88,7 @@ const EditProperty = () => {
   const [imagesToDelete, setImagesToDelete] = useState([]); // New state for tracking images to delete
   const [imagePreviews, setImagePreviews] = useState([]); // This will combine existing and new previews
   const [formErrors, setFormErrors] = useState({}); // New state for form errors
+  const [customAmenity, setCustomAmenity] = useState('');
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -265,7 +266,8 @@ const EditProperty = () => {
                 <option value="Mountain" className="bg-card text-foreground">Mountain</option>
                 <option value="Riverside" className="bg-card text-foreground">Riverside</option>
                 <option value="Farm" className="bg-card text-foreground">Farm</option>
-                <option value="Minimal" className="bg-card text-foreground">Minimal</option>
+                <option value="Forest" className="bg-card text-foreground">Forest</option>
+                <option value="Village" className="bg-card text-foreground">Village</option>
               </select>
               {formErrors.type && <p className="text-red-500 text-sm mt-1">{formErrors.type}</p>}
             </div>
@@ -365,6 +367,54 @@ const EditProperty = () => {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Custom Amenity section */}
+          <div className="mt-6 border-t border-border pt-4">
+            <h3 className="text-xl font-medium text-muted-foreground mb-3">Custom Amenities</h3>
+            <div className="flex gap-2 items-center mb-4">
+              <input
+                type="text"
+                value={customAmenity}
+                onChange={(e) => setCustomAmenity(e.target.value)}
+                placeholder="Add custom amenity..."
+                className="flex-1 bg-transparent border border-border p-2 rounded text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none text-foreground"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (customAmenity.trim() && !formData.amenities.includes(customAmenity.trim())) {
+                      setFormData({ ...formData, amenities: [...formData.amenities, customAmenity.trim()] });
+                      setCustomAmenity('');
+                    }
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (customAmenity.trim() && !formData.amenities.includes(customAmenity.trim())) {
+                    setFormData({ ...formData, amenities: [...formData.amenities, customAmenity.trim()] });
+                    setCustomAmenity('');
+                  }
+                }}
+                className="px-4 py-2 bg-primary text-primary-foreground text-sm rounded font-medium shadow hover:bg-primary/90 transition-all"
+              >
+                Add
+              </button>
+            </div>
+            
+            {formData.amenities.filter(a => !Object.values(amenityCategories).flat().includes(a)).length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {formData.amenities.filter(a => !Object.values(amenityCategories).flat().includes(a)).map(amenity => (
+                  <div key={amenity} className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-sm font-medium shadow">
+                    <span>{amenity}</span>
+                    <button type="button" onClick={() => handleAmenityChange({ target: { value: amenity, checked: false } })} className="hover:text-red-200 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
