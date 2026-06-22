@@ -119,11 +119,9 @@ const PropertyDetails = () => {
       return setBookingError('Please select a start and end date.');
     }
 
-    const res = await loadRazorpay();
-
-    if (!res) {
-      return setBookingError('Razorpay SDK failed to load. Are you online?');
-    }
+    // Try to load Razorpay SDK, but don't fail immediately.
+    // We only fail if the server actually returns a Razorpay order.
+    const razorpayLoaded = await loadRazorpay();
 
     const bookingData = {
       propertyId: property._id,
@@ -134,6 +132,18 @@ const PropertyDetails = () => {
     try {
       const result = await createBooking(bookingData);
       const { razorpayOrder, data: booking } = result;
+
+      // If Razorpay is not configured on the server (Prototyping / presentation fallback)
+      if (!razorpayOrder) {
+        setBookingSuccess(true);
+        setBookingError(null);
+        return;
+      }
+
+      // If Razorpay is required by the server, we must have the SDK loaded
+      if (!razorpayLoaded || !window.Razorpay) {
+        return setBookingError('Razorpay SDK failed to load. Please check your internet connection.');
+      }
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
