@@ -4,84 +4,40 @@ import { addProperty } from '../../services/hostService';
 import api from '../../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import LocationPicker from '../../components/property/LocationPicker';
+import * as LucideIcons from 'lucide-react';
 
-const getAmenityIcon = (amenity) => {
-  const iconProps = { className: "h-5 w-5 text-primary" };
-  switch (amenity) {
-    case 'Comfortable beds':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm3-12h.01M3 17h18a2 2 0 002-2V9a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>;
-    case 'Wardrobes/closets':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2zM8 7v.01M8 11v.01"></path></svg>;
-    case 'Woollen blankets':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M4 11V7a2 2 0 012-2h.5c.532 0 1.052.126 1.5.368m.5-3.368h-.5C6.948 3 6.428 3.126 6 3.368M4 11v6a2 2 0 002 2h2m-2-8h4m-4 0c-.532 0-1.052.126-1.5.368m.5-3.368h-.5C6.948 3 6.428 3.126 6 3.368M20 11V7a2 2 0 00-2-2h-.5c-.532 0-1.052.126-1.5.368m-.5-3.368h.5c.532 0 1.052.126 1.5.368M20 11v6a2 2 0 01-2 2h-2m2-8h-4m4 0c.532 0 1.052.126 1.5.368m-.5-3.368h.5c-.532 0-1.052-.126-1.5-.368M10 11h4"></path></svg>;
-    case 'Attached bathrooms':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 13h10m-3-3V7m-4 6v4m-3-3v4m8-4v4m-3-3h.01M3 21v-4a2 2 0 012-2h14a2 2 0 012 2v4M5 7h14a2 2 0 012 2v4a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"></path></svg>;
-    case 'Hot/cold running water':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>;
-    case 'Western-style toilets':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M14 10l-2 1m0 0l-2-1m2 1V3m2 7h-4M5 13h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2a2 2 0 002 2zm14 0v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4h18z"></path></svg>;
-    case 'Toiletries':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-4.414-4.414A1 1 0 0013.586 4H7a2 2 0 00-2 2v13a2 2 0 002 2z"></path></svg>;
-    case 'Free Wi-Fi':
-    case 'High-Speed Internet':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728M9.879 16.121a3 3 0 010-4.242m4.242 0a3 3 0 010 4.242M12 12h.01"></path></svg>;
-    case 'Air Conditioning':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>;
-    case 'Heating':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343a7.99 7.99 0 012.344 5.657z" /><path strokeLinecap="round" strokeLinejoin="round" d="M9.879 16.121A3 3 0 1012.015 11L11 14l.879 2.121z" /></svg>;
-    case 'Dedicated Workspace':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>;
-    case 'Televisions with cable/satellite channels':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M12 12h.01"></path></svg>;
-    case 'Home-cooked meals':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>;
-    case 'Shared kitchen or kitchenette':
-    case 'Kitchen Essentials (Oil, Salt, Pepper)':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>;
-    case 'Microwave':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 7v10M18 10h.01M18 14h.01" /></svg>;
-    case 'Dishwasher':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>;
-    case 'Coffee Maker':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V4m0 16v-4m-6-10L4 12m16 0l-2 2m-6-6h.01M12 6.01V6"></path></svg>;
-    case 'Housekeeping':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M11 4a2 2 0 114 0v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4zM11 4a2 2 0 10-4 0v12a1 1 0 001 1h2a1 1 0 001-1V4zm1-13h6a2 2 0 012 2v6a2 2 0 01-2 2h-6a2 2 0 01-2-2V5a2 2 0 012-2z"></path></svg>;
-    case 'Laundry services':
-    case 'Iron/ironing boards':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10M4 20h16"></path></svg>;
-    case 'Personalized guided tours':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>;
-    case 'CCTV surveillance':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.872-3.248A1 1 0 0121 7.279v9.442a1 1 0 01-1.128.927L15 14m0 0l-4 4H9.68l-3.328-3.328C5.972 14.28 5 13.568 5 12.656V11a.5.5 0 01.5-.5h4.872l-1.936-3.226A1 1 0 018.872 7v-.058a1 1 0 011.128-.927L15 10z"></path></svg>;
-    case 'Secure parking':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4zm-3-4a1 1 0 011-1h10a1 1 0 011 1v12a1 1 0 01-1 1H7a1 1 0 01-1-1V6zM7 21h10"></path></svg>;
-    case 'First-aid kits':
-    case 'Fire Extinguisher':
-    case 'Smoke Alarm':
-    case 'Carbon Monoxide Alarm':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.816A2.003 2.003 0 0015 3.033V3a2 2 0 00-2-2H9a2 2 0 00-2 2v.033A2.003 2.003 0 004.382 8.184l-.304 1.52A4 4 0 007.432 19h9.136a4 4 0 003.354-9.293l-.304-1.52z"></path></svg>;
-    case 'Fireplaces':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h2a2 2 0 002-2V9a2 2 0 00-2-2h-3V5a2 2 0 00-2-2H9a2 2 0 00-2 2v2H4a2 2 0 00-2 2v9a2 2 0 002 2h2m0 0V4m0 0H4m16 0v4m0 0h-4M7 7h10"></path></svg>;
-    case 'Gardens':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V4m0 16v-4m-6-10L4 12m16 0l-2 2m-6-6h.01M12 6.01V6"></path></svg>;
-    case 'Terraces':
-    case 'Outdoor Dining Area':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>;
-    case 'Spa treatments':
-    case 'Hot Tub':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3V1h4v6m-4 5h.01M16 16v-4h-4v4h4z"></path></svg>;
-    case 'Yoga sessions':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
-    case 'Private Pool':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" /></svg>;
-    case 'BBQ Grill':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 11V7a2 2 0 00-2-2H7a2 2 0 00-2 2v4m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>;
-    case 'Flexible check-in/check-out':
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm3-12h.01M3 17h18a2 2 0 002-2V9a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>;
-    default:
-      return <svg {...iconProps} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
-  }
-};
+import { getAmenityIcon } from '../../utils/amenityIcons';
+
+const availableIcons = [
+  { name: 'Wifi', label: 'Wi-Fi' },
+  { name: 'Tv', label: 'TV' },
+  { name: 'Utensils', label: 'Dining' },
+  { name: 'Coffee', label: 'Coffee' },
+  { name: 'Bath', label: 'Bath' },
+  { name: 'Bed', label: 'Bed' },
+  { name: 'Wind', label: 'AC' },
+  { name: 'Thermometer', label: 'Heating' },
+  { name: 'Flower2', label: 'Garden' },
+  { name: 'Palmtree', label: 'Outdoor' },
+  { name: 'Waves', label: 'Pool/Water' },
+  { name: 'Smile', label: 'Wellness' },
+  { name: 'Car', label: 'Parking' },
+  { name: 'Cctv', label: 'CCTV' },
+  { name: 'Activity', label: 'Gym' },
+  { name: 'ShieldAlert', label: 'Safety' },
+  { name: 'Flame', label: 'Fireplace' },
+  { name: 'Sparkles', label: 'Premium' },
+  { name: 'Gift', label: 'Gift' },
+  { name: 'Heart', label: 'Love' },
+  { name: 'Sun', label: 'Sunlight' },
+  { name: 'Moon', label: 'Night' },
+  { name: 'TreePine', label: 'Forest' },
+  { name: 'Mountain', label: 'Mountain' },
+  { name: 'Dumbbell', label: 'Weights' },
+  { name: 'Gamepad2', label: 'Games' },
+  { name: 'Bike', label: 'Bikes' },
+  { name: 'PawPrint', label: 'Pets' }
+];
 
 const amenityCategories = {
   "Accommodation Comforts": ["Comfortable beds", "Wardrobes/closets", "Woollen blankets", "Air Conditioning", "Heating"],
@@ -115,6 +71,7 @@ const AddProperty = () => {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [formErrors, setFormErrors] = useState({});
   const [customAmenity, setCustomAmenity] = useState('');
+  const [selectedCustomIcon, setSelectedCustomIcon] = useState('Sparkles');
   const navigate = useNavigate();
 
   const totalSteps = 4;
@@ -303,12 +260,12 @@ const AddProperty = () => {
                     onChange={handleChange}
                     className="w-full p-4 bg-card border border-border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none appearance-none"
                   >
-                    <option value="">Select Category</option>
-                    <option value="Mountain">Mountain</option>
-                    <option value="Riverside">Riverside</option>
-                    <option value="Farm">Farm</option>
-                    <option value="Forest">Forest</option>
-                    <option value="Village">Village</option>
+                      <option value="" className="bg-card text-foreground">Select Category</option>
+                      <option value="Mountain" className="bg-card text-foreground">Mountain</option>
+                      <option value="Riverside" className="bg-card text-foreground">Riverside</option>
+                      <option value="Farm" className="bg-card text-foreground">Farm</option>
+                      <option value="Forest" className="bg-card text-foreground">Forest</option>
+                      <option value="Village" className="bg-card text-foreground">Village</option>
                   </select>
                   {formErrors.type && <p className="text-red-500 text-[10px] font-bold uppercase mt-1 ml-1">{formErrors.type}</p>}
                 </div>
@@ -389,43 +346,87 @@ const AddProperty = () => {
                     </div>
                   ))}
                   
-                  <div className="flex gap-2 items-center mt-6">
-                    <input
-                      type="text"
-                      value={customAmenity}
-                      onChange={(e) => setCustomAmenity(e.target.value)}
-                      placeholder="Add custom amenity..."
-                      className="flex-1 bg-transparent border-b border-border py-2 text-sm focus:border-primary outline-none text-foreground placeholder:text-muted-foreground"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          if (customAmenity.trim() && !formData.amenities.includes(customAmenity.trim())) {
-                            setFormData({ ...formData, amenities: [...formData.amenities, customAmenity.trim()] });
+                  <div className="space-y-4 mt-6">
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        value={customAmenity}
+                        onChange={(e) => setCustomAmenity(e.target.value)}
+                        placeholder="Add custom amenity..."
+                        className="flex-1 bg-transparent border-b border-border py-2 text-sm focus:border-primary outline-none text-foreground placeholder:text-muted-foreground"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (customAmenity.trim()) {
+                              const nameToCheck = customAmenity.trim();
+                              const alreadyExists = formData.amenities.some(a => {
+                                const existingName = a.includes('|') ? a.split('|')[0] : a;
+                                return existingName.toLowerCase() === nameToCheck.toLowerCase();
+                              });
+                              if (!alreadyExists) {
+                                const finalAmenity = `${customAmenity.trim()}|${selectedCustomIcon}`;
+                                setFormData({ ...formData, amenities: [...formData.amenities, finalAmenity] });
+                              }
+                              setCustomAmenity('');
+                            }
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (customAmenity.trim()) {
+                            const nameToCheck = customAmenity.trim();
+                            const alreadyExists = formData.amenities.some(a => {
+                              const existingName = a.includes('|') ? a.split('|')[0] : a;
+                              return existingName.toLowerCase() === nameToCheck.toLowerCase();
+                            });
+                            if (!alreadyExists) {
+                              const finalAmenity = `${customAmenity.trim()}|${selectedCustomIcon}`;
+                              setFormData({ ...formData, amenities: [...formData.amenities, finalAmenity] });
+                            }
                             setCustomAmenity('');
                           }
-                        }
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (customAmenity.trim() && !formData.amenities.includes(customAmenity.trim())) {
-                          setFormData({ ...formData, amenities: [...formData.amenities, customAmenity.trim()] });
-                          setCustomAmenity('');
-                        }
-                      }}
-                      className="px-4 py-2 bg-primary text-primary-foreground text-xs rounded-full font-bold shadow-sm hover:bg-primary/90 transition-all active:scale-95"
-                    >
-                      Add
-                    </button>
+                        }}
+                        className="px-4 py-2 bg-primary text-primary-foreground text-xs rounded-full font-bold shadow-sm hover:bg-primary/90 transition-all active:scale-95"
+                      >
+                        Add
+                      </button>
+                    </div>
+
+                    <div className="mt-2">
+                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-2">Select Custom Icon</label>
+                      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+                        {availableIcons.map((ico) => {
+                          const IconComponent = LucideIcons[ico.name] || LucideIcons.Star;
+                          return (
+                            <button
+                              key={ico.name}
+                              type="button"
+                              onClick={() => setSelectedCustomIcon(ico.name)}
+                              className={`flex flex-col items-center gap-1 p-2 rounded-xl border text-xs min-w-[65px] transition-all cursor-pointer ${
+                                selectedCustomIcon === ico.name
+                                  ? 'bg-primary border-primary text-primary-foreground'
+                                  : 'bg-card border-border text-muted-foreground hover:border-primary/50'
+                              }`}
+                            >
+                              <IconComponent className="h-5 w-5 shrink-0" />
+                              <span className="text-[9px] font-medium whitespace-nowrap">{ico.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
+
                   {formData.amenities.filter(a => !Object.values(amenityCategories).flat().includes(a)).length > 0 && (
                     <div className="mt-6">
                       <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-4">Custom Amenities</h4>
                       <div className="flex flex-wrap gap-2">
                         {formData.amenities.filter(a => !Object.values(amenityCategories).flat().includes(a)).map(amenity => (
                           <div key={amenity} className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm">
-                            <span>{amenity}</span>
+                            {getAmenityIcon(amenity)}
+                            <span>{amenity.includes('|') ? amenity.split('|')[0] : amenity}</span>
                             <button type="button" onClick={() => handleAmenityChange(amenity)} className="hover:text-red-200 transition-colors">
                               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                             </button>
@@ -528,6 +529,7 @@ const AddProperty = () => {
                 lat={formData.latitude} 
                 lng={formData.longitude} 
                 onChange={handleLocationChange} 
+                address={formData.address}
               />
               
               {formErrors.location && <p className="text-red-500 text-sm font-bold italic">{formErrors.location}</p>}

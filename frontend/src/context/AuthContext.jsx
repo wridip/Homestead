@@ -10,7 +10,6 @@ const authReducer = (state, action) => {
         ...state,
         isAuthenticated: !!action.payload.user,
         user: action.payload.user,
-        token: action.payload.token,
         loading: false,
       };
     case 'LOGIN':
@@ -18,14 +17,12 @@ const authReducer = (state, action) => {
         ...state,
         isAuthenticated: true,
         user: action.payload.user,
-        token: action.payload.token,
       };
     case 'LOGOUT':
       return {
         ...state,
         isAuthenticated: false,
         user: null,
-        token: null,
       };
     default:
       return state;
@@ -36,48 +33,35 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     isAuthenticated: false,
     user: null,
-    token: null,
     loading: true,
   });
 
   useEffect(() => {
-    const verifyToken = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        try {
-          const response = await api.get('/me');
-          const user = response.data;
-          dispatch({
-            type: 'AUTH_STATE_INITIALIZED',
-            payload: { user, token },
-          });
-        } catch (error) {
-          console.error('Token verification failed', error);
-          dispatch({ type: 'AUTH_STATE_INITIALIZED', payload: { user: null, token: null } });
-        }
-      } else {
-        dispatch({ type: 'AUTH_STATE_INITIALIZED', payload: { user: null, token: null } });
+    const verifySession = async () => {
+      try {
+        // The HTTPOnly cookie is sent automatically by the browser (withCredentials: true).
+        // If it's valid the server returns the user profile; otherwise it 401s.
+        const response = await api.get('/me');
+        dispatch({
+          type: 'AUTH_STATE_INITIALIZED',
+          payload: { user: response.data },
+        });
+      } catch (error) {
+        dispatch({ type: 'AUTH_STATE_INITIALIZED', payload: { user: null } });
       }
     };
 
-    verifyToken();
+    verifySession();
   }, []);
 
   const login = useCallback((userData) => {
-    localStorage.setItem('user', JSON.stringify(userData.user));
-    localStorage.setItem('token', userData.token);
-    api.defaults.headers.common['Authorization'] = `Bearer ${userData.token}`;
     dispatch({
       type: 'LOGIN',
-      payload: { user: userData.user, token: userData.token },
+      payload: { user: userData.user },
     });
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    delete api.defaults.headers.common['Authorization'];
     dispatch({ type: 'LOGOUT' });
   }, []);
 
