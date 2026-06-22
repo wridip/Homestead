@@ -45,7 +45,6 @@ exports.googleLogin = async (req, res, next) => {
 
     res.json({
       success: true,
-      token: accessToken,
       user: {
         _id: user._id,
         name: user.name,
@@ -80,7 +79,6 @@ exports.signup = async (req, res, next) => {
 
       res.status(201).json({
         success: true,
-        token: accessToken,
         user: {
           _id: user._id,
           name: user.name,
@@ -111,7 +109,6 @@ exports.login = async (req, res, next) => {
 
       res.json({
         success: true,
-        token: accessToken,
         user: {
           _id: user._id,
           name: user.name,
@@ -157,7 +154,6 @@ exports.refresh = async (req, res, next) => {
 
     res.json({
       success: true,
-      token: accessToken,
     });
   } catch (error) {
     next(error);

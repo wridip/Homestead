@@ -37,4 +37,16 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Handle global 401 responses (expired / invalid token → redirect to login)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Cookie has expired or been cleared server-side — send user to login
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
