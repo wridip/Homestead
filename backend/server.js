@@ -7,7 +7,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const csurf = require('@dr.pogodin/csurf');
 const mongoSanitize = require('express-mongo-sanitize');
-
 const rateLimit = require('express-rate-limit');
 
 // Load environment variables
@@ -40,23 +39,23 @@ app.use(async (req, res, next) => {
   }
 });
 
+// --- CORS ---
+// Explicitly whitelist known origins only — no catch-all wildcard
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://homestead-ui.vercel.app',
+  'https://homestead-management-system.vercel.app',
+  'https://homestead-9r7jidoyg-wridip-sarkars-projects.vercel.app',
+];
+if (process.env.CORS_ORIGIN) {
+  allowedOrigins.push(process.env.CORS_ORIGIN);
+}
+
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl)
+    // Allow server-to-server / curl (no origin header)
     if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'https://homestead-ui.vercel.app',
-      'https://homestead-9r7jidoyg-wridip-sarkars-projects.vercel.app',
-    ];
-    
-    if (process.env.CORS_ORIGIN) {
-      allowedOrigins.push(process.env.CORS_ORIGIN);
-    }
-    
-    // Dynamically allow any vercel.app domain from the user
-    if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -78,10 +77,62 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Body parsing middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// --- Body parsing middleware (with size limits to prevent large-payload DoS) ---
+app.use(express.json({ limit: '50kb' }));
+app.use(express.urlencoded({ extended: true, limit: '50kb' }));
 app.use(cookieParser());
+
+// --- Rate Limiters ---
+// Helper to create a rate limiter with standard options
+const makeRateLimiter = (windowMs, max, message) =>
+  rateLimit({
+    windowMs,
+    max,
+    message: { success: false, message },
+    standardHeaders: true,  // Return RateLimit-* headers
+    legacyHeaders: false,   // Disable X-RateLimit-* legacy headers
+    validate: { xForwardedForHeader: false }, // Suppress Vercel proxy warning
+  });
+
+// Global limiter — covers every route including /api/csrf-token
+const globalLimiter = makeRateLimiter(
+  1 * 60 * 1000, // 1 minute window
+  100,           // 100 requests per IP per minute
+  'Too many requests, please slow down.'
+);
+
+// Strict limiters for sensitive auth endpoints
+const loginLimiter = makeRateLimiter(
+  15 * 60 * 1000, // 15 minute window
+  10,             // 10 attempts per IP per 15 min
+  'Too many login attempts. Please try again in 15 minutes.'
+);
+
+const signupLimiter = makeRateLimiter(
+  60 * 60 * 1000, // 1 hour window
+  10,             // 10 signups per IP per hour
+  'Too many accounts created from this IP. Please try again later.'
+);
+
+const refreshLimiter = makeRateLimiter(
+  15 * 60 * 1000, // 15 minute window
+  30,             // 30 refresh calls per IP per 15 min
+  'Too many token refresh attempts. Please try again later.'
+);
+
+const googleAuthLimiter = makeRateLimiter(
+  15 * 60 * 1000, // 15 minute window
+  20,             // 20 Google auth calls per IP per 15 min
+  'Too many Google login attempts. Please try again later.'
+);
+
+if (process.env.NODE_ENV !== 'test') {
+  // Apply global limiter BEFORE all routes (including csrf-token)
+  app.use(globalLimiter);
+
+  // Sanitize data against NoSQL injection
+  app.use(mongoSanitize());
+}
 
 // CSRF Protection
 const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL;
@@ -89,7 +140,7 @@ const csrfProtection = csurf({
   cookie: {
     httpOnly: true,
     secure: isProd,
-    sameSite: isProd ? 'none' : 'lax', // 'none' needed if frontend and backend are on different domains but both Vercel
+    sameSite: isProd ? 'none' : 'lax', // 'none' needed for cross-origin Vercel deployments
   },
 });
 app.use(csrfProtection);
@@ -97,24 +148,6 @@ app.use(csrfProtection);
 app.get('/api/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
-
-if (process.env.NODE_ENV !== 'test') {
-  // Sanitize data
-  app.use(mongoSanitize());
-
-
-
-  // Rate limiting
-  const limiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 100,
-    validate: { xForwardedForHeader: false }, // Disable this check for Vercel
-  });
-  app.use(limiter);
-}
-
-// --- Database Connection ---
-// Handled by middleware for Vercel
 
 // --- API Routes ---
 const authRoutes = require('./src/routes/authRoutes');
@@ -126,6 +159,14 @@ const photoRoutes = require('./src/routes/photoRoutes');
 const messageRoutes = require('./src/routes/messageRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
+
+// Attach per-route limiters to sensitive auth endpoints before mounting the router
+if (process.env.NODE_ENV !== 'test') {
+  app.use('/api/auth/login', loginLimiter);
+  app.use('/api/auth/signup', signupLimiter);
+  app.use('/api/auth/refresh-token', refreshLimiter);
+  app.use('/api/auth/google', googleAuthLimiter);
+}
 
 app.use('/api/auth', authRoutes);
 app.use('/api/properties', propertyRoutes);

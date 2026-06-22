@@ -29,8 +29,8 @@ const { protect } = require('../middlewares/authMiddleware');
 router.post('/logout', protect, logout);
 
 // @route   POST api/auth/refresh-token
-// @desc    Refresh access token
-// @access  Private
-router.post('/refresh-token', protect, refresh);
+// @desc    Refresh access token using refresh token cookie
+// @access  Public (validated via httpOnly refresh token cookie, not access token)
+router.post('/refresh-token', refresh);
 
 module.exports = router;

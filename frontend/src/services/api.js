@@ -37,14 +37,66 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Handle global 401 responses (expired / invalid token → redirect to login)
+// Track whether a token refresh is already in flight so concurrent
+// 401s don't trigger multiple simultaneous refresh calls.
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Cookie has expired or been cleared server-side — send user to login
-      window.location.href = '/login';
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Only attempt a refresh on 401s that haven't already been retried,
+    // and skip refresh calls themselves to avoid infinite loops.
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/auth/refresh-token')
+    ) {
+      if (isRefreshing) {
+        // Queue the request until the ongoing refresh resolves.
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => api(originalRequest))
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // The refresh token is in an httpOnly cookie — just call the endpoint.
+        await axios.post(
+          `${API_BASE_URL}/auth/refresh-token`,
+          {},
+          { withCredentials: true }
+        );
+        processQueue(null);
+        // Replay the original request with the refreshed access-token cookie.
+        return api(originalRequest);
+      } catch (refreshError) {
+        // Refresh token is also expired or missing — the user must log in again.
+        processQueue(refreshError);
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
     return Promise.reject(error);
   }
 );
