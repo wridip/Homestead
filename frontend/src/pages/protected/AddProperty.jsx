@@ -114,6 +114,7 @@ const AddProperty = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [formErrors, setFormErrors] = useState({});
+  const [customAmenity, setCustomAmenity] = useState('');
   const navigate = useNavigate();
 
   const totalSteps = 4;
@@ -306,7 +307,8 @@ const AddProperty = () => {
                     <option value="Mountain">Mountain</option>
                     <option value="Riverside">Riverside</option>
                     <option value="Farm">Farm</option>
-                    <option value="Minimal">Minimal</option>
+                    <option value="Forest">Forest</option>
+                    <option value="Village">Village</option>
                   </select>
                   {formErrors.type && <p className="text-red-500 text-[10px] font-bold uppercase mt-1 ml-1">{formErrors.type}</p>}
                 </div>
@@ -386,6 +388,53 @@ const AddProperty = () => {
                       </div>
                     </div>
                   ))}
+                  
+                  <div className="flex gap-2 items-center mt-6">
+                    <input
+                      type="text"
+                      value={customAmenity}
+                      onChange={(e) => setCustomAmenity(e.target.value)}
+                      placeholder="Add custom amenity..."
+                      className="flex-1 bg-transparent border-b border-border py-2 text-sm focus:border-primary outline-none text-foreground placeholder:text-muted-foreground"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (customAmenity.trim() && !formData.amenities.includes(customAmenity.trim())) {
+                            setFormData({ ...formData, amenities: [...formData.amenities, customAmenity.trim()] });
+                            setCustomAmenity('');
+                          }
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (customAmenity.trim() && !formData.amenities.includes(customAmenity.trim())) {
+                          setFormData({ ...formData, amenities: [...formData.amenities, customAmenity.trim()] });
+                          setCustomAmenity('');
+                        }
+                      }}
+                      className="px-4 py-2 bg-primary text-primary-foreground text-xs rounded-full font-bold shadow-sm hover:bg-primary/90 transition-all active:scale-95"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {formData.amenities.filter(a => !Object.values(amenityCategories).flat().includes(a)).length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-4">Custom Amenities</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {formData.amenities.filter(a => !Object.values(amenityCategories).flat().includes(a)).map(amenity => (
+                          <div key={amenity} className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm">
+                            <span>{amenity}</span>
+                            <button type="button" onClick={() => handleAmenityChange(amenity)} className="hover:text-red-200 transition-colors">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               </section>
 
