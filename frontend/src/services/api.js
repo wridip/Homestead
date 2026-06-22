@@ -53,6 +53,19 @@ const processQueue = (error) => {
   failedQueue = [];
 };
 
+// Public routes where an unauthenticated state is completely normal.
+// The interceptor must NEVER force a redirect to /login from these pages —
+// doing so creates an infinite reload loop because AuthContext's verifySession()
+// fires on every mount, gets a 401, triggers a refresh attempt, which also
+// fails, and then redirects back to the same page causing it to reload again.
+const PUBLIC_PATHS = ['/login', '/signup', '/about'];
+const isOnPublicPage = () =>
+  PUBLIC_PATHS.includes(window.location.pathname) ||
+  window.location.pathname === '/' ||
+  window.location.pathname.startsWith('/property/') ||
+  window.location.pathname.startsWith('/host/') ||
+  window.location.pathname.startsWith('/explore');
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -88,9 +101,16 @@ api.interceptors.response.use(
         // Replay the original request with the refreshed access-token cookie.
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh token is also expired or missing — the user must log in again.
         processQueue(refreshError);
-        window.location.href = '/login';
+
+        // Only redirect to /login from protected pages.
+        // On public pages (login, signup, home, explore, property detail, etc.)
+        // the 401 is expected for unauthenticated visitors — AuthContext's own
+        // catch block handles this correctly by setting user to null.
+        if (!isOnPublicPage()) {
+          window.location.href = '/login';
+        }
+
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
