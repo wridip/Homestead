@@ -45,7 +45,13 @@ const LocationPicker = ({ lat, lng, onChange, address }) => {
           map.setZoom(14);
         }
       } else {
-        setSearchError(`Could not find the location: ${status}`);
+        if (status === 'REQUEST_DENIED') {
+          setSearchError('Address search is restricted on this Google API key. Please manually drag the pin or click on the map to pinpoint your location.');
+        } else if (status === 'ZERO_RESULTS') {
+          setSearchError('Address not found. Please try a different area name, or manually pin the location on the map.');
+        } else {
+          setSearchError(`Address search failed (${status}). Please pin your location manually.`);
+        }
         console.error('Geocode failed due to: ' + status);
       }
     });

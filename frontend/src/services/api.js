@@ -37,14 +37,86 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Handle global 401 responses (expired / invalid token → redirect to login)
+// Track whether a token refresh is already in flight so concurrent
+// 401s don't trigger multiple simultaneous refresh calls.
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+  failedQueue = [];
+};
+
+// Public routes where an unauthenticated state is completely normal.
+// The interceptor must NEVER force a redirect to /login from these pages —
+// doing so creates an infinite reload loop because AuthContext's verifySession()
+// fires on every mount, gets a 401, triggers a refresh attempt, which also
+// fails, and then redirects back to the same page causing it to reload again.
+const PUBLIC_PATHS = ['/login', '/signup', '/about'];
+const isOnPublicPage = () =>
+  PUBLIC_PATHS.includes(window.location.pathname) ||
+  window.location.pathname === '/' ||
+  window.location.pathname.startsWith('/property/') ||
+  window.location.pathname.startsWith('/host/') ||
+  window.location.pathname.startsWith('/explore');
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Cookie has expired or been cleared server-side — send user to login
-      window.location.href = '/login';
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Only attempt a refresh on 401s that haven't already been retried,
+    // and skip refresh calls themselves to avoid infinite loops.
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/auth/refresh-token')
+    ) {
+      if (isRefreshing) {
+        // Queue the request until the ongoing refresh resolves.
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => api(originalRequest))
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // The refresh token is in an httpOnly cookie — just call the endpoint.
+        await axios.post(
+          `${API_BASE_URL}/auth/refresh-token`,
+          {},
+          { withCredentials: true }
+        );
+        processQueue(null);
+        // Replay the original request with the refreshed access-token cookie.
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError);
+
+        // Only redirect to /login from protected pages.
+        // On public pages (login, signup, home, explore, property detail, etc.)
+        // the 401 is expected for unauthenticated visitors — AuthContext's own
+        // catch block handles this correctly by setting user to null.
+        if (!isOnPublicPage()) {
+          window.location.href = '/login';
+        }
+
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
     return Promise.reject(error);
   }
 );

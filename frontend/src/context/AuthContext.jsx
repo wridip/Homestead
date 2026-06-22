@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
       try {
         // The HTTPOnly cookie is sent automatically by the browser (withCredentials: true).
         // If it's valid the server returns the user profile; otherwise it 401s.
-        const response = await api.get('/me');
+        const response = await api.get('/users/me');
         dispatch({
           type: 'AUTH_STATE_INITIALIZED',
           payload: { user: response.data },
